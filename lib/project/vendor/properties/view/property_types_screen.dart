@@ -10,8 +10,8 @@ import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/helper.dart';
 import '../../../../locator.dart';
 import '../cubit/cubit.dart';
+import 'edite_property_screen.dart';
 import 'lobby_offers_dialog.dart';
-import 'property_screen.dart';
 
 typedef PropertyType = ({String name, String icon});
 
@@ -66,10 +66,8 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BlocProvider.value(
-          value: getIt<PropertiesCubit>(),
-          child: PropertyScreen(type: backendType),
-        ),
+        // builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen(type: backendType)),
+        builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen()),
       ),
     );
   }

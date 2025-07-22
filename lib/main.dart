@@ -7,7 +7,10 @@ import 'core/services/cach_services.dart';
 import 'locator.dart';
 import 'project/vendor/Home/cubit/home_cubit.dart';
 import 'project/vendor/Home/screen/UI/splash/luby_screen_splash.dart';
+import 'project/vendor/activities/cubit/cubit.dart';
 import 'project/vendor/auth/cubit/auth_cubit.dart';
+import 'project/vendor/properties/cubit/cubit.dart';
+import 'project/vendor/user/cubit/cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,22 +24,25 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => getIt<AuthCubit>()),
-        BlocProvider(create: (context) => getIt<HomeCubit>()),
-      ],
-      child: ScreenUtilInit(
-        designSize: const Size(360, 690),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) => MaterialApp(
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (context) => getIt<AuthCubit>()),
+      BlocProvider(create: (context) => getIt<HomeCubit>()),
+      BlocProvider(create: (context) => getIt<UserCubit>()),
+      BlocProvider(create: (context) => getIt<ActivitiesCubit>()),
+      BlocProvider(create: (context) => getIt<PropertiesCubit>()),
+    ],
+    child: ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), useMaterial3: true),
           home: const LubyScreenSplash(),
-        ),
-      ),
-    );
-  }
+        );
+      },
+    ),
+  );
 }

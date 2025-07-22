@@ -22,9 +22,9 @@ class HomeRepository {
     }
   }
 
-  Future<UserModel> getUserProfile(String id) async {
+  Future<UserModel> getUserProfile() async {
     try {
-      final response = await _apiServices.dio.get(ApiConstance.userProfile(id));
+      final response = await _apiServices.dio.get(ApiConstance.userProfile);
       if (!(response.data['success'] ?? false) || response.data['data'] == null) {
         throw Exception('فشل تحميل الملف الشخصي');
       }
@@ -32,9 +32,7 @@ class HomeRepository {
       return userResponse;
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
-      if (e.response?.data['error'] != null) {
-        throw Exception(e.response?.data['error'].toString());
-      }
+      if (e.response?.data['error'] != null) throw Exception(e.response?.data['error'].toString());
       throw Exception('فشل الاتصال بالخادم');
     } catch (e) {
       debugPrint('Unexpected error: $e');

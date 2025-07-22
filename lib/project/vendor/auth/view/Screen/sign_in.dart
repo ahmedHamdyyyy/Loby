@@ -49,7 +49,6 @@ class _SignInScreenState extends State<SignInScreen> {
         if (state.signinStatus == Status.error) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg), backgroundColor: Colors.red));
         } else if (state.signinStatus == Status.success) {
-          
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainVendorHome()));
         }
       },
@@ -61,8 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios, color: AppColors.primaryIcon),
             onPressed: () {
-              Navigator.pushReplacement(context, 
-              MaterialPageRoute(builder: (context) => const SplashScreens()));
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SplashScreens()));
             },
           ),
         ),
@@ -82,10 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   onGuestLogin: () {},
                 ),
                 if (state.signinStatus == Status.loading)
-                  Container(
-                    color: Colors.black26,
-                    child: const Center(child: CircularProgressIndicator()),
-                  ),
+                  Container(color: Colors.black26, child: const Center(child: CircularProgressIndicator())),
               ],
             );
           },

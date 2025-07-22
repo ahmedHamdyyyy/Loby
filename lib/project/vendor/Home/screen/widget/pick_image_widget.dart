@@ -1,25 +1,43 @@
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_selector/file_selector.dart';
-import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 
 class ImagePickerWidget extends StatefulWidget {
-  const ImagePickerWidget({super.key});
+  const ImagePickerWidget({super.key, required this.onImagesUploaded});
+  final void Function(List<String>) onImagesUploaded;
+
   @override
   State<ImagePickerWidget> createState() => _ImagePickerScreenState();
 }
 
 class _ImagePickerScreenState extends State<ImagePickerWidget> {
   final List<String> _imagePaths = [];
-  final _picker = ImagePicker();
+  // final _picker = ImagePicker();
+
+  // Future<void> _pickImage() async {
+  //   try {
+  //     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //     if (pickedFile != null) setState(() => _imagePaths.add(pickedFile.path));
+  //     widget.onImagesUploaded(_imagePaths);
+  //   } catch (e) {
+  //     debugPrint('Error picking image: $e');
+  //   }
+  // }
+
   Future<void> _pickImage() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) setState(() => _imagePaths.add(pickedFile.path));
+      final file = await FilePickerWidget.pickImage(context);
+      if (file == null) return;
+      setState(() => _imagePaths.add(file.path));
+      widget.onImagesUploaded(_imagePaths);
     } catch (e) {
       debugPrint('Error picking image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل في اختيار الصورة')));
+      }
     }
   }
 
@@ -100,45 +118,38 @@ class FilePickerWidget {
   static void _showPermissionDialog(BuildContext context, String permissionName, String purpose) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('إذن $permissionName مطلوب'),
-        content: Text(
-          'يحتاج التطبيق إلى إذن $permissionName $purpose. يرجى منح الإذن في إعدادات التطبيق.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('إلغاء'),
+      builder:
+          (context) => AlertDialog(
+            title: Text('إذن $permissionName مطلوب'),
+            content: Text('يحتاج التطبيق إلى إذن $permissionName $purpose. يرجى منح الإذن في إعدادات التطبيق.'),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+              TextButton(
+                onPressed: () {
+                  openAppSettings();
+                  Navigator.pop(context);
+                },
+                child: const Text('فتح الإعدادات'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              openAppSettings();
-              Navigator.pop(context);
-            },
-            child: const Text('فتح الإعدادات'),
-          ),
-        ],
-      ),
     );
   }
 
   static Future<File?> pickImage(BuildContext context, {ImageSource source = ImageSource.gallery}) async {
     try {
-      final hasPermission = await _requestImagePermissions(context);
-      if (!hasPermission) return null;
+      // final hasPermission = await _requestImagePermissions(context);
+      // if (!hasPermission) return null;
 
-      final XFile? image = await _picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
+      final image = await _picker.pickImage(source: source, imageQuality: 80);
 
       if (image != null) {
         final fileSize = await File(image.path).length();
         if (fileSize > 5 * 1024 * 1024) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('حجم الصورة كبير جداً. يجب أن يكون أقل من 5 ميجابايت')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('حجم الصورة كبير جداً. يجب أن يكون أقل من 5 ميجابايت')));
           }
           return null;
         }
@@ -148,9 +159,7 @@ class FilePickerWidget {
     } catch (e) {
       debugPrint('Error picking image: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ أثناء اختيار الصورة')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الصورة')));
       }
       return null;
     }
@@ -161,9 +170,7 @@ class FilePickerWidget {
       final hasPermission = await _requestImagePermissions(context);
       if (!hasPermission) return [];
 
-      final List<XFile> images = await _picker.pickMultiImage(
-        imageQuality: 80,
-      );
+      final List<XFile> images = await _picker.pickMultiImage(imageQuality: 80);
 
       List<File> validImages = [];
       for (var image in images) {
@@ -174,18 +181,16 @@ class FilePickerWidget {
       }
 
       if (validImages.length != images.length && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تجاهل بعض الصور التي يتجاوز حجمها 5 ميجابايت')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تم تجاهل بعض الصور التي يتجاوز حجمها 5 ميجابايت')));
       }
 
       return validImages;
     } catch (e) {
       debugPrint('Error picking multiple images: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ أثناء اختيار الصور')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الصور')));
       }
       return [];
     }
@@ -193,22 +198,17 @@ class FilePickerWidget {
 
   static Future<File?> pickPdfFile(BuildContext context) async {
     try {
-      const XTypeGroup typeGroup = XTypeGroup(
-        label: 'PDF Files',
-        extensions: ['pdf'],
-      );
+      const XTypeGroup typeGroup = XTypeGroup(label: 'PDF Files', extensions: ['pdf']);
 
-      final XFile? file = await openFile(
-        acceptedTypeGroups: [typeGroup],
-      );
+      final XFile? file = await openFile(acceptedTypeGroups: [typeGroup]);
 
       if (file != null) {
         final fileSize = await File(file.path).length();
         if (fileSize > 10 * 1024 * 1024) {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('حجم الملف كبير جداً. يجب أن يكون أقل من 10 ميجابايت')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(const SnackBar(content: Text('حجم الملف كبير جداً. يجب أن يكون أقل من 10 ميجابايت')));
           }
           return null;
         }
@@ -218,9 +218,7 @@ class FilePickerWidget {
     } catch (e) {
       debugPrint('Error picking PDF file: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ أثناء اختيار الملف')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الملف')));
       }
       return null;
     }

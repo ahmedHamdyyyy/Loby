@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../../../config/colors/colors.dart';
 import '../../../../../../../config/images/image_assets.dart';
+import '../../../../activities/view/screens/home_view.dart';
 import '../../../../properties/view/property_types_screen.dart';
-import '../Activity/home_view.dart';
 
 /// Dialog for selecting vendor type
 class VendorTypeDialog extends StatelessWidget {

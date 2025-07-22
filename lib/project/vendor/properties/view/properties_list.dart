@@ -32,10 +32,11 @@ class PropertiesListView extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BlocProvider.value(
-                        value: getIt<PropertiesCubit>(),
-                        child: EditPropertyScreen(propertyId: properties[index].id),
-                      ),
+                      builder:
+                          (context) => BlocProvider.value(
+                            value: getIt<PropertiesCubit>(),
+                            child: PropertyScreen(propertyId: properties[index].id),
+                          ),
                     ),
                   );
                 },
@@ -63,10 +64,11 @@ class PropertiesListView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => BlocProvider.value(
-                            value: getIt<PropertiesCubit>(),
-                            child: EditPropertyScreen(propertyId: properties[index].id),
-                          ),
+                          builder:
+                              (context) => BlocProvider.value(
+                                value: getIt<PropertiesCubit>(),
+                                child: PropertyScreen(propertyId: properties[index].id),
+                              ),
                         ),
                       );
                     },
@@ -77,42 +79,25 @@ class PropertiesListView extends StatelessWidget {
                     onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          title: Text(
-                            'Delete Property',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          content: Text(
-                            'Are you sure you want to delete this property?',
-                            style: GoogleFonts.poppins(),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: GoogleFonts.poppins(),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                getIt<PropertiesCubit>().deleteProperty(properties[index].id);
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                'Delete',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.red,
+                        builder:
+                            (context) => AlertDialog(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              title: Text('Delete Property', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                              content: Text('Are you sure you want to delete this property?', style: GoogleFonts.poppins()),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('Cancel', style: GoogleFonts.poppins()),
                                 ),
-                              ),
+                                TextButton(
+                                  onPressed: () {
+                                    getIt<PropertiesCubit>().deleteProperty(properties[index].id);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
                       );
                     },
                     child: SvgPicture.asset(ImageAssets.deleteIcon, height: 20, width: 20),

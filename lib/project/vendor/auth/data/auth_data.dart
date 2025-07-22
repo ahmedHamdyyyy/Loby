@@ -12,13 +12,11 @@ class AuthData {
   final CacheService _cacheServices;
 
   Future<UserModel> signup({required UserModel user}) async {
-    final response = await _apiServices.dio.post(ApiConstance.signup, data: FormData.fromMap(await user.signUp()));
+    final response = await _apiServices.dio.post(ApiConstance.signup, data: await user.signUp());
+    if (_hasException(response)) throw _responseException(response);
     final id = response.data['data']['user'][AppConst.id];
-    final token = response.data['data']['token'];
-    if (_hasException(response) || id == null || token == null) throw _responseException(response);
-    final addedUser = user.copyWith(id: id);
-    await _cacheServices.storage.setString(AppConst.token, token);
-    await _cacheServices.storage.setString(AppConst.id, id);
+    print(id);
+    final addedUser = user.copyWith(id: id, profilePicture: response.data['data']['user'][AppConst.profilePicture]);
     await _saveUser(addedUser);
     return addedUser;
   }
@@ -27,7 +25,8 @@ class AuthData {
     final loginData = {AppConst.email: email, AppConst.password: password};
     final response = await _apiServices.dio.post(ApiConstance.signin, data: loginData);
     final userData = response.data['data']['user'];
-    final token = response.data['data']['token'];
+    final token = response.data['data']['accessToken'];
+    // final token = response.data['data']['refreshToken'];
     if (_hasException(response) || userData == null || token == null) throw _responseException(response);
     final user = UserModel.fromJson(userData);
     await _cacheServices.storage.setString(AppConst.token, token);
@@ -35,6 +34,7 @@ class AuthData {
     await _saveUser(user);
     return user;
   }
+
   Future<void> signout() async {
     await _cacheServices.storage.remove(AppConst.token);
     await _cacheServices.storage.remove(AppConst.id);

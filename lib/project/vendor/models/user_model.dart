@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../config/constants/constance.dart';
 
@@ -62,15 +63,20 @@ class UserModel {
     profilePicture: json[AppConst.profilePicture] ?? '',
   );
 
-  Future<Map<String, dynamic>> signUp() async => {
+  Future<FormData> signUp() async => FormData.fromMap({
     AppConst.firstName: firstName,
     AppConst.lastName: lastName,
     AppConst.password: password,
     AppConst.email: email,
     AppConst.phone: phone,
     AppConst.role: role,
-    if (profilePicture.isNotEmpty) AppConst.profilePicture: await _parceImage(),
-  };
+    if (profilePicture.isNotEmpty)
+      AppConst.profilePicture: await MultipartFile.fromFile(
+        profilePicture,
+        filename: profilePicture.split('/').last,
+        contentType: MediaType('image', 'jpg'),
+      ),
+  });
 
   String toCache() => jsonEncode({
     AppConst.id: id,
@@ -84,6 +90,4 @@ class UserModel {
   });
 
   factory UserModel.fromCache(String user) => UserModel.fromJson(jsonDecode(user) as Map<String, dynamic>);
-
-  Future _parceImage() async => await MultipartFile.fromFile(profilePicture, filename: profilePicture.split('/').last);
 }

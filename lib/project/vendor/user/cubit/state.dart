@@ -5,7 +5,7 @@ class UserState extends Equatable {
   final UserModel user;
   final Status fetchUserStatus;
 
-  const UserState({required this.callback, required this.user, required this.fetchUserStatus});
+  const UserState({this.callback = '', this.user = UserModel.non, this.fetchUserStatus = Status.initial});
 
   UserState copyWith({String? callback, UserModel? user, Status? fetchUserStatus}) {
     return UserState(

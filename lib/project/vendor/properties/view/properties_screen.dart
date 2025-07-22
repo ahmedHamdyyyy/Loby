@@ -58,25 +58,27 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                         }
                         return ClipRRect(
                           borderRadius: const BorderRadius.all(Radius.circular(40)),
-                          child: state.user.profilePicture.isEmpty
-                              ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
-                              : Image.network(
-                                  state.user.profilePicture,
-                                  width: 56,
-                                  height: 56,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) =>
-                                      Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover),
-                                  loadingBuilder: (context, child, loadingProgress) {
-                                    if (loadingProgress == null) return child;
-                                    return Container(
-                                      width: 56,
-                                      height: 56,
-                                      color: Colors.grey[300],
-                                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                                    );
-                                  },
-                                ),
+                          child:
+                              state.user.profilePicture.isEmpty
+                                  ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
+                                  : Image.network(
+                                    state.user.profilePicture,
+                                    width: 56,
+                                    height: 56,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (_, _, _) =>
+                                            Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover),
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        width: 56,
+                                        height: 56,
+                                        color: Colors.grey[300],
+                                        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                      );
+                                    },
+                                  ),
                         );
                       },
                     ),
@@ -92,8 +94,8 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                               style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              "Welcome to our App",
+                            Text(
+                              state.user.id,
                               style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w400),
                             ),
                           ],
@@ -171,7 +173,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                   "Your properties",
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                 ),
-                BlocProvider.value(value: getIt<PropertiesCubit>()..getProperties(), child: const PropertiesListView()),
+                BlocProvider.value(value: getIt<PropertiesCubit>(), child: const PropertiesListView()),
               ],
             ),
           ),
@@ -179,47 +181,31 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
       ),
     ),
   );
+}
 
-  }
 Column textVendorNow() {
-    return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Be a vendor now !",
-                              style: GoogleFonts.poppins(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              "Lorem ipsum dolor sit amet, consecr text adipiscing edit text hendrerit triueas dfay lorem ipsum dolor sit amet, consecr text \nDiam habitant .",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.grayTextColor,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            Text(
-                              "App Commission",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "The first party's commission for every reservation made by the second party is 14% of the rent (not including value added tax).",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.grayTextColor,
-                              ),
-                            ),
-                          ],
-                        );
-  }
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "Be a vendor now !",
+        style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
+      ),
+      const SizedBox(height: 20),
+      Text(
+        "Lorem ipsum dolor sit amet, consecr text adipiscing edit text hendrerit triueas dfay lorem ipsum dolor sit amet, consecr text \nDiam habitant .",
+        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
+      ),
+      const SizedBox(height: 20),
+      Text(
+        "App Commission",
+        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
+      ),
+      const SizedBox(height: 10),
+      Text(
+        "The first party's commission for every reservation made by the second party is 14% of the rent (not including value added tax).",
+        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
+      ),
+    ],
+  );
+}

@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../../../../config/colors/colors.dart';
-import '../../../../../../../config/images/image_assets.dart';
-import '../../widget/pick_image_widget.dart';
-import '../Properties/location_screens.dart';
-import 'usage_agreement.dart';
+import '../../../../../../config/colors/colors.dart';
+import '../../../../../../config/images/image_assets.dart';
+import '../../../Home/screen/UI/Properties/location_screens.dart';
 
 class AgreementTitle extends StatelessWidget {
   const AgreementTitle({super.key});
@@ -16,33 +14,6 @@ class AgreementTitle extends StatelessWidget {
     return Text(
       'Loby Platform Usage Agreement',
       style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
-    );
-  }
-}
-
-class AgreementCheckbox extends StatelessWidget {
-  final bool isChecked;
-  final VoidCallback onToggle;
-
-  const AgreementCheckbox({super.key, required this.isChecked, required this.onToggle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        GestureDetector(
-          onTap: onToggle,
-          child: SvgPicture.asset(isChecked ? ImageAssets.cracalWhite : ImageAssets.cracalBlack),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            'I agree to all the terms and conditions',
-            style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.secondGrayTextColor),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -107,77 +78,6 @@ class AgreementParagraph extends StatelessWidget {
         height: 1.5,
       ),
       textAlign: TextAlign.justify,
-    );
-  }
-}
-
-class ActivityRegistrationHeader extends StatelessWidget {
-  const ActivityRegistrationHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Material(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Container(
-            height: 171,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage('assets/images/shutterstock.jpg'), fit: BoxFit.cover),
-            ),
-          ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 60),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: SvgPicture.asset(ImageAssets.backIcon, width: 24, height: 24),
-              ),
-            ),
-            const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Text(
-                'Please enter your activity information',
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class ActivityNameField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const ActivityNameField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Name of activity',
-          style: GoogleFonts.poppins(fontSize: 16, color: AppColors.grayTextColor, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 15),
-        CustomTextField(controller: controller, hintText: 'Enter your activity name'),
-      ],
     );
   }
 }
@@ -267,25 +167,6 @@ class AmenitiesSection extends StatelessWidget {
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
         ),
         // const TagSelectorWidget(),
-      ],
-    );
-  }
-}
-
-class PhotoUploadSection extends StatelessWidget {
-  const PhotoUploadSection({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Upload studio photos or video',
-          style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        const ImagePickerWidget(),
       ],
     );
   }
@@ -382,18 +263,20 @@ class CustomTextField extends StatelessWidget {
   const CustomTextField({super.key, required this.controller, required this.hintText});
 
   @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(
-        border: buildOutlineBorder(),
-        focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
-        enabledBorder: buildOutlineBorder(),
-        hintText: hintText,
-        hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
-      ),
-      controller: controller,
-    );
-  }
+  Widget build(BuildContext context) => TextFormField(
+    decoration: InputDecoration(
+      border: buildOutlineBorder(),
+      focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
+      enabledBorder: buildOutlineBorder(),
+      hintText: hintText,
+      hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
+    ),
+    validator: (value) {
+      if (value == null || value.isEmpty) return 'Please enter $hintText';
+      return null;
+    },
+    controller: controller,
+  );
 }
 
 OutlineInputBorder buildOutlineBorder([Color? color]) {
@@ -401,29 +284,4 @@ OutlineInputBorder buildOutlineBorder([Color? color]) {
     borderRadius: const BorderRadius.all(Radius.circular(5)),
     borderSide: BorderSide(color: color ?? AppColors.lightGray),
   );
-}
-
-class SaveButton extends StatelessWidget {
-  const SaveButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const UsageAgreement()));
-        },
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          backgroundColor: const Color(0xFF262626),
-        ),
-        child: Text(
-          'Save',
-          style: GoogleFonts.poppins(fontSize: 16, color: const Color(0xFFFFFFFF), fontWeight: FontWeight.w500),
-        ),
-      ),
-    );
-  }
 }

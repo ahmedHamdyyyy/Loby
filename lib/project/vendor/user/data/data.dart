@@ -15,10 +15,11 @@ class UserData {
     return UserModel.fromCache(userData);
   }
 
-  Future<UserModel> fetchUser(String id) async {
-    final response = await _apiServices.dio.get(ApiConstance.userProfile(id));
+  Future<UserModel> fetchUser() async {
+    final response = await _apiServices.dio.get(ApiConstance.userProfile);
+    print(response.data);
     if (!(response.data['success'] ?? false) || response.data['data'] == null) throw Exception('فشل تحميل الملف الشخصي');
-    final userResponse = UserModel.fromJson(response.data['data']['user']);
+    final userResponse = UserModel.fromJson(response.data['data']);
     return userResponse;
   }
 }

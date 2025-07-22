@@ -1,8 +1,10 @@
+import 'dart:io'; // Added for File
+
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart'; // Added for debugPrint
-import 'dart:io'; // Added for File
+import 'package:http_parser/http_parser.dart';
+
 import '../../../../config/constants/api_constance.dart';
 
 class CustomPropertyModel extends Equatable {
@@ -10,19 +12,22 @@ class CustomPropertyModel extends Equatable {
   final bool available;
   final String vendorId;
 
-  const CustomPropertyModel({required this.id,
-  required this.vendorId,
-   required this.type, required this.image, required this.available});
+  const CustomPropertyModel({
+    required this.id,
+    required this.vendorId,
+    required this.type,
+    required this.image,
+    required this.available,
+  });
 
-  CustomPropertyModel copyWith({
-    String? vendorId,
-    String? id, String? type, String? image, bool? available}) => CustomPropertyModel(
-    id: id ?? this.id,
-    type: type ?? this.type,
-    vendorId: vendorId ?? this.vendorId,
-    image: image ?? this.image,
-    available: available ?? this.available,
-  );
+  CustomPropertyModel copyWith({String? vendorId, String? id, String? type, String? image, bool? available}) =>
+      CustomPropertyModel(
+        id: id ?? this.id,
+        type: type ?? this.type,
+        vendorId: vendorId ?? this.vendorId,
+        image: image ?? this.image,
+        available: available ?? this.available,
+      );
 
   factory CustomPropertyModel.fromJson(Map<String, dynamic> json) {
     String getFirstMedia(dynamic medias) {
@@ -40,19 +45,23 @@ class CustomPropertyModel extends Equatable {
     }
 
     return CustomPropertyModel(
-    id: json['_id'] ?? '',
-    vendorId: json['vendorId'] ?? '',
-    type: json['type'] ?? '',
+      id: json['_id'] ?? '',
+      vendorId: json['vendorId'] ?? '',
+      type: json['type'] ?? '',
       image: getFirstMedia(json['medias']),
-    available: json['available'] ?? false,
-  );
+      available: json['available'] ?? false,
+    );
   }
 
   factory CustomPropertyModel.fromProperty(PropertyModel property) => CustomPropertyModel(
     id: property.id,
     type: property.type,
-    image: property.medias.isNotEmpty ? 
-      (property.medias.first.startsWith('http') ? property.medias.first : ApiConstance.baseUrl + property.medias.first) : '',
+    image:
+        property.medias.isNotEmpty
+            ? (property.medias.first.startsWith('http')
+                ? property.medias.first
+                : ApiConstance.baseUrl + property.medias.first)
+            : '',
     available: property.available,
     vendorId: property.id,
   );
@@ -114,28 +123,28 @@ class PropertyModel extends Equatable {
     }
 
     return PropertyModel(
-    id: json['_id'] ?? '',
-    type: json['type'] ?? '',
-    available: json['available'] ?? false,
-    guestNumber: json['guestNumber'] ?? 0,
-    bedrooms: json['bedrooms'] ?? 0,
-    bathrooms: json['bathrooms'] ?? 0,
-    beds: json['beds'] ?? 0,
-    address: json['address'] ?? '',
-    details: json['details'] ?? '',
+      id: json['_id'] ?? '',
+      type: json['type'] ?? '',
+      available: json['available'] ?? false,
+      guestNumber: json['guestNumber'] ?? 0,
+      bedrooms: json['bedrooms'] ?? 0,
+      bathrooms: json['bathrooms'] ?? 0,
+      beds: json['beds'] ?? 0,
+      address: json['address'] ?? '',
+      details: json['details'] ?? '',
       tags: parseStringOrList(json['tags']),
-    pricePerNight: json['pricePerNight'] ?? 0,
+      pricePerNight: json['pricePerNight'] ?? 0,
       availableDates: parseStringOrList(json['availableDates']),
-    maxDays: json['maxDays'] ?? 0,
+      maxDays: json['maxDays'] ?? 0,
       ownershipContract: parseStringOrList(json['ownershipContract']),
       facilityLicense: parseStringOrList(json['facilityLicense']),
       medias: parseStringOrList(json['medias']),
-  );
+    );
   }
 
   Future<FormData> create() async {
     final formData = FormData();
-    
+
     // Add basic fields
     formData.fields.addAll([
       MapEntry('type', type),
@@ -152,10 +161,10 @@ class PropertyModel extends Equatable {
 
     // Add arrays
     for (final tag in tags) {
-      formData.fields.add(MapEntry('tags[]', tag));
+      formData.fields.add(MapEntry('tags', tag));
     }
     for (final date in availableDates) {
-      formData.fields.add(MapEntry('availableDates[]', date));
+      formData.fields.add(MapEntry('availableDates', date));
     }
 
     // Add files with proper content types
@@ -165,14 +174,18 @@ class PropertyModel extends Equatable {
         if (filePath.isNotEmpty) {
           final file = File(filePath);
           if (await file.exists()) {
-            formData.files.add(MapEntry(
-              'ownershipContract',
-              await MultipartFile.fromFile(
-                filePath,
-                filename: filePath.split('/').last,
-                contentType: MediaType('application', 'pdf'),
+            formData.files.add(
+              MapEntry(
+                'ownershipContract',
+                await MultipartFile.fromFile(
+                  filePath,
+                  filename: filePath.split('/').last,
+                  contentType: MediaType('application', 'pdf'),
+                ),
               ),
-            ));
+            );
+          } else {
+            formData.fields.add(MapEntry('ownershipContract', filePath));
           }
         }
       }
@@ -182,34 +195,39 @@ class PropertyModel extends Equatable {
         if (filePath.isNotEmpty) {
           final file = File(filePath);
           if (await file.exists()) {
-            formData.files.add(MapEntry(
-              'facilityLicense',
-              await MultipartFile.fromFile(
-                filePath,
-                filename: filePath.split('/').last,
-                contentType: MediaType('application', 'pdf'),
+            formData.files.add(
+              MapEntry(
+                'facilityLicense',
+                await MultipartFile.fromFile(
+                  filePath,
+                  filename: filePath.split('/').last,
+                  contentType: MediaType('application', 'pdf'),
+                ),
               ),
-            ));
+            );
+          } else {
+            formData.fields.add(MapEntry('facilityLicense', filePath));
           }
         }
       }
-
-      // Add media files
       for (final filePath in medias) {
-        if (filePath.isNotEmpty) {
-          final file = File(filePath);
-          if (await file.exists()) {
-            final extension = filePath.split('.').last.toLowerCase();
-            final contentType = extension == 'png' ? 'png' : 'jpeg';
-            formData.files.add(MapEntry(
+        if (filePath.isEmpty) continue;
+        final file = File(filePath);
+        final extension = filePath.split('.').last.toLowerCase();
+        if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
+        if (await file.exists()) {
+          formData.files.add(
+            MapEntry(
               'medias',
               await MultipartFile.fromFile(
                 filePath,
                 filename: filePath.split('/').last,
-                contentType: MediaType('image', contentType),
+                contentType: MediaType('image', extension),
               ),
-            ));
-          }
+            ),
+          );
+        } else {
+          formData.fields.add(MapEntry('medias', filePath));
         }
       }
     } catch (e) {

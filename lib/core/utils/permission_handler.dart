@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -46,9 +48,7 @@ class PermissionHelper {
 
   static Future<bool> requestMediaPermissions(BuildContext context) async {
     // For Android 13 and above
-    if (await Permission.photos.isGranted &&
-        await Permission.videos.isGranted &&
-        await Permission.audio.isGranted) {
+    if (await Permission.photos.isGranted && await Permission.videos.isGranted && await Permission.audio.isGranted) {
       return true;
     }
 
@@ -67,26 +67,24 @@ class PermissionHelper {
   static void _showPermissionDeniedDialog(BuildContext context, String permissionName) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('$permissionName Permission Required'),
-        content: Text(
-          'This app needs $permissionName permission to function properly. '
-          'Please grant the permission in app settings.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+      builder:
+          (context) => AlertDialog(
+            title: Text('$permissionName Permission Required'),
+            content: Text(
+              'This app needs $permissionName permission to function properly. '
+              'Please grant the permission in app settings.',
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              TextButton(
+                onPressed: () {
+                  openAppSettings();
+                  Navigator.pop(context);
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () {
-              openAppSettings();
-              Navigator.pop(context);
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
     );
   }
-} 
+}

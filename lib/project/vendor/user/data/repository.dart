@@ -16,9 +16,9 @@ class UserRepository {
     }
   }
 
-  Future<UserModel> fetchUser(String id) async {
+  Future<UserModel> fetchUser() async {
     try {
-      return _userData.fetchUser(id);
+      return _userData.fetchUser();
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) throw Exception(e.response?.data['error'].toString());

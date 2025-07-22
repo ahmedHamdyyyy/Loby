@@ -1,21 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
-import '../../models/property_model.dart';
+import '../../models/activity.dart';
 import 'data.dart';
 
-class PropertiesRespository {
-  const PropertiesRespository(this._propertiesData);
-  final PropertiesData _propertiesData;
+class ActivitiesRepository {
+  const ActivitiesRepository(this._data);
+  final ActivitiesData _data;
 
-  Future<PropertyModel> createProperty(PropertyModel property) async {
+  Future<ActivityModel> createActivity(ActivityModel property) async {
     try {
-      return await _propertiesData.createProperty(property);
+      return await _data.createActivity(property);
     } on DioException catch (e) {
       debugPrint('DioException: $e');
-      debugPrint('DioException: ${e.response?.data}');
-      debugPrint('DioException: ${e.response}');
-      debugPrint('DioException: ${e.stackTrace}');
       if (e.response?.data['error'] != null) {
         final errorMessage = e.response?.data['error'];
         if (errorMessage is List) {
@@ -33,9 +30,9 @@ class PropertiesRespository {
     }
   }
 
-  Future<PropertyModel> updateProperty(PropertyModel property) async {
+  Future<void> updateActivity(ActivityModel property) async {
     try {
-      return await _propertiesData.updateProperty(property);
+      return await _data.updateActivity(property);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) {
@@ -55,9 +52,9 @@ class PropertiesRespository {
     }
   }
 
-  Future<void> deleteProperty(String id) async {
+  Future<void> deleteActivity(String id) async {
     try {
-      return await _propertiesData.deleteProperty(id);
+      return await _data.deleteActivity(id);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) {
@@ -77,9 +74,9 @@ class PropertiesRespository {
     }
   }
 
-  Future<List<CustomPropertyModel>> getProperties() async {
+  Future<List<CustomActivityModel>> getActivities() async {
     try {
-      return await _propertiesData.getProperties();
+      return await _data.getActivities();
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) {
@@ -92,16 +89,16 @@ class PropertiesRespository {
       } else if (e.response?.statusCode != null) {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
-      throw Exception('Failed to get properties: ${e.message}');
+      throw Exception('Failed to get activities: ${e.message}');
     } catch (e) {
       debugPrint('Unexpected error: $e');
       throw Exception('An unexpected error occurred');
     }
   }
 
-  Future<PropertyModel> getProperty(String id) async {
+  Future<ActivityModel> getActivity(String id) async {
     try {
-      return await _propertiesData.getProperty(id);
+      return await _data.getActivity(id);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) {
@@ -114,7 +111,7 @@ class PropertiesRespository {
       } else if (e.response?.statusCode != null) {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
-      throw Exception('Failed to get properties: ${e.message}');
+      throw Exception('Failed to get activities: ${e.message}');
     } catch (e) {
       debugPrint('Unexpected error: $e');
       throw Exception('An unexpected error occurred');

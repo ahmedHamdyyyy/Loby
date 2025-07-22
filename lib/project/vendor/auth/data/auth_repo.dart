@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../models/user_model.dart';
 import 'auth_data.dart';
@@ -11,12 +12,14 @@ class AuthRepo {
     try {
       return await _authData.signup(user: user);
     } on DioException catch (e) {
+      debugPrint('Unexpected error: $e');
       if (e.response?.data['error'] != null) {
         final errors = e.response?.data['error'] as List;
         if (errors.isNotEmpty && errors[0] is List) throw Exception((errors[0] as List).join(', '));
       }
       throw Exception('Failed to sign up');
     } catch (e) {
+      debugPrint('Unexpected error: $e');
       throw Exception('An unexpected error occurred');
     }
   }
@@ -34,6 +37,7 @@ class AuthRepo {
       throw Exception('An unexpected error occurred');
     }
   }
+
   Future<void> signout() async {
     try {
       await _authData.signout();
@@ -41,5 +45,4 @@ class AuthRepo {
       throw Exception('An unexpected error occurred');
     }
   }
-
 }
