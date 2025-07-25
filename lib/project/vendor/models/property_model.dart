@@ -136,13 +136,13 @@ class PropertyModel extends Equatable {
       pricePerNight: json['pricePerNight'] ?? 0,
       availableDates: parseStringOrList(json['availableDates']),
       maxDays: json['maxDays'] ?? 0,
-      ownershipContract: parseStringOrList(json['ownershipContract']),
-      facilityLicense: parseStringOrList(json['facilityLicense']),
+      ownershipContract: [json['ownershipContract'] ?? ''],
+      facilityLicense: [json['facilityLicense'] ?? ''],
       medias: parseStringOrList(json['medias']),
     );
   }
 
-  Future<FormData> create() async {
+  Future<FormData> toJson() async {
     final formData = FormData();
 
     // Add basic fields
@@ -159,82 +159,69 @@ class PropertyModel extends Equatable {
       MapEntry('maxDays', maxDays.toString()),
     ]);
 
-    // Add arrays
     for (final tag in tags) {
       formData.fields.add(MapEntry('tags', tag));
     }
+
     for (final date in availableDates) {
       formData.fields.add(MapEntry('availableDates', date));
     }
 
-    // Add files with proper content types
     try {
-      // Add ownership contract files
       for (final filePath in ownershipContract) {
-        if (filePath.isNotEmpty) {
-          final file = File(filePath);
-          if (await file.exists()) {
-            formData.files.add(
-              MapEntry(
-                'ownershipContract',
-                await MultipartFile.fromFile(
-                  filePath,
-                  filename: filePath.split('/').last,
-                  contentType: MediaType('application', 'pdf'),
-                ),
-              ),
-            );
-          } else {
-            formData.fields.add(MapEntry('ownershipContract', filePath));
-          }
-        }
+        if (filePath.isEmpty) continue;
+        if (filePath.startsWith('https://') || filePath.startsWith('http://')) continue;
+        if (!await File(filePath).exists()) continue;
+        formData.files.add(
+          MapEntry(
+            'ownershipContract',
+            await MultipartFile.fromFile(
+              filePath,
+              filename: filePath.split('/').last,
+              contentType: MediaType('application', 'pdf'),
+            ),
+          ),
+        );
       }
-
-      // Add facility license files
       for (final filePath in facilityLicense) {
-        if (filePath.isNotEmpty) {
-          final file = File(filePath);
-          if (await file.exists()) {
-            formData.files.add(
-              MapEntry(
-                'facilityLicense',
-                await MultipartFile.fromFile(
-                  filePath,
-                  filename: filePath.split('/').last,
-                  contentType: MediaType('application', 'pdf'),
-                ),
-              ),
-            );
-          } else {
-            formData.fields.add(MapEntry('facilityLicense', filePath));
-          }
-        }
+        if (filePath.isEmpty) continue;
+        if (filePath.startsWith('https://') || filePath.startsWith('http://')) continue;
+        if (!await File(filePath).exists()) continue;
+        formData.files.add(
+          MapEntry(
+            'facilityLicense',
+            await MultipartFile.fromFile(
+              filePath,
+              filename: filePath.split('/').last,
+              contentType: MediaType('application', 'pdf'),
+            ),
+          ),
+        );
       }
       for (final filePath in medias) {
         if (filePath.isEmpty) continue;
-        final file = File(filePath);
+        if (filePath.startsWith('https://') || filePath.startsWith('http://')) {
+          formData.fields.add(MapEntry('existingMedias', filePath));
+          continue;
+        }
         final extension = filePath.split('.').last.toLowerCase();
         if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
-        if (await file.exists()) {
-          formData.files.add(
-            MapEntry(
-              'medias',
-              await MultipartFile.fromFile(
-                filePath,
-                filename: filePath.split('/').last,
-                contentType: MediaType('image', extension),
-              ),
+        if (!await File(filePath).exists()) continue;
+        formData.files.add(
+          MapEntry(
+            'medias',
+            await MultipartFile.fromFile(
+              filePath,
+              filename: filePath.split('/').last,
+              contentType: MediaType('image', extension),
             ),
-          );
-        } else {
-          formData.fields.add(MapEntry('medias', filePath));
-        }
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Error preparing files: $e');
       rethrow;
     }
-
     return formData;
   }
 

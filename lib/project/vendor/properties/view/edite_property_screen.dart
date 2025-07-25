@@ -21,8 +21,9 @@ import 'document_section.dart';
 import 'images_section.dart';
 
 class PropertyScreen extends StatefulWidget {
-  const PropertyScreen({super.key, this.propertyId = ''});
+  const PropertyScreen({super.key, this.propertyId = '', this.type = 'house'});
   final String propertyId;
+  final String type;
   @override
   State<PropertyScreen> createState() => _PropertyScreenState();
 }
@@ -56,6 +57,13 @@ class _PropertyScreenState extends State<PropertyScreen> {
     selectedAmenities = property.tags;
     propertyType = property.type;
     isSelected = !property.available;
+    _contractPaths.addAll(property.ownershipContract);
+    _licensePaths.addAll(property.facilityLicense);
+    selectedDates =
+        property.availableDates.map((date) {
+          final parts = date.split('-');
+          return DateTime.parse('${parts[0]}-${parts[1]}-${parts[2]}');
+        }).toSet();
     _imagePaths.addAll(property.medias);
     setState(() {});
   }
