@@ -129,13 +129,30 @@ class _ActivityRegistrationScreenState extends State<ActivityRegistrationScreen>
                       if (!_isAgreed) {
                         return showToast(text: 'Please agree to the terms and conditions', stute: ToustStute.worning);
                       }
+                      // التحقق من صحة البيانات قبل الإرسال
+                      if (activityNameController.text.isEmpty) {
+                        return showToast(text: 'يرجى إدخال اسم النشاط', stute: ToustStute.worning);
+                      }
+                      
+                      if (dateController.text.isEmpty || dateController.text.trim() == 'ا' || dateController.text.trim() == '') {
+                        return showToast(text: 'يرجى اختيار تاريخ صحيح', stute: ToustStute.worning);
+                      }
+                      
+                      if (timeController.text.isEmpty) {
+                        return showToast(text: 'يرجى اختيار وقت صحيح', stute: ToustStute.worning);
+                      }
+                      
+                      if (priceController.text.isEmpty || double.tryParse(priceController.text) == null) {
+                        return showToast(text: 'يرجى إدخال سعر صحيح', stute: ToustStute.worning);
+                      }
+                      
                       getIt<ActivitiesCubit>().createActivity(
                         ActivityModel(
-                          id: DateTime.now().toString(),
+                          id: '', // إترك فارغ ليتم توليده تلقائياً من الخادم
                           vendorId: getIt<UserCubit>().state.user.id,
                           tags: selectedAmenities,
                           medias: medias,
-                          verified: false,
+                          verified: false, // سيتم تحويله في ActivityModel.create()
                           name: activityNameController.text,
                           address: addressController.text,
                           details: detailsController.text,

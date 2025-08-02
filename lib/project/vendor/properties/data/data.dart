@@ -21,7 +21,7 @@ class PropertiesData {
   }
 
   Future<void> deleteProperty(String id) async {
-    final response = await _apiService.dio.delete(ApiConstance.updateProperty(id));
+    final response = await _apiService.dio.delete(ApiConstance.deleteProperty(id));
     if (!(response.data['success'] ?? false)) throw _dioError(response);
   }
 

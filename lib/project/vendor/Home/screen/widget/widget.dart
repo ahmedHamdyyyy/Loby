@@ -54,6 +54,21 @@ Widget buildBottomNavigationBarVendor({int currentIndex = 0, Function(int)? onTa
         colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
       ),
       label: "Home",
+    ),   
+     BottomNavigationBarItem(
+      icon: SvgPicture.asset(
+        ImageAssets.home,
+        width: 24,
+        height: 24,
+        colorFilter: ColorFilter.mode(Colors.grey.shade600, BlendMode.srcIn),
+      ),
+      activeIcon: SvgPicture.asset(
+        ImageAssets.billIcon,
+        width: 24,
+        height: 24,
+        colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+      ),
+      label: "Activities",
     ),
     BottomNavigationBarItem(
       icon: SvgPicture.asset(

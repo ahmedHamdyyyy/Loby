@@ -1,3 +1,4 @@
+import 'package:Luby/config/widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -47,8 +48,9 @@ class _SignInScreenState extends State<SignInScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state.signinStatus == Status.error) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg), backgroundColor: Colors.red));
+          showToast(text: state.msg, stute: ToustStute .error);
         } else if (state.signinStatus == Status.success) {
+          showToast(text: state.msg, stute: ToustStute .success);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainVendorHome()));
         }
       },

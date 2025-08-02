@@ -1,3 +1,4 @@
+import 'package:Luby/project/vendor/activities/view/widgets/tag_selector_widget.dart' show TagSelectorWidget;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -166,7 +167,7 @@ class AmenitiesSection extends StatelessWidget {
           'Tell guests what your place has to offer',
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
         ),
-        // const TagSelectorWidget(),
+        const TagSelectorWidget(),
       ],
     );
   }
@@ -187,7 +188,30 @@ class DateField extends StatelessWidget {
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        CustomTextField(controller: controller, hintText: 'dd/mm/yyyy'),
+        TextFormField(
+          controller: controller,
+          readOnly: true,
+          onTap: () async {
+            final selectedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (selectedDate != null) {
+              // تنسيق التاريخ بصيغة yyyy-MM-dd
+              controller.text = "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+            }
+          },
+          decoration: InputDecoration(
+            border: buildOutlineBorder(),
+            focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
+            enabledBorder: buildOutlineBorder(),
+            hintText: 'yyyy-MM-dd',
+            hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
+            suffixIcon: const Icon(Icons.calendar_today),
+          ),
+        ),
       ],
     );
   }
@@ -208,7 +232,30 @@ class TimeField extends StatelessWidget {
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        CustomTextField(controller: controller, hintText: '2:00am'),
+        TextFormField(
+          controller: controller,
+          readOnly: true,
+          onTap: () async {
+            final selectedTime = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.now(),
+            );
+            if (selectedTime != null) {
+              // تنسيق الوقت بصيغة HH:mm
+              final hour = selectedTime.hour.toString().padLeft(2, '0');
+              final minute = selectedTime.minute.toString().padLeft(2, '0');
+              controller.text = "$hour:$minute";
+            }
+          },
+          decoration: InputDecoration(
+            border: buildOutlineBorder(),
+            focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
+            enabledBorder: buildOutlineBorder(),
+            hintText: 'HH:MM',
+            hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
+            suffixIcon: const Icon(Icons.access_time),
+          ),
+        ),
       ],
     );
   }

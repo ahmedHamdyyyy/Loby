@@ -14,7 +14,7 @@ class AppConst {
   static const firstName = 'firstName';
   static const lastName = 'lastName';
   static const role = 'role';
-  static const token = 'token';
+
   static const userId = "_id";
   static const createdAt = 'createdAt';
   static const updatedAt = 'updatedAt';
@@ -22,18 +22,20 @@ class AppConst {
   static const city = 'city';
   static const type = 'type';
   static const date = 'date';
+  static const accessToken = 'accessToken';
+  static const refreshToken = 'refreshToken';
   static const profilePicture = 'profilePicture';
   static const user = 'user';
 
   //screens
-  static const splashScreen = '/';
+/*   static const splashScreen = '/';
   static const signInScreen = '/signInScreen';
   static const signUpScreen = '/signUpScreen';
   static const adminScreen = '/adminHomeScreen';
   static const userScreen = '/userHomeScreen';
   static const addProductScreen = '/AddProductScreen';
   static const detailsScreen = '/detailsScreen';
-  static const cutomerScreen = '/customerHomeScreen';
+  static const cutomerScreen = '/customerHomeScreen'; */
 
   // cache
   static const String tokenKey = 'auth_token';

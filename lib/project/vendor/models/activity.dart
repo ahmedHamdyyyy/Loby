@@ -84,8 +84,7 @@ class ActivityModel extends Equatable {
     final formData = FormData();
 
     // Add basic fields
-    formData.fields.addAll([
-      MapEntry('id', id),
+    List<MapEntry<String, String>> fields = [
       MapEntry('vendorId', vendorId),
       MapEntry('date', date),
       MapEntry('time', time),
@@ -94,8 +93,17 @@ class ActivityModel extends Equatable {
       MapEntry('address', address),
       MapEntry('details', details),
       MapEntry('price', price.toString()),
-      MapEntry('verified', verified.toString()),
-    ]);
+      // لا نرسل verified للأنشطة الجديدة - الخادم يتولى ذلك
+    ];
+    
+    // إضافة ID فقط إذا لم يكن فارغ (للتحديث)
+    if (id.isNotEmpty) {
+      fields.add(MapEntry('_id', id));
+      // إضافة verified فقط عند التحديث
+      fields.add(MapEntry('verified', verified.toString()));
+    }
+    
+    formData.fields.addAll(fields);
 
     // Add arrays
     for (final tag in tags) {

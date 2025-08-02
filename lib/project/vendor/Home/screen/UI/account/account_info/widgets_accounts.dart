@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../../../../../config/colors/colors.dart';
+import '../../../../../../../config/constants/constance.dart';
 import '../../../../../../../config/images/image_assets.dart';
 import '../../../../../../../config/widget/common_styles.dart';
 import '../../../../../../../config/widget/widgets.dart';
@@ -437,35 +439,16 @@ class AccountHeader extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Text("Account", style: TextStyles.subtitle()),
         ),
-        IconButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('تسجيل الخروج'),
-                content: const Text('هل أنت متأكد من تسجيل الخروج؟'),
-                actions: [
-                  TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
-                  TextButton(
-                    onPressed: () async {
-                       Navigator.pop(context);
-                       await getIt<AuthCubit>().signout();
-                       if (context.mounted) {
-                         Navigator.of(context).pushAndRemoveUntil(
-                           MaterialPageRoute(builder: (context) => const SignInScreen()),
-                           (route) => false,
-                         );
-                      }
-                    },
-                    style: TextButton.styleFrom(foregroundColor: Colors.red),
-                    child: const Text('تسجيل الخروج'),
-                  ),
-                ],
-              ),
-            );
-          },
-          icon: const Icon(Icons.logout),
-        ),
+       BlocConsumer<AuthCubit, AuthState>(    
+        listener: (context, state) {
+          if (state.signoutStatus == Status.success) {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SignInScreen()), (route) => false);
+          }
+        },
+        builder: (context, state) {
+          return  IconButton(onPressed: () => getIt<AuthCubit>().signout(), icon: const Icon(Icons.logout));
+        },
+       ),
       ],
     ),
   );

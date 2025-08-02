@@ -16,6 +16,8 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     try {
       final activities = await _repo.getActivities();
       emit(state.copyWith(getStatus: Status.success, activities: activities));
+      print(activities);
+      print(state.activities.length);
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
     }
@@ -33,6 +35,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
         ),
       );
     } catch (e) {
+      print(e);
       emit(state.copyWith(createStatus: Status.error, msg: e.toString()));
     }
   }

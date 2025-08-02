@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/constants/constance.dart';
@@ -12,13 +11,13 @@ class PropertiesCubit extends Cubit<PropertiesState> {
   PropertiesCubit(this._propertiesRespository) : super(const PropertiesState());
   final PropertiesRespository _propertiesRespository;
 
-  void getProperties(String id) async {
+  void getProperties() async {
     emit(state.copyWith(getStatus: Status.loading));
     try {
       final allProperties = await _propertiesRespository.getProperties();
-      final userProperties = allProperties.where((property) => property.vendorId == id).toList();
-      debugPrint("userProperties: $userProperties");
-      emit(state.copyWith(getStatus: Status.success, properties: userProperties));
+     // final userProperties = allProperties.where((property) => property.vendorId == ).toList();
+      
+      emit(state.copyWith(getStatus: Status.success, properties: allProperties));
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
     }

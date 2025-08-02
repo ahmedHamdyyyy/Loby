@@ -146,7 +146,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
   @override
   Widget build(BuildContext context) => BlocConsumer<PropertiesCubit, PropertiesState>(
     listener: (context, state) {
-      if (state.updateStatus == Status.success) {
+      if (state.updateStatus == Status.success && state.createStatus == Status.success) {
         Navigator.pop(context); // Return to previous screen after successful update
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث العقار بنجاح')));
       } else if (state.updateStatus == Status.error) {

@@ -18,7 +18,7 @@ class LubyScreenSplash extends StatefulWidget {
 }
 
 class _LubyScreenSplashState extends State<LubyScreenSplash> {
-  final isLoggedIn = getIt<CacheService>().storage.getString(AppConst.user) != null;
+  final isLoggedIn = getIt<CacheService>().storage.getString(AppConst.accessToken) != null;
   @override
   void initState() {
     super.initState();

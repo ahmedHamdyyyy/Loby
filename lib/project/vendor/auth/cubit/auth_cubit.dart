@@ -33,10 +33,11 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signout() async {
     emit(state.copyWith(signoutStatus: Status.loading));
     try {
-      await _repo.signout();
-      emit(state.copyWith(signoutStatus: Status.success));
+      final msg = await _repo.signout();
+      emit(state.copyWith(signoutStatus: Status.success, msg: msg));
+      print(msg);
     } catch (e) {
-      emit(state.copyWith(signoutStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(signoutStatus: Status.error, msg: e.toString().replaceAll('Exception: ', '')));
     }
   }
 }

@@ -5,26 +5,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../config/colors/colors.dart';
-import '../../../../config/images/image_assets.dart';
-import '../../../../locator.dart';
+import '../../../../../config/colors/colors.dart';
+import '../../../../../config/images/image_assets.dart';
+import '../../../../../locator.dart';
+import '../../../Home/screen/UI/home_rental_services/all_wideget_home.dart';
+import '../../../Home/screen/UI/notifications/notifications_screen.dart';
+import '../../../properties/cubit/cubit.dart';
+import '../../../properties/view/properties_list.dart';
+import '../../cubit/cubit.dart';
 
-import '../../Home/screen/UI/home_rental_services/all_wideget_home.dart';
-import '../../Home/screen/UI/notifications/notifications_screen.dart';
-import '../cubit/cubit.dart';
-import 'properties_list.dart';
 
-class PropertiesScreen extends StatefulWidget {
-  const PropertiesScreen({super.key});
+
+class ActivitiesScreen extends StatefulWidget {
+  const ActivitiesScreen({super.key});
   @override
-  State<PropertiesScreen> createState() => _PropertiesScreenState();
+  State<ActivitiesScreen> createState() => _ActivitiesScreenState();
 }
 
-class _PropertiesScreenState extends State<PropertiesScreen> {
+class _ActivitiesScreenState extends State<ActivitiesScreen> {
   @override
   Widget build(BuildContext context) => RefreshIndicator(
     
-    onRefresh: () async => getIt<PropertiesCubit>().getProperties(),
+    onRefresh: () async => getIt<ActivitiesCubit>().getActivities(),
     child: Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -96,7 +98,7 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                               children: [
                                 Text(
                                   fullName.isEmpty ? "Guest User" : fullName,
-                                  style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(color : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),

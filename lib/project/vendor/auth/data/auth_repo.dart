@@ -28,19 +28,29 @@ class AuthRepo {
     try {
       return await _authData.signin(email: email, password: password);
     } on DioException catch (e) {
-      if (e.response?.data['error'] != null) {
-        final errors = e.response?.data['error'] as List;
-        if (errors.isNotEmpty && errors[0] is List) throw Exception((errors[0] as List).join(', '));
+      final error = e.response?.data['error'] ;
+      if (error == null ) {
+        throw Exception(error);
+      }
+      if (error is String)throw Exception(error) ;
+      if (error is List) {
+        throw Exception(error.join(', '));
+      }
+
+      if (e.response?.data['error'] != null && e.response?.data['error'] is Map) {
+        final errors = e.response?.data['error'] ;
+        if (errors.isNotEmpty && errors ) throw Exception(errors);
       }
       throw Exception(e.response?.data['error']);
     } catch (e) {
+      debugPrint('Unexpected error: $e');
       throw Exception('An unexpected error occurred');
     }
   }
 
-  Future<void> signout() async {
+  Future<String> signout() async {
     try {
-      await _authData.signout();
+      return await _authData.signout();
     } catch (e) {
       throw Exception('An unexpected error occurred');
     }

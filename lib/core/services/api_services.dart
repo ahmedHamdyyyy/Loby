@@ -23,7 +23,7 @@ class ApiService {
         ),
       );
 
-      dio.interceptors.add(_ApiInterceptor(_cacheServices, dio));
+      dio.interceptors.add(_Interceptor(dio, _cacheServices));
       return true;
     } on DioException catch (e) {
       debugPrint(e.toString());
@@ -31,56 +31,50 @@ class ApiService {
     }
   }
 }
-
-class _ApiInterceptor extends InterceptorsWrapper {
-  _ApiInterceptor(this._cacheService, this.dio);
-  final CacheService _cacheService;
+class _Interceptor extends Interceptor {
   final Dio dio;
+  final CacheService _cacheService;
+
+  _Interceptor(this.dio, this._cacheService);
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    debugPrint('REQUEST[${options.method}] => PATH: ${options.path}');
-    final isMultipart = options.data is FormData;
-    options.headers['Content-Type'] = isMultipart ? 'multipart/form-data' : 'application/json';
-    // if (isMultipart) options.headers['Accept-Encoding'] = 'gzip, deflate, br';
-
-    final token = _cacheService.storage.getString(AppConst.token);
-    if (token != null && token.isNotEmpty) options.headers['Authorization'] = 'Bearer $token';
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final accessToken =  _cacheService.storage.getString(AppConst.accessToken);
+    if (accessToken != null) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
+    }
     return handler.next(options);
   }
-
-  @override
+ @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     debugPrint('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-    if (response.data is Map && response.data['data'] is Map && response.data['data']['token'] != null) {
-      final token = response.data['data']['token'];
-      await _cacheService.storage.setString(AppConst.token, token);
+    if (response.data is Map && response.data['data'] is Map && response.data['data']['accessToken'] != null && response.data['data']['refreshToken'] != null) {
+      final accessToken = response.data['data']['accessToken'];
+      final refreshToken = response.data['data']['refreshToken'];
+      await _cacheService.storage.setString(AppConst.accessToken, accessToken);
+      await _cacheService.storage.setString(AppConst.refreshToken, refreshToken);
     }
     return handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    debugPrint('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
     if (err.response?.statusCode == 401) {
-      final token = _cacheService.storage.getString(AppConst.token);
-      if (token != null) {
-        final response = await dio.get(
-          ApiConstance.refreshToken,
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
-        if (response.data['data']['token'] != null) {
-          await _cacheService.storage.setString(AppConst.token, response.data['data']['token']);
-          final options = err.requestOptions;
-          options.headers['Authorization'] = 'Bearer ${response.data['data']['token']}';
-          final retryResponse = await dio.request(
-            options.path,
-            data: options.data,
-            queryParameters: options.queryParameters,
-            options: Options(method: options.method, headers: options.headers, responseType: options.responseType),
-          );
-          return handler.resolve(retryResponse);
-        }
+
+      final refreshToken =  _cacheService.storage.getString(ApiConstance.refreshToken);
+      if (refreshToken == null) return handler.next(err);
+      try {
+        final refreshResponse = await dio.post(ApiConstance.refreshToken, data: {'refreshToken': refreshToken});
+        final newAccessToken = refreshResponse.data['data']['accessToken'];
+        final newRefreshToken = refreshResponse.data['data']['refreshToken'];
+        await _cacheService.storage.setString(ApiConstance.refreshToken, newRefreshToken);
+        final opts = err.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $newAccessToken';
+        final response = await dio.fetch(opts);
+        return handler.resolve(response);
+      } catch (e) {
+        print(e.toString());
+        return handler.next(err);
       }
     }
     return handler.next(err);

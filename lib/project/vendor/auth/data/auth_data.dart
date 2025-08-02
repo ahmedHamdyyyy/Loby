@@ -24,21 +24,32 @@ class AuthData {
   Future<UserModel> signin({required String email, required String password}) async {
     final loginData = {AppConst.email: email, AppConst.password: password};
     final response = await _apiServices.dio.post(ApiConstance.signin, data: loginData);
+    print(response.data);
+    if(response.data['data']==null ) {
+      throw _responseException(response); 
+    }
     final userData = response.data['data']['user'];
-    final token = response.data['data']['accessToken'];
-    // final token = response.data['data']['refreshToken'];
-    if (_hasException(response) || userData == null || token == null) throw _responseException(response);
+    
+    if (_hasException(response) || userData == null ) throw _responseException(response);
     final user = UserModel.fromJson(userData);
-    await _cacheServices.storage.setString(AppConst.token, token);
-    await _cacheServices.storage.setString(AppConst.id, user.id);
-    await _saveUser(user);
+ 
     return user;
   }
 
-  Future<void> signout() async {
-    await _cacheServices.storage.remove(AppConst.token);
-    await _cacheServices.storage.remove(AppConst.id);
-    await _cacheServices.storage.remove(AppConst.user);
+  Future<String> signout() async {
+    final response = await _apiServices.dio.post(
+      ApiConstance.logout,
+      data: {
+        AppConst.refreshToken: _cacheServices.storage.getString(
+          AppConst.refreshToken,
+        ),
+      },
+    );
+    if (response.data['success'] == false) throw _responseException(response);
+    await _cacheServices.storage.remove(AppConst.accessToken);
+    //await _cacheServices.storage.remove(AppConst.user);
+    await _cacheServices.storage.remove(AppConst.refreshToken);
+    return response.data['data']['message'];
   }
 
   Future<void> _saveUser(UserModel user) async => await _cacheServices.storage.setString(AppConst.user, user.toCache());
