@@ -5,8 +5,10 @@ import '../../../../../config/colors/colors.dart';
 
 
 class TagSelectorWidget extends StatefulWidget {
-  const TagSelectorWidget({super.key});
 
+  const TagSelectorWidget({super.key, required this.selectedTags});
+
+  final List<String> selectedTags;
   @override
   State<TagSelectorWidget> createState() => _TagSelectorScreenState();
 }

@@ -3,6 +3,7 @@ import 'dart:io'; // Added for File
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart'; // Added for debugPrint
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
 import '../../../../config/constants/api_constance.dart';

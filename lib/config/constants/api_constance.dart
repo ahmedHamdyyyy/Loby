@@ -4,7 +4,12 @@ class ApiConstance {
   static const signin = "auth/signin";
   static const signup = "auth/signup";
   static const logout = "auth/logout";
-  static const refreshToken = 'auth/refresh-token';
+  static const refreshToken = "auth/refresh-token";
+  static const resetpassword = "auth/reset-password";
+  static const confirmOtpSignUp = "auth/signup/verify";
+  static const confirmOtpResetPassword = "auth/confirm-otp-reset-password";
+  static const forgetPasswordReset = "auth/forget-password/reset";
+  static const verifyEmail = "auth/signup/initiate";
   static const userProfile = "users/me";
 
   static const createActivity = "activities";

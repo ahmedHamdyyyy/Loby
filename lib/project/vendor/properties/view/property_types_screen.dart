@@ -61,13 +61,13 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
   }
 
   void _selectPropertyType(String typeName) {
-    final backendType = _convertToBackendType(typeName);
+    final String backendType = _convertToBackendType(typeName);
     setState(() => selectedPropertyType = typeName);
     Navigator.push(
       context,
       MaterialPageRoute(
         // builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen(type: backendType)),
-        builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen()),
+        builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen(type: backendType)),
       ),
     );
   }

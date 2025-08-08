@@ -1,4 +1,5 @@
 import 'package:Luby/config/constants/constance.dart';
+import 'package:Luby/project/vendor/activities/view/widgets/activetes_list.dart';
 import 'package:Luby/project/vendor/user/cubit/cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +11,7 @@ import '../../../../../config/images/image_assets.dart';
 import '../../../../../locator.dart';
 import '../../../Home/screen/UI/home_rental_services/all_wideget_home.dart';
 import '../../../Home/screen/UI/notifications/notifications_screen.dart';
-import '../../../properties/cubit/cubit.dart';
-import '../../../properties/view/properties_list.dart';
+
 import '../../cubit/cubit.dart';
 
 
@@ -22,7 +22,14 @@ class ActivitiesScreen extends StatefulWidget {
   State<ActivitiesScreen> createState() => _ActivitiesScreenState();
 }
 
+
+
 class _ActivitiesScreenState extends State<ActivitiesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    getIt<ActivitiesCubit>().getActivities();
+  }
   @override
   Widget build(BuildContext context) => RefreshIndicator(
     
@@ -159,7 +166,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                 ),
                                 onPressed: () => showDialog(context: context, builder: (context) => const VendorTypeDialog()),
                                 child: Text(
-                                  "Start",
+                                  "Start now",
                                   style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),
                                 ),
                               ),
@@ -179,10 +186,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Your properties",
+                    "Your activities",
                     style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                   ),
-                  BlocProvider.value(value: getIt<PropertiesCubit>(), child: const PropertiesListView()),
+                  BlocProvider.value(value: getIt<ActivitiesCubit>(), child: const ActivitiesListView()),
                 ],
               ),
             ),

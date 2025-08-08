@@ -10,6 +10,7 @@ import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../config/images/assets.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../../locator.dart';
 import '../../Home/screen/UI/properties/all_properts_widget.dart';
 import '../../Home/screen/UI/properties/location_screens.dart';
 import '../../models/property_model.dart';
@@ -21,9 +22,10 @@ import 'document_section.dart';
 import 'images_section.dart';
 
 class PropertyScreen extends StatefulWidget {
-  const PropertyScreen({super.key, this.propertyId = '', this.type = 'house'});
+  const PropertyScreen({super.key, this.propertyId = '', required this.type});
   final String propertyId;
   final String type;
+
   @override
   State<PropertyScreen> createState() => _PropertyScreenState();
 }
@@ -117,7 +119,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
         final property = PropertyModel(
           id: widget.propertyId,
           facilityLicense: _licensePaths,
-          type: 'house',
+          type: widget.type,
           available: !isSelected,
           guestNumber: guests,
           bedrooms: bedrooms,
@@ -512,7 +514,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                 ],
               ),
             ),
-            if (context.watch<PropertiesCubit>().state.updateStatus == Status.loading)
+            if (getIt<PropertiesCubit>().state.updateStatus == Status.loading)
               Container(
                 color: Colors.black.withAlpha(125),
                 child: Center(

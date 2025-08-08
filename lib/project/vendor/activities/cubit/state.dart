@@ -2,12 +2,13 @@ part of 'cubit.dart';
 
 class ActivitiesState extends Equatable {
   final String msg;
-  final Status createStatus, updateStatus, deleteStatus, getStatus;
+  final Status createStatus, updateStatus, deleteStatus, getActivityStatus, getStatus;
   final List<CustomActivityModel> activities;
   final ActivityModel activity;
 
   const ActivitiesState({
     this.msg = '',
+    this.getActivityStatus = Status.initial,
     this.createStatus = Status.initial,
     this.updateStatus = Status.initial,
     this.deleteStatus = Status.initial,
@@ -20,6 +21,7 @@ class ActivitiesState extends Equatable {
     String? msg,
     Status? createStatus,
     Status? updateStatus,
+    Status? getActivityStatus,
     Status? deleteStatus,
     Status? getStatus,
     List<CustomActivityModel>? activities,
@@ -27,6 +29,7 @@ class ActivitiesState extends Equatable {
   }) {
     return ActivitiesState(
       msg: msg ?? this.msg,
+      getActivityStatus: getActivityStatus ?? this.getActivityStatus,
       createStatus: createStatus ?? this.createStatus,
       updateStatus: updateStatus ?? this.updateStatus,
       deleteStatus: deleteStatus ?? this.deleteStatus,
@@ -37,5 +40,5 @@ class ActivitiesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [msg, createStatus, updateStatus, deleteStatus, getStatus, activities, activity];
+  List<Object> get props => [msg, createStatus, updateStatus, deleteStatus, getActivityStatus, getStatus, activities, activity];
 }

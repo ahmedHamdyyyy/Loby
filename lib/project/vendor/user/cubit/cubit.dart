@@ -11,15 +11,7 @@ class UserCubit extends Cubit<UserState> {
   UserCubit(this._userRepository) : super(UserState());
   final UserRepository _userRepository;
 
-  void getCachedUser() {
-    emit(state.copyWith(fetchUserStatus: Status.initial));
-    try {
-      final user = _userRepository.getCachedUser();
-      emit(state.copyWith(fetchUserStatus: Status.success, user: user));
-    } catch (e) {
-      emit(state.copyWith(fetchUserStatus: Status.error, callback: e.toString()));
-    }
-  }
+
 
   Future<void> fetchUser() async {
     emit(state.copyWith(fetchUserStatus: Status.loading));

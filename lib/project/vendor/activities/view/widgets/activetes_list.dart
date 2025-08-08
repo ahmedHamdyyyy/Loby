@@ -1,50 +1,55 @@
-import 'package:Luby/locator.dart';
-import 'package:Luby/project/vendor/properties/view/edite_property_screen.dart';
+import 'package:Luby/project/vendor/activities/view/screens/home_view.dart';
+import 'package:Luby/project/vendor/models/activity.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../config/images/image_assets.dart';
-import '../../models/property_model.dart';
-import '../cubit/cubit.dart';
+import '../../../../../config/images/image_assets.dart';
 
-class PropertiesListView extends StatelessWidget {
-  const PropertiesListView({super.key});
+import '../../../../../locator.dart';
+import '../../cubit/cubit.dart';
+
+
+class ActivitiesListView extends StatelessWidget {
+  const ActivitiesListView({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocSelector<PropertiesCubit, PropertiesState, List<CustomPropertyModel>>(
-    selector: (state) => state.properties,
-    builder: (context, properties) {
-      if (properties.isEmpty) return const Center(child: Text('No Added Items Here...'));
+  Widget build(BuildContext context) => BlocSelector<ActivitiesCubit, ActivitiesState, List<CustomActivityModel>>(
+    selector: (state) => state.activities,
+    builder: (context, activities) {
+      if (activities.isEmpty) return const Center(child: Text('No Added Items Here...'));
       return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: properties.length,
+        itemCount: activities.length,
         itemBuilder: (context, index) {
-          final property = properties[index];
+          final activity = activities[index];
           return Column(
             children: [
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
+                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
                           (context) => BlocProvider.value(
-                            value: getIt<PropertiesCubit>(),
-                            child: PropertyScreen(propertyId: properties[index].id, type: property.type),
+                            value: getIt<ActivitiesCubit>(),
+                            child: ActivityRegistrationScreen(
+                              id: activity.id,
+                            ),
                           ),
                     ),
-                  );
+                  );  
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: FadeInImage.assetNetwork(
                     height: 200,
-                    image: property.image,
+                    image: activity.image,
                     width: double.infinity,
                     fit: BoxFit.cover,
                     placeholder: 'assets/images/IMAG.png',
@@ -57,20 +62,20 @@ class PropertiesListView extends StatelessWidget {
               const SizedBox(height: 15),
               Row(
                 children: [
-                  Text(property.type, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(activity.name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
+                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder:
                               (context) => BlocProvider.value(
-                                value: getIt<PropertiesCubit>(),
-                                child: PropertyScreen(propertyId: properties[index].id, type: property.type),
+                                value: getIt<ActivitiesCubit>(),
+                                child: ActivityRegistrationScreen(id: activities[index].id),
                               ),
                         ),
-                      );
+                      ); 
                     },
                     child: SvgPicture.asset(ImageAssets.editIcon, height: 20, width: 20),
                   ),
@@ -91,8 +96,8 @@ class PropertiesListView extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    getIt<PropertiesCubit>().deleteProperty(properties[index].id);
-                                    Navigator.pop(context);
+                                    getIt<ActivitiesCubit>().deleteActivity(activity.id);
+                                    Navigator.pop(context); 
                                   },
                                   child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
                                 ),

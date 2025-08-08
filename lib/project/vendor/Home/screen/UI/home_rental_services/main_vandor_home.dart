@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../../locator.dart';
+import '../../../../activities/view/screens/activetes_screen.dart';
 import '../../../../properties/cubit/cubit.dart';
 import '../../../../properties/view/properties_screen.dart';
 import '../../../../user/cubit/cubit.dart';
@@ -17,10 +18,10 @@ class MainVendorHome extends StatefulWidget {
 
 class _MainVendorHomeState extends State<MainVendorHome> {
   final _pages = [const PropertiesScreen(), 
-  PropertiesScreen(),
+  ActivitiesScreen(),
   const NoResurvationvendor(), const NoChatVendor(), const AccountScreen()];
-  int _currentIndex = 0;
-  void updateCurrentIndex(int index) => setState(() => _currentIndex = index);
+  int currentIndex = 0;
+  void updateCurrentIndex(int index) => setState(() => currentIndex = index);
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _MainVendorHomeState extends State<MainVendorHome> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: _pages[_currentIndex],
-    bottomNavigationBar: buildBottomNavigationBarVendor(currentIndex: _currentIndex, onTap: updateCurrentIndex),
+    body: _pages[currentIndex],
+    bottomNavigationBar: buildBottomNavigationBarVendor(currentIndex: currentIndex, onTap: updateCurrentIndex),
   );
 }

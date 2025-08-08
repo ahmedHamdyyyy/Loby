@@ -8,13 +8,7 @@ class UserRepository {
   const UserRepository(this._userData);
   final UserData _userData;
 
-  UserModel getCachedUser() {
-    try {
-      return _userData.getCachedUser();
-    } catch (e) {
-      throw Exception('حدث خطأ غير متوقع يرجي اعادة تسجيل الدخول');
-    }
-  }
+
 
   Future<UserModel> fetchUser() async {
     try {

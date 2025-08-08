@@ -80,7 +80,7 @@ class _CounterItemState extends State<CounterItem> {
                 onTap: () {
                   if (_value == 0) return;
                   setState(() => _value--);
-                  print(_value);
+                  debugPrint(_value.toString());
                   widget.onChanged(_value);
                 },
                 child: SvgPicture.asset(ImageAssets.removeIcon, width: 22, height: 22),
@@ -95,7 +95,7 @@ class _CounterItemState extends State<CounterItem> {
                 onTap: () {
                   if (_value > 999) return;
                   setState(() => _value++);
-                  print(_value);
+                  debugPrint(_value.toString());
                   widget.onChanged(_value);
                 },
                 child: SvgPicture.asset(ImageAssets.addIcon, width: 22, height: 22),

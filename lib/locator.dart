@@ -27,7 +27,7 @@ void setup() {
   // Home feature dependencies
   getIt.registerSingleton<HomeCubit>(HomeCubit(HomeRepository(getIt<ApiService>(), getIt<CacheService>())));
   getIt.registerSingleton<AuthCubit>(AuthCubit(AuthRepo(AuthData(getIt<ApiService>(), getIt<CacheService>()))));
-  getIt.registerSingleton<UserCubit>(UserCubit(UserRepository(UserData(getIt<ApiService>(), getIt<CacheService>()))));
+  getIt.registerSingleton<UserCubit>(UserCubit(UserRepository(UserData(getIt<ApiService>()))));
   getIt.registerSingleton<ActivitiesCubit>(ActivitiesCubit(ActivitiesRepository(ActivitiesData(getIt<ApiService>()))));
   getIt.registerSingleton<PropertiesCubit>(PropertiesCubit(PropertiesRespository(PropertiesData(getIt<ApiService>()))));
 }

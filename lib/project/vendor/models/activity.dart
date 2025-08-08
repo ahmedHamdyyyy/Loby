@@ -71,12 +71,16 @@ class ActivityModel extends Equatable {
     address: json['address'] ?? '',
     details: json['details'] ?? '',
     tags: List<String>.from(json['tags'] ?? []),
-    price: json['pricePerNight'] ?? 0,
+    price: (json['price'] is String) 
+        ? double.tryParse(json['price']) ?? 0.0
+        : (json['price'] ?? 0).toDouble(),
     date: json['date'] ?? '',
     time: json['time'] ?? '',
     activityTime: json['activityTime'] ?? '',
     name: json['name'] ?? '',
-    verified: json['verified'] ?? false,
+    verified: (json['verified'] is String) 
+        ? json['verified'].toString().toLowerCase() == 'true'
+        : json['verified'] ?? false,
     medias: List<String>.from(json['medias'] ?? []),
   );
 

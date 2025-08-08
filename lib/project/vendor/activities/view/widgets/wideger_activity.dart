@@ -156,7 +156,9 @@ class DetailsField extends StatelessWidget {
 }
 
 class AmenitiesSection extends StatelessWidget {
-  const AmenitiesSection({super.key});
+  final List<String> selectedTags;
+
+  const AmenitiesSection({super.key, required this.selectedTags});
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +169,7 @@ class AmenitiesSection extends StatelessWidget {
           'Tell guests what your place has to offer',
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
         ),
-        const TagSelectorWidget(),
+        TagSelectorWidget(selectedTags: selectedTags),
       ],
     );
   }

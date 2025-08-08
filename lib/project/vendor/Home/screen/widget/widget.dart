@@ -57,7 +57,7 @@ Widget buildBottomNavigationBarVendor({int currentIndex = 0, Function(int)? onTa
     ),   
      BottomNavigationBarItem(
       icon: SvgPicture.asset(
-        ImageAssets.home,
+        ImageAssets.billIcon,
         width: 24,
         height: 24,
         colorFilter: ColorFilter.mode(Colors.grey.shade600, BlendMode.srcIn),

@@ -15,8 +15,10 @@ import 'project/vendor/user/cubit/cubit.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setup();
+
   await getIt<CacheService>().init();
-  await getIt<ApiService>().init();
+  await getIt<ApiService>().init();  
+ // await getIt<CacheService>().storage.clear();
   runApp(const MyApp());
 }
 

@@ -89,7 +89,7 @@ class DialogOptions extends StatelessWidget {
         height: 50,
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityRegistrationScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityRegistrationScreen(id: '')));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,

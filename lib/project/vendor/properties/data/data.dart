@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../config/constants/api_constance.dart';
 import '../../../../core/services/api_services.dart';
@@ -27,7 +28,7 @@ class PropertiesData {
 
   Future<List<CustomPropertyModel>> getProperties() async {
     final response = await _apiService.dio.get(ApiConstance.getProperties);
-    print(response.data['data']['data']);
+    debugPrint(response.data['data']['data'].toString());
     if (!(response.data['success'] ?? false) || response.data['data']['data'] == null) throw _dioError(response);
     return (response.data['data']['data'] as List).map((e) => CustomPropertyModel.fromJson(e)).toList();
   }
