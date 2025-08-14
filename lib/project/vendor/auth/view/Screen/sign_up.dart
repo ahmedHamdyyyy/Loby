@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:Luby/project/vendor/auth/view/Screen/confirm_otp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/constants/constance.dart';
+import '../../../../../config/widget/widget.dart';
 import '../../../Home/screen/UI/home_rental_services/main_vandor_home.dart';
 import '../../../models/user_model.dart';
 import '../../cubit/auth_cubit.dart';
@@ -66,18 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    context.read<AuthCubit>().signup(
-      UserModel(
-        id: '',
-        firstName: firstNameController.text,
-        lastName: lastNameController.text,
-        email: emailController.text.trim(),
-        phone: phoneController.text,
-        password: passwordController.text,
-        role: 'vendor',
-        profilePicture: profileImage == null ? '' : profileImage!.path,
-      ),
-    );
+    context.read<AuthCubit>().verifyEmail(emailController.text.trim());
   }
 
   void _handleImageSelected(File image) => setState(() => profileImage = image);
@@ -85,10 +76,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) => BlocConsumer<AuthCubit, AuthState>(
     listener: (context, state) {
-      if (state.signupStatus == Status.error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg), backgroundColor: Colors.red));
-      } else if (state.signupStatus == Status.success) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainVendorHome()));
+      switch (state.verifyEmailStatus) {
+        case Status.initial:
+          break;
+        case Status.error:
+          showToast(text: state.msg, stute: ToustStute.error);
+          break;
+        case Status.success:
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return ConfirmOtpScreen(
+                  user: UserModel(
+                    id: '',
+                    firstName: firstNameController.text.trim(),
+                    lastName: lastNameController.text.trim(),
+                    email: emailController.text.trim(),
+                    phone: phoneController.text.trim(),
+                    password: passwordController.text.trim(),
+                    role: AppConst.user,
+                    profilePicture: profileImage == null ? '' : profileImage!.path,
+                  ),
+                  email: emailController.text.trim(),
+                  willSignup: true,
+                );
+              },
+            ),
+          );
+          break;
+        default:
+          break;
       }
     },
     builder: (context, state) {
@@ -108,8 +126,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 30),
                     RegistrationTextField(hintText: "الاسم الأول", controller: firstNameController, isError: false),
                     RegistrationTextField(hintText: "اسم العائلة", controller: lastNameController),
-                    RegistrationTextField(hintText: "رقم الهاتف", controller: phoneController, isNumber: true),
-                    RegistrationTextField(hintText: "البريد الإلكتروني", controller: emailController),
+                    RegistrationTextField(
+                      //validator: (value) => InputValidation.phoneValidation(value),
+                      keyboardType: TextInputType.phone,
+                      hintText: "رقم الهاتف",
+                      controller: phoneController,
+                      isNumber: true,
+                    ),
+                    RegistrationTextField(
+                      keyboardType: TextInputType.emailAddress,
+                      hintText: "البريد الإلكتروني",
+                      controller: emailController,
+                    ),
                     RegistrationTextField(hintText: "كلمة المرور", controller: passwordController, isPassword: true),
                     RegistrationTextField(
                       hintText: "تأكيد كلمة المرور",
@@ -157,10 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             if (state.signupStatus == Status.loading)
-              Container(
-                color: Colors.black26,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
+              Container(color: Colors.black26, child: const Center(child: CircularProgressIndicator())),
           ],
         ),
       );

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../config/constants/constance.dart';
 import '../../../../../../config/widget/widget.dart';
-import '../../../cubit/auth_cubit.dart';
+import '../../cubit/auth_cubit.dart';
 import 'confirm_otp.dart';
 
 class VerifyEmailScreen extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:luby2/project/user/auth/cubit/auth_cubit.dart';
 
 import '../../../../../../config/constants/constance.dart';
-import '../splash/splash_screens.dart';
+import '../../../Home/screen/UI/splash/splash_screens.dart';
+import '../../cubit/auth_cubit.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key, required this.email});

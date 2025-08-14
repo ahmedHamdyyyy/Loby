@@ -586,6 +586,7 @@ class RegistrationTextField extends StatelessWidget {
   final bool isNumber;
   final bool isError;
   final TextEditingController controller;
+  final TextInputType? keyboardType;
 
   const RegistrationTextField({
     super.key,
@@ -594,6 +595,7 @@ class RegistrationTextField extends StatelessWidget {
     this.isNumber = false,
     this.isError = false,
     required this.controller,
+    this.keyboardType,
   });
 
   @override
@@ -603,7 +605,7 @@ class RegistrationTextField extends StatelessWidget {
       child: TextField(
         controller: controller,
         obscureText: isPassword,
-        keyboardType: isNumber ? TextInputType.phone : TextInputType.text,
+        keyboardType: keyboardType ?? (isNumber ? TextInputType.phone : TextInputType.text),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(color: AppColors.grayTextColor, fontSize: 14),

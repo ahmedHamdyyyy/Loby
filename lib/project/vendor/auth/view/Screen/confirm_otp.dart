@@ -1,12 +1,12 @@
+import 'package:Luby/project/vendor/auth/cubit/auth_cubit.dart' show AuthCubit, AuthState;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../config/constants/constance.dart';
 import '../../../../../../config/widget/widget.dart';
 import '../../../../../../locator.dart';
-import '../../../../models/user.dart';
-import '../../../cubit/auth_cubit.dart';
-import '../splash/splash_screens.dart';
+import '../../../Home/screen/UI/splash/splash_screens.dart';
+import '../../../models/user_model.dart';
 import 'reset_password.dart';
 
 class ConfirmOtpScreen extends StatefulWidget {

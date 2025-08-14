@@ -5,6 +5,7 @@ import '../../config/constants/api_constance.dart';
 import '../../config/constants/constance.dart';
 import 'cach_services.dart';
 
+
 class ApiService {
   ApiService(this._cacheServices);
   final CacheService _cacheServices;
@@ -33,10 +34,9 @@ class ApiService {
 }
 
 class _ApiInterceptor extends InterceptorsWrapper {
-  _ApiInterceptor(this._cacheService, this.dio);
+  _ApiInterceptor(this._cacheService, this._dio);
   final CacheService _cacheService;
-  final Dio dio;
-  int _counter = 0;
+  final Dio _dio;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -59,25 +59,19 @@ class _ApiInterceptor extends InterceptorsWrapper {
         if (accessToken != null) await _cacheService.storage.setString(AppConst.accessToken, accessToken);
         if (refreshToken != null) await _cacheService.storage.setString(AppConst.refreshToken, refreshToken);
       }
-    }
-    if (response.statusCode == 401) {
-      if (_counter > 5) return handler.next(response);
-      _counter++;
-      final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        final response = await dio.post(ApiConstance.refreshToken, data: {AppConst.refreshToken: refreshToken});
-        if (response.statusCode == 200) {
-          final accessToken = (response.data['data'] ?? {})['accessToken'];
-          if (accessToken != null) {
-            await _cacheService.storage.setString(AppConst.accessToken, accessToken);
-            await dio.request(
-              response.requestOptions.path,
-              data: response.requestOptions.data,
-              options: Options(headers: response.requestOptions.headers..addAll({'Authorization': 'Bearer $accessToken'})),
-            );
-            return;
-          }
-        }
+    } else if (response.statusCode == 401) {
+      try {
+        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+        if (refreshToken == null || refreshToken.isEmpty) return handler.next(response);
+        final accessToken = await getAccessToken(refreshToken);
+        final opts = response.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $accessToken';
+        final cloneReq = await _dio.fetch(opts);
+        return handler.resolve(cloneReq);
+      } catch (e) {
+        await _cacheService.storage.remove(AppConst.accessToken);
+        await _cacheService.storage.remove(AppConst.refreshToken);
+        return handler.next(response);
       }
     }
     return handler.next(response);
@@ -85,31 +79,28 @@ class _ApiInterceptor extends InterceptorsWrapper {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    debugPrint('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
-    debugPrint(err.response?.data.toString());
-    debugPrint(err.message);
-    debugPrint(err.error.toString());
     if (err.response?.statusCode == 401) {
-      if (_counter > 5) return handler.next(err);
-      _counter++;
-      final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-      if (refreshToken != null && refreshToken.isNotEmpty) {
-        final response = await dio.post(ApiConstance.refreshToken, data: {AppConst.refreshToken: refreshToken});
-        if (response.statusCode == 200) {
-          final accessToken = (response.data['data'] ?? {})['accessToken'];
-          if (accessToken != null) {
-            await _cacheService.storage.setString(AppConst.accessToken, accessToken);
-            await dio.request(
-              err.requestOptions.path,
-              data: err.requestOptions.data,
-              options: Options(headers: err.requestOptions.headers..addAll({'Authorization': 'Bearer $accessToken'})),
-            );
-            return;
-          }
-        }
+      try {
+        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+        if (refreshToken == null || refreshToken.isEmpty) return handler.next(err);
+        final accessToken = await getAccessToken(refreshToken);
+        final opts = err.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $accessToken';
+        final cloneReq = await _dio.fetch(opts);
+        return handler.resolve(cloneReq);
+      } catch (e) {
+        await _cacheService.storage.remove(AppConst.accessToken);
+        await _cacheService.storage.remove(AppConst.refreshToken);
+        return handler.next(err);
       }
     }
-    _counter = 0;
-    return handler.next(err);
+    super.onError(err, handler);
+  }
+
+  Future<String> getAccessToken(String refreshToken) async {
+    final response = await _dio.post(ApiConstance.refreshToken, data: {AppConst.refreshToken: refreshToken});
+    final accessToken = response.data['data']['accessToken'];
+    await _cacheService.storage.setString(AppConst.accessToken, accessToken);
+    return accessToken;
   }
 }
