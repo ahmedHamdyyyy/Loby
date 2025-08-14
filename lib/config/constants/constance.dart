@@ -9,13 +9,16 @@ class AppConst {
   static const gender = 'gender';
   static const password = 'password';
   static const passwordConfirmation = 'password_confirmation';
+  static const isPropertyOwner = 'isPropertyOwner';
   static const theme = 'theme';
   static const lang = 'lang';
   static const firstName = 'firstName';
   static const lastName = 'lastName';
   static const role = 'role';
+  static const vendor = 'vendor';
 
   static const userId = "_id";
+  static const viewOnboarding = "viewOnboarding";
   static const createdAt = 'createdAt';
   static const updatedAt = 'updatedAt';
   static const address = 'address';
@@ -28,7 +31,7 @@ class AppConst {
   static const user = 'user';
 
   //screens
-/*   static const splashScreen = '/';
+  /*   static const splashScreen = '/';
   static const signInScreen = '/signInScreen';
   static const signUpScreen = '/signUpScreen';
   static const adminScreen = '/adminHomeScreen';

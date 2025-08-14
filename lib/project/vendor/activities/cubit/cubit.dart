@@ -24,8 +24,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     } catch (e) {
       emit(state.copyWith(getActivityStatus: Status.error, msg: e.toString()));
       return ActivityModel.non;
-    }
-    finally {
+    } finally {
       emit(state.copyWith(getActivityStatus: Status.initial));
     }
   }
@@ -35,10 +34,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     try {
       final activities = await _repo.getActivities();
       emit(state.copyWith(getStatus: Status.success, activities: activities));
-      
-      //  debugPrint(activities.toString());
-        debugPrint(state.activities.length.toString());
-
+      debugPrint(state.activities.length.toString());
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
     }
@@ -60,6 +56,8 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
         debugPrint(e.toString());
       }
       emit(state.copyWith(createStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(getActivityStatus: Status.initial));
     }
   }
 
@@ -76,6 +74,8 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
       );
     } catch (e) {
       emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(getActivityStatus: Status.initial));
     }
   }
 
@@ -92,6 +92,12 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
       );
     } catch (e) {
       emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(getActivityStatus: Status.initial));
     }
+  }
+
+  void init() {
+    emit(state.copyWith(createStatus: Status.initial, updateStatus: Status.initial));
   }
 }

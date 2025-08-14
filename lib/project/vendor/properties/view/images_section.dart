@@ -22,6 +22,9 @@ class _PropertyImagesSectionState extends State<PropertyImagesSection> {
   @override
   void initState() {
     _imagePaths.addAll(widget.imagePaths);
+    print('widget.imagePaths');
+    print(widget.imagePaths);
+    print('widget.imagePaths');
     super.initState();
   }
 

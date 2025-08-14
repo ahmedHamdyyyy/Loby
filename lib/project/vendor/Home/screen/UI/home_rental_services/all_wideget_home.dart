@@ -69,7 +69,11 @@ class DialogOptions extends StatelessWidget {
         width: double.infinity,
         height: 48,
         child: ElevatedButton(
-          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PropertyTypesScreen())),
+          onPressed: () async {
+            // await getIt<CacheService>().storage.setBool(AppConst.isPropertyOwner, true);
+            // ignore: use_build_context_synchronously
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const PropertyTypesScreen()));
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
@@ -88,7 +92,9 @@ class DialogOptions extends StatelessWidget {
         width: double.infinity,
         height: 50,
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            // await getIt<CacheService>().storage.setBool(AppConst.isPropertyOwner, false);
+            // ignore: use_build_context_synchronously
             Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityRegistrationScreen(id: '')));
           },
           style: ElevatedButton.styleFrom(

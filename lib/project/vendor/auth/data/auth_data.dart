@@ -1,6 +1,5 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../../config/constants/api_constance.dart';
 import '../../../../../config/constants/constance.dart';
@@ -12,9 +11,8 @@ class AuthData {
   const AuthData(this._apiServices, this._cacheServices);
   final ApiService _apiServices;
   final CacheService _cacheServices;
-  
-  
-    Future<String> signout() async {
+
+  Future<String> signout() async {
     final response = await _apiServices.dio.post(
       ApiConstance.logout,
       data: {AppConst.refreshToken: _cacheServices.storage.getString(AppConst.refreshToken)},
@@ -88,8 +86,7 @@ class AuthData {
     return response.data['data']['message'];
   }
 
-
-/*   Future<UserModel> signup({required UserModel user}) async {
+  /*   Future<UserModel> signup({required UserModel user}) async {
     final response = await _apiServices.dio.post(ApiConstance.signup, data: await user.signUp());
     if (_hasException(response)) throw _responseException(response);
     final id = response.data['data']['user'][AppConst.id];
@@ -139,5 +136,4 @@ class AuthData {
       ![200, 201, 202, 203].contains(response.statusCode) || !(response.data['success'] ?? false);
 
  */
-
 }

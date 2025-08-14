@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
 
 class CustomActivityModel extends Equatable {
   final String id, name, image;
@@ -32,6 +32,7 @@ class CustomActivityModel extends Equatable {
 class ActivityModel extends Equatable {
   final String id, vendorId, name, address, details, date, time, activityTime;
   final double price;
+  final int maximumGuestNumber;
   final List<String> tags, medias;
   final bool verified;
 
@@ -48,6 +49,7 @@ class ActivityModel extends Equatable {
     required this.price,
     required this.medias,
     required this.verified,
+    required this.maximumGuestNumber,
   });
 
   static const non = ActivityModel(
@@ -61,28 +63,36 @@ class ActivityModel extends Equatable {
     details: '',
     tags: [],
     price: 0,
+    maximumGuestNumber: 0,
     medias: [],
     verified: false,
   );
 
-  factory ActivityModel.fromJson(Map<String, dynamic> json) => ActivityModel(
-    id: json['_id'] ?? '',
-    vendorId: json['vendorId'] ?? '',
-    address: json['address'] ?? '',
-    details: json['details'] ?? '',
-    tags: List<String>.from(json['tags'] ?? []),
-    price: (json['price'] is String) 
-        ? double.tryParse(json['price']) ?? 0.0
-        : (json['price'] ?? 0).toDouble(),
-    date: json['date'] ?? '',
-    time: json['time'] ?? '',
-    activityTime: json['activityTime'] ?? '',
-    name: json['name'] ?? '',
-    verified: (json['verified'] is String) 
-        ? json['verified'].toString().toLowerCase() == 'true'
-        : json['verified'] ?? false,
-    medias: List<String>.from(json['medias'] ?? []),
-  );
+  factory ActivityModel.fromJson(Map<String, dynamic> json) {
+    List<String> parseStringOrList(dynamic value) {
+      if (value == null) return [];
+      if (value is List) return List<String>.from(value);
+      if (value is String) return [value];
+      return [];
+    }
+
+    return ActivityModel(
+      id: json['_id'] ?? '',
+      vendorId: json['vendorId'] ?? '',
+      address: json['address'] ?? '',
+      details: json['details'] ?? '',
+      tags: List<String>.from(json['tags'] ?? []),
+      price: (json['price'] is String) ? double.tryParse(json['price']) ?? 0.0 : (json['price'] ?? 0).toDouble(),
+      date: json['date'] ?? '',
+      time: json['time'] ?? '',
+      activityTime: json['activityTime'] ?? '',
+      name: json['name'] ?? '',
+      maximumGuestNumber: json['maximumGuestNumber'] ?? 0,
+      verified:
+          (json['verified'] is String) ? json['verified'].toString().toLowerCase() == 'true' : json['verified'] ?? false,
+      medias: parseStringOrList(json['medias']),
+    );
+  }
 
   Future<FormData> create() async {
     final formData = FormData();
@@ -96,45 +106,47 @@ class ActivityModel extends Equatable {
       MapEntry('name', name),
       MapEntry('address', address),
       MapEntry('details', details),
+      MapEntry('maximumGuestNumber', maximumGuestNumber.toString()),
       MapEntry('price', price.toString()),
       // لا نرسل verified للأنشطة الجديدة - الخادم يتولى ذلك
     ];
-    
+
     // إضافة ID فقط إذا لم يكن فارغ (للتحديث)
     if (id.isNotEmpty) {
       fields.add(MapEntry('_id', id));
       // إضافة verified فقط عند التحديث
       fields.add(MapEntry('verified', verified.toString()));
     }
-    
+
     formData.fields.addAll(fields);
 
     // Add arrays
     for (final tag in tags) {
-      formData.fields.add(MapEntry('tags[]', tag));
+      formData.fields.add(MapEntry('tags', tag));
     }
 
     // Add files with proper content types
     try {
       // Add media files
       for (final filePath in medias) {
-        if (filePath.isNotEmpty) {
-          final file = File(filePath);
-          if (await file.exists()) {
-            final extension = filePath.split('.').last.toLowerCase();
-            final contentType = extension == 'png' ? 'png' : 'jpeg';
-            formData.files.add(
-              MapEntry(
-                'medias',
-                await MultipartFile.fromFile(
-                  filePath,
-                  filename: filePath.split('/').last,
-                  contentType: MediaType('image', contentType),
-                ),
-              ),
-            );
-          }
+        if (filePath.isEmpty) continue;
+        if (filePath.startsWith('https://') || filePath.startsWith('http://')) {
+          formData.fields.add(MapEntry('existingMedias', filePath));
+          continue;
         }
+        final extension = filePath.split('.').last.toLowerCase();
+        if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
+        if (!await File(filePath).exists()) continue;
+        formData.files.add(
+          MapEntry(
+            'medias',
+            await MultipartFile.fromFile(
+              filePath,
+              filename: filePath.split('/').last,
+              contentType: MediaType('image', extension),
+            ),
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Error preparing files: $e');
@@ -157,6 +169,7 @@ class ActivityModel extends Equatable {
     String? activityTime,
     String? vendorId,
     bool? verified,
+    int? maximumGuestNumber,
   }) {
     return ActivityModel(
       id: id ?? this.id,
@@ -171,9 +184,24 @@ class ActivityModel extends Equatable {
       activityTime: activityTime ?? this.activityTime,
       vendorId: vendorId ?? this.vendorId,
       verified: verified ?? this.verified,
+      maximumGuestNumber: maximumGuestNumber ?? this.maximumGuestNumber,
     );
   }
 
   @override
-  List<Object?> get props => [id, address, details, tags, price, medias, name, date, time, activityTime, vendorId, verified];
+  List<Object?> get props => [
+    id,
+    address,
+    details,
+    maximumGuestNumber,
+    tags,
+    price,
+    medias,
+    name,
+    date,
+    time,
+    activityTime,
+    vendorId,
+    verified,
+  ];
 }

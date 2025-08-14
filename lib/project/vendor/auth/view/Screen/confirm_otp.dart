@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../../config/constants/constance.dart';
 import '../../../../../../config/widget/widget.dart';
 import '../../../../../../locator.dart';
-import '../../../Home/screen/UI/splash/splash_screens.dart';
+import '../../../Home/screen/UI/splash/luby_screen_splash.dart';
 import '../../../models/user_model.dart';
 import 'reset_password.dart';
 
@@ -64,7 +64,7 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
           showToast(text: state.msg, stute: ToustStute.error);
           break;
         case Status.success:
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const SplashScreens()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const LubyScreenSplash()));
 
           break;
         default:

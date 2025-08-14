@@ -11,10 +11,7 @@ import '../../../../../config/images/image_assets.dart';
 import '../../../../../locator.dart';
 import '../../../Home/screen/UI/home_rental_services/all_wideget_home.dart';
 import '../../../Home/screen/UI/notifications/notifications_screen.dart';
-
 import '../../cubit/cubit.dart';
-
-
 
 class ActivitiesScreen extends StatefulWidget {
   const ActivitiesScreen({super.key});
@@ -22,17 +19,15 @@ class ActivitiesScreen extends StatefulWidget {
   State<ActivitiesScreen> createState() => _ActivitiesScreenState();
 }
 
-
-
 class _ActivitiesScreenState extends State<ActivitiesScreen> {
   @override
   void initState() {
     super.initState();
     getIt<ActivitiesCubit>().getActivities();
   }
+
   @override
   Widget build(BuildContext context) => RefreshIndicator(
-    
     onRefresh: () async => getIt<ActivitiesCubit>().getActivities(),
     child: Scaffold(
       body: SingleChildScrollView(
@@ -80,8 +75,12 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                       height: 56,
                                       fit: BoxFit.cover,
                                       errorBuilder:
-                                          (_, _, _) =>
-                                              Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover),
+                                          (_, _, _) => Image.asset(
+                                            ImageAssets.profileImage,
+                                            width: 56,
+                                            height: 56,
+                                            fit: BoxFit.cover,
+                                          ),
                                       loadingBuilder: (context, child, loadingProgress) {
                                         if (loadingProgress == null) return child;
                                         return Container(
@@ -105,7 +104,7 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                               children: [
                                 Text(
                                   fullName.isEmpty ? "Guest User" : fullName,
-                                  style: const TextStyle(color : Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 4),
@@ -121,7 +120,10 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()),
+                          );
                         },
                         child: Container(
                           width: 40,
@@ -164,7 +166,8 @@ class _ActivitiesScreenState extends State<ActivitiesScreen> {
                                   backgroundColor: AppColors.primaryColor,
                                   padding: const EdgeInsets.symmetric(vertical: 14),
                                 ),
-                                onPressed: () => showDialog(context: context, builder: (context) => const VendorTypeDialog()),
+                                onPressed:
+                                    () => showDialog(context: context, builder: (context) => const VendorTypeDialog()),
                                 child: Text(
                                   "Start now",
                                   style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),

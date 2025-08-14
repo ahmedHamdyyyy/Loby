@@ -7,12 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../../core/services/cach_services.dart';
 import '../../../../locator.dart';
-
 import '../../Home/screen/UI/home_rental_services/all_wideget_home.dart';
 import '../../Home/screen/UI/notifications/notifications_screen.dart';
+import '../../activities/view/screens/home_view.dart';
 import '../cubit/cubit.dart';
 import 'properties_list.dart';
+import 'property_types_screen.dart';
 
 class PropertiesScreen extends StatefulWidget {
   const PropertiesScreen({super.key});
@@ -23,7 +25,6 @@ class PropertiesScreen extends StatefulWidget {
 class _PropertiesScreenState extends State<PropertiesScreen> {
   @override
   Widget build(BuildContext context) => RefreshIndicator(
-    
     onRefresh: () async => getIt<PropertiesCubit>().getProperties(),
     child: Scaffold(
       body: SingleChildScrollView(
@@ -71,8 +72,12 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                                       height: 56,
                                       fit: BoxFit.cover,
                                       errorBuilder:
-                                          (_, _, _) =>
-                                              Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover),
+                                          (_, _, _) => Image.asset(
+                                            ImageAssets.profileImage,
+                                            width: 56,
+                                            height: 56,
+                                            fit: BoxFit.cover,
+                                          ),
                                       loadingBuilder: (context, child, loadingProgress) {
                                         if (loadingProgress == null) return child;
                                         return Container(
@@ -112,7 +117,10 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()),
+                          );
                         },
                         child: Container(
                           width: 40,
@@ -155,7 +163,22 @@ class _PropertiesScreenState extends State<PropertiesScreen> {
                                   backgroundColor: AppColors.primaryColor,
                                   padding: const EdgeInsets.symmetric(vertical: 14),
                                 ),
-                                onPressed: () => showDialog(context: context, builder: (context) => const VendorTypeDialog()),
+                                onPressed: () {
+                                  final isPropertyOwner = getIt<CacheService>().storage.getBool(AppConst.isPropertyOwner);
+                                  if (isPropertyOwner == null) {
+                                    showDialog(context: context, builder: (context) => const VendorTypeDialog());
+                                  } else if (isPropertyOwner) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const PropertyTypesScreen()),
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => const ActivityRegistrationScreen(id: '')),
+                                    );
+                                  }
+                                },
                                 child: Text(
                                   "Start",
                                   style: GoogleFonts.poppins(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w600),

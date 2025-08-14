@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/constants/constance.dart';
 import '../../../../../config/widget/widget.dart';
-import '../../../Home/screen/UI/home_rental_services/main_vandor_home.dart';
 import '../../../models/user_model.dart';
 import '../../cubit/auth_cubit.dart';
 import '../Widget/wideget_sign_up.dart';
@@ -95,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     email: emailController.text.trim(),
                     phone: phoneController.text.trim(),
                     password: passwordController.text.trim(),
-                    role: AppConst.user,
+                    role: AppConst.vendor,
                     profilePicture: profileImage == null ? '' : profileImage!.path,
                   ),
                   email: emailController.text.trim(),

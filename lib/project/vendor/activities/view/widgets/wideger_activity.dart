@@ -155,10 +155,10 @@ class DetailsField extends StatelessWidget {
   }
 }
 
-class AmenitiesSection extends StatelessWidget {
+class TagsSection extends StatelessWidget {
+  const TagsSection({super.key, required this.selectedTags, required this.onTagsSelected});
   final List<String> selectedTags;
-
-  const AmenitiesSection({super.key, required this.selectedTags});
+  final void Function(List<String>) onTagsSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +169,7 @@ class AmenitiesSection extends StatelessWidget {
           'Tell guests what your place has to offer',
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
         ),
-        TagSelectorWidget(selectedTags: selectedTags),
+        TagSelectorWidget(selectedTags: selectedTags, onTagsSelected: onTagsSelected),
       ],
     );
   }
@@ -202,7 +202,8 @@ class DateField extends StatelessWidget {
             );
             if (selectedDate != null) {
               // تنسيق التاريخ بصيغة yyyy-MM-dd
-              controller.text = "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+              controller.text =
+                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
             }
           },
           decoration: InputDecoration(
@@ -238,10 +239,7 @@ class TimeField extends StatelessWidget {
           controller: controller,
           readOnly: true,
           onTap: () async {
-            final selectedTime = await showTimePicker(
-              context: context,
-              initialTime: TimeOfDay.now(),
-            );
+            final selectedTime = await showTimePicker(context: context, initialTime: TimeOfDay.now());
             if (selectedTime != null) {
               // تنسيق الوقت بصيغة HH:mm
               final hour = selectedTime.hour.toString().padLeft(2, '0');
@@ -300,6 +298,27 @@ class PriceField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CustomTextField(controller: controller, hintText: 'Enter price per person'),
+      ],
+    );
+  }
+}
+
+class GuestNumber extends StatelessWidget {
+  final TextEditingController controller;
+
+  const GuestNumber({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Guest Number',
+          style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        CustomTextField(controller: controller, hintText: 'Enter Maximum Guest Number'),
       ],
     );
   }

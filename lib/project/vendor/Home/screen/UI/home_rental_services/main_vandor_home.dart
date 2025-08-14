@@ -17,16 +17,20 @@ class MainVendorHome extends StatefulWidget {
 }
 
 class _MainVendorHomeState extends State<MainVendorHome> {
-  final _pages = [const PropertiesScreen(), 
-  ActivitiesScreen(),
-  const NoResurvationvendor(), const NoChatVendor(), const AccountScreen()];
+  final _pages = [
+    const PropertiesScreen(),
+    ActivitiesScreen(),
+    const NoResurvationvendor(),
+    const NoChatVendor(),
+    const AccountScreen(),
+  ];
   int currentIndex = 0;
   void updateCurrentIndex(int index) => setState(() => currentIndex = index);
 
   @override
   void initState() {
     super.initState();
-   // getIt<UserCubit>().getCachedUser();
+    // getIt<UserCubit>().getCachedUser();
     getIt<UserCubit>().fetchUser();
     getIt<PropertiesCubit>().getProperties();
     //getIt<HomeCubit>().loadUserProfile();

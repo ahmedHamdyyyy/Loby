@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../../../../config/constants/api_constance.dart';
-import '../../../../config/constants/constance.dart';
 import '../../../../core/services/api_services.dart';
 import '../../models/activity.dart';
 
@@ -12,7 +11,7 @@ class ActivitiesData {
   Future<ActivityModel> createActivity(ActivityModel activity) async {
     final response = await _apiService.dio.post(ApiConstance.createActivity, data: await activity.create());
     _checkIfSuccess(response);
-    return activity.copyWith(id: response.data['data'][AppConst.id].toString());
+    return ActivityModel.fromJson(response.data['data']);
   }
 
   Future<void> updateActivity(ActivityModel activity) async {

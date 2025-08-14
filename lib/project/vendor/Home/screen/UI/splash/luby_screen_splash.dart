@@ -7,6 +7,7 @@ import '../../../../../../config/colors/colors.dart';
 import '../../../../../../config/constants/constance.dart';
 import '../../../../../../core/services/cach_services.dart';
 import '../../../../../../locator.dart';
+import '../../../../auth/view/Screen/sign_in.dart';
 import '../home_rental_services/main_vandor_home.dart';
 import 'language_selection_screen.dart';
 
@@ -18,20 +19,26 @@ class LubyScreenSplash extends StatefulWidget {
 }
 
 class _LubyScreenSplashState extends State<LubyScreenSplash> {
-  final isLoggedIn = getIt<CacheService>().storage.getString(AppConst.accessToken) != null;
   @override
   void initState() {
     super.initState();
     _handleNavigation();
   }
 
-  void _handleNavigation() {
-    Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => isLoggedIn ? const MainVendorHome() : const LanguageSelectionScreen()),
-      );
-    });
+  void _handleNavigation() async {
+    await Future.delayed(const Duration(seconds: 3));
+    final isLoggedIn = getIt<CacheService>().storage.getString(AppConst.accessToken) != null;
+    if (isLoggedIn) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainVendorHome()));
+    } else {
+      final viewOnboarding = getIt<CacheService>().storage.getBool(AppConst.viewOnboarding) ?? true;
+      if (viewOnboarding) {
+        getIt<CacheService>().storage.setBool(AppConst.viewOnboarding, false);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LanguageSelectionScreen()));
+      } else {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
+      }
+    }
   }
 
   @override
