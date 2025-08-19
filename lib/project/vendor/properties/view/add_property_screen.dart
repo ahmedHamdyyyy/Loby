@@ -61,11 +61,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
     isSelected = !property.available;
     _contractPaths.addAll(property.ownershipContract);
     _licensePaths.addAll(property.facilityLicense);
-    selectedDates =
-        property.availableDates.map((date) {
-          final parts = date.split('-');
-          return DateTime.parse('${parts[0]}-${parts[1]}-${parts[2]}');
-        }).toSet();
+    selectedDates = property.availableDates.map((date) => DateTime.parse(date)).toSet();
     _imagePaths.addAll(property.medias);
     setState(() {});
   }
@@ -118,6 +114,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
             }).toList();
         final property = PropertyModel(
           id: widget.propertyId,
+          availableDates: formattedDates,
           facilityLicense: _licensePaths,
           type: widget.type,
           available: !isSelected,
@@ -129,7 +126,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
           details: detailsController.text,
           tags: selectedAmenities,
           pricePerNight: int.parse(priceController.text),
-          availableDates: formattedDates,
+         // availableDates: formattedDates,
           maxDays: 5,
           ownershipContract: _contractPaths,
           medias: _imagePaths,

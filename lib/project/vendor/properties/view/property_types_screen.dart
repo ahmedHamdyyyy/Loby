@@ -10,7 +10,7 @@ import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/helper.dart';
 import '../../../../locator.dart';
 import '../cubit/cubit.dart';
-import 'edite_property_screen.dart';
+import 'add_property_screen.dart';
 import 'lobby_offers_dialog.dart';
 
 typedef PropertyType = ({String name, String icon});

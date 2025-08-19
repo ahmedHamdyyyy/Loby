@@ -29,6 +29,7 @@ class AppConst {
   static const refreshToken = 'refreshToken';
   static const profilePicture = 'profilePicture';
   static const user = 'user';
+  static const vendor = 'vendor';
 
   //screens
   /*   static const splashScreen = '/';

@@ -1,5 +1,5 @@
 import 'package:Luby/locator.dart';
-import 'package:Luby/project/vendor/properties/view/edite_property_screen.dart';
+import 'package:Luby/project/vendor/properties/view/add_property_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
