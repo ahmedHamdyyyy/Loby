@@ -1,10 +1,10 @@
-import 'package:Luby/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/images/image_assets.dart';
+import '../../../locator.dart';
 import '../../../models/property_model.dart';
 import '../logic/cubit.dart';
 import 'edite_property_screen.dart';

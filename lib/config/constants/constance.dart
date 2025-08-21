@@ -32,7 +32,6 @@ class AppConst {
   static const profilePicture = 'profilePicture';
   static const user = 'user';
   static const vendorRole = 'vendorRole';
-
   //screens
   /*   static const splashScreen = '/';
   static const signInScreen = '/signInScreen';
