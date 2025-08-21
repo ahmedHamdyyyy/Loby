@@ -11,13 +11,13 @@ class ApiConstance {
   static const forgetPasswordReset = "auth/forget-password/reset";
   static const verifyEmail = "auth/signup/initiate";
   static const userProfile = "users/me";
+  static const setVendorRole = "users/choose-vendor-role";
 
   static const createActivity = "activities";
   static const getActivities = 'activities/me';
   static getActivity(String id) => "activities/$id";
   static updateActivity(String id) => "activities/$id";
   static deleteActivity(String id) => "activities/$id";
-
 
   static const createProperty = 'properties';
   static getProperty(String id) => "properties/$id";

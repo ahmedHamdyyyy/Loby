@@ -36,13 +36,13 @@ class _ApiInterceptor extends InterceptorsWrapper {
   _ApiInterceptor(this._cacheService, this._dio);
   final CacheService _cacheService;
   final Dio _dio;
-  int _counter = 0;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     debugPrint('REQUEST[${options.method}] => PATH: ${options.path}');
     final isMultipart = options.data is FormData;
     final accessToken = _cacheService.storage.getString(AppConst.accessToken);
+    print(accessToken);
     options.headers['Content-Type'] = isMultipart ? 'multipart/form-data' : 'application/json';
     if (isMultipart) options.headers['Accept-Encoding'] = 'gzip, deflate, br';
     if (accessToken != null && accessToken.isNotEmpty) options.headers['Authorization'] = 'Bearer $accessToken';
@@ -52,81 +52,50 @@ class _ApiInterceptor extends InterceptorsWrapper {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     debugPrint('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-    debugPrint(response.data.toString());
-    if (response.data != null && response.data['success'] == true) {
-      final data = response.data['data'] ?? {};
-      final accessToken = data[AppConst.accessToken];
-      final refreshToken = data[AppConst.refreshToken];
-      if (accessToken != null) await _cacheService.storage.setString(AppConst.accessToken, accessToken);
-      if (refreshToken != null) await _cacheService.storage.setString(AppConst.refreshToken, refreshToken);
-    }
-    if (response.statusCode == 401) {
-      if (_counter == 2) {
-        await _clearTokens();
+    if ([ApiConstance.signin, ApiConstance.signup, ApiConstance.resetpassword].contains(response.requestOptions.path)) {
+      if (response.data != null && response.data['success']) {
+        final accessToken = (response.data['data'] ?? {})['accessToken'];
+        final refreshToken = (response.data['data'] ?? {})['refreshToken'];
+        if (accessToken != null) await _cacheService.storage.setString(AppConst.accessToken, accessToken);
+        if (refreshToken != null) await _cacheService.storage.setString(AppConst.refreshToken, refreshToken);
+      }
+    } else if (response.statusCode == 401) {
+      try {
+        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+        print(refreshToken);
+        if (refreshToken == null || refreshToken.isEmpty) return handler.next(response);
+        final accessToken = await getAccessToken(refreshToken);
+        final opts = response.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $accessToken';
+        final cloneReq = await _dio.fetch(opts);
+        return handler.resolve(cloneReq);
+      } catch (e) {
+        await _cacheService.storage.remove(AppConst.accessToken);
+        await _cacheService.storage.remove(AppConst.refreshToken);
         return handler.next(response);
       }
-      _counter++;
-      return await _handleUnauthorized(response, handler);
     }
-    _counter = 0;
     return handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      if (_counter == 2) {
-        await _clearTokens();
+      try {
+        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+        if (refreshToken == null || refreshToken.isEmpty) return handler.next(err);
+        final accessToken = await getAccessToken(refreshToken);
+        final opts = err.requestOptions;
+        opts.headers['Authorization'] = 'Bearer $accessToken';
+        final cloneReq = await _dio.fetch(opts);
+        return handler.resolve(cloneReq);
+      } catch (e) {
+        await _cacheService.storage.remove(AppConst.accessToken);
+        await _cacheService.storage.remove(AppConst.refreshToken);
         return handler.next(err);
       }
-      _counter++;
-      return await _handleUnauthorizedError(err, handler);
     }
-    _counter = 0;
     super.onError(err, handler);
-  }
-
-  Future<void> _handleUnauthorized(Response response, ResponseInterceptorHandler handler) async {
-    _counter++;
-    try {
-      final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-      if (refreshToken == null || refreshToken.isEmpty) return handler.next(response);
-      final accessToken = await getAccessToken(refreshToken);
-      await _cacheService.storage.setString(AppConst.accessToken, accessToken);
-      final opts = response.requestOptions;
-      opts.headers['Authorization'] = 'Bearer $accessToken';
-      final cloneReq = await _dio.fetch(opts);
-      return handler.resolve(cloneReq);
-    } catch (e) {
-      await _clearTokens();
-      return handler.next(response);
-    }
-  }
-
-  Future<void> _handleUnauthorizedError(DioException err, ErrorInterceptorHandler handler) async {
-    if (_counter == 2) {
-      await _clearTokens();
-      return handler.next(err);
-    }
-    _counter++;
-    try {
-      final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-      if (refreshToken == null || refreshToken.isEmpty) return handler.next(err);
-
-      final accessToken = await getAccessToken(refreshToken);
-      final opts = err.requestOptions;
-      opts.headers['Authorization'] = 'Bearer $accessToken';
-      final cloneReq = await _dio.fetch(opts);
-      return handler.resolve(cloneReq);
-    } catch (e) {
-      await _clearTokens();
-      return handler.next(err);
-    }
-  }
-
-  Future<void> _clearTokens() async {
-    await _cacheService.storage.remove(AppConst.accessToken);
-    await _cacheService.storage.remove(AppConst.refreshToken);
   }
 
   Future<String> getAccessToken(String refreshToken) async {

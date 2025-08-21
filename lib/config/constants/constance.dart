@@ -1,5 +1,7 @@
 enum Status { initial, loading, success, error }
 
+enum VendorRole { non, property, activity }
+
 class AppConst {
   //variables
   static const id = '_id';
@@ -29,6 +31,7 @@ class AppConst {
   static const refreshToken = 'refreshToken';
   static const profilePicture = 'profilePicture';
   static const user = 'user';
+  static const vendorRole = 'vendorRole';
 
   //screens
   /*   static const splashScreen = '/';
