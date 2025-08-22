@@ -7,7 +7,7 @@ import '../../../../config/images/image_assets.dart';
 import '../../../../locator.dart';
 import '../../../../models/activity.dart';
 import '../../logic/cubit.dart';
-import '../screens/home_view.dart';
+import '../screens/activity_screen.dart';
 
 class ActivitiesListView extends StatelessWidget {
   const ActivitiesListView({super.key});
@@ -29,16 +29,7 @@ class ActivitiesListView extends StatelessWidget {
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => BlocProvider.value(
-                            value: getIt<ActivitiesCubit>(),
-                            child: ActivityRegistrationScreen(id: activity.id),
-                          ),
-                    ),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ActivityScreen(activityId: activity.id)));
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
@@ -67,7 +58,7 @@ class ActivitiesListView extends StatelessWidget {
                           builder:
                               (context) => BlocProvider.value(
                                 value: getIt<ActivitiesCubit>(),
-                                child: ActivityRegistrationScreen(id: activities[index].id),
+                                child: ActivityScreen(activityId: activities[index].id),
                               ),
                         ),
                       );

@@ -24,21 +24,25 @@ class Utils {
         ),
   );
 
-  static Future loadingDialog(BuildContext context) => showDialog(
+  static Future<T?> loadingDialog<T>(
+    BuildContext context, {
+    String message = 'Loading...',
+    bool barrierDismissible = false,
+  }) => showDialog<T>(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: barrierDismissible,
     builder:
         (context) => PopScope(
-          canPop: false,
+          canPop: barrierDismissible,
           child: Dialog(
             child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Loading', style: Theme.of(context).textTheme.headlineMedium),
-                  const Center(child: LinearProgressIndicator()),
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  Text(message, style: Theme.of(context).textTheme.bodyLarge, textAlign: TextAlign.center),
                 ],
               ),
             ),

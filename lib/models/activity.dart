@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
 class CustomActivityModel extends Equatable {
@@ -31,9 +32,9 @@ class CustomActivityModel extends Equatable {
 
 class ActivityModel extends Equatable {
   final String id, vendorId, name, address, details, date, time, activityTime;
-  final double price;
-  final int maximumGuestNumber;
   final List<String> tags, medias;
+  final int maximumGuestNumber;
+  final double price;
   final bool verified;
 
   const ActivityModel({
@@ -78,7 +79,7 @@ class ActivityModel extends Equatable {
 
     return ActivityModel(
       id: json['_id'] ?? '',
-      vendorId: json['vendorId'] ?? '',
+      vendorId: json['vendorId']?['_id'] ?? '',
       address: json['address'] ?? '',
       details: json['details'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),

@@ -1,17 +1,20 @@
-import 'dart:io'; // Added for File
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart'; // Added for debugPrint
+import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
 import '../config/constants/api_constance.dart';
 
+// ignore: constant_identifier_names
+enum PropertyType { apartment, house, cabin, guest_house, studio, yacht, cruise }
+
 class CustomPropertyModel extends Equatable {
-  final String id, type, image;
+  final String id, image, vendorId;
+  final PropertyType type;
   final bool available;
-  final String vendorId;
 
   const CustomPropertyModel({
     required this.id,
@@ -21,7 +24,7 @@ class CustomPropertyModel extends Equatable {
     required this.available,
   });
 
-  CustomPropertyModel copyWith({String? vendorId, String? id, String? type, String? image, bool? available}) =>
+  CustomPropertyModel copyWith({String? vendorId, String? id, PropertyType? type, String? image, bool? available}) =>
       CustomPropertyModel(
         id: id ?? this.id,
         type: type ?? this.type,
@@ -37,8 +40,7 @@ class CustomPropertyModel extends Equatable {
         String mediaUrl = medias[0].toString();
         // Only prepend base URL if it's not already a full URL
         return mediaUrl.startsWith('http') ? mediaUrl : ApiConstance.baseUrl + mediaUrl;
-      }
-      if (medias is String) {
+      } else if (medias is String) {
         // Only prepend base URL if it's not already a full URL
         return medias.startsWith('http') ? medias : ApiConstance.baseUrl + medias;
       }
@@ -48,7 +50,7 @@ class CustomPropertyModel extends Equatable {
     return CustomPropertyModel(
       id: json['_id'] ?? '',
       vendorId: json['vendorId'] ?? '',
-      type: json['type'] ?? '',
+      type: PropertyType.values.firstWhere((e) => e.name == (json['type'] ?? ''), orElse: () => PropertyType.house),
       image: getFirstMedia(json['medias']),
       available: json['available'] ?? false,
     );
@@ -72,10 +74,11 @@ class CustomPropertyModel extends Equatable {
 }
 
 class PropertyModel extends Equatable {
-  final String id, type, address, details;
+  final String id, address, details, startDate, endDate;
   final int guestNumber, bedrooms, bathrooms, beds, pricePerNight, maxDays;
-  final List<String> tags, availableDates, medias, ownershipContract, facilityLicense;
+  final List<String> tags, medias, ownershipContract, facilityLicense;
   final bool available;
+  final PropertyType type;
 
   const PropertyModel({
     required this.id,
@@ -89,7 +92,8 @@ class PropertyModel extends Equatable {
     required this.details,
     required this.tags,
     required this.pricePerNight,
-    required this.availableDates,
+    required this.startDate,
+    required this.endDate,
     required this.maxDays,
     required this.ownershipContract,
     required this.medias,
@@ -98,7 +102,7 @@ class PropertyModel extends Equatable {
 
   static const non = PropertyModel(
     id: '',
-    type: '',
+    type: PropertyType.house,
     available: true,
     guestNumber: 0,
     bedrooms: 0,
@@ -108,7 +112,8 @@ class PropertyModel extends Equatable {
     details: '',
     tags: [],
     pricePerNight: 0,
-    availableDates: [],
+    startDate: '',
+    endDate: '',
     maxDays: 0,
     ownershipContract: [],
     facilityLicense: [],
@@ -117,15 +122,17 @@ class PropertyModel extends Equatable {
 
   factory PropertyModel.fromJson(Map<String, dynamic> json) {
     List<String> parseStringOrList(dynamic value) {
-      if (value == null) return [];
-      if (value is List) return List<String>.from(value);
-      if (value is String) return [value];
+      if (value is List) {
+        return List<String>.from(value);
+      } else if (value is String) {
+        return [value];
+      }
       return [];
     }
 
     return PropertyModel(
       id: json['_id'] ?? '',
-      type: json['type'] ?? '',
+      type: PropertyType.values.firstWhere((e) => e.name == (json['type'] ?? ''), orElse: () => PropertyType.house),
       available: json['available'] ?? false,
       guestNumber: json['guestNumber'] ?? 0,
       bedrooms: json['bedrooms'] ?? 0,
@@ -135,7 +142,8 @@ class PropertyModel extends Equatable {
       details: json['details'] ?? '',
       tags: parseStringOrList(json['tags']),
       pricePerNight: json['pricePerNight'] ?? 0,
-      availableDates: parseStringOrList(json['availableDates']),
+      startDate: json['startDate'] ?? '',
+      endDate: json['endDate'] ?? '',
       maxDays: json['maxDays'] ?? 0,
       ownershipContract: [json['ownershipContract'] ?? ''],
       facilityLicense: [json['facilityLicense'] ?? ''],
@@ -148,10 +156,12 @@ class PropertyModel extends Equatable {
 
     // Add basic fields
     formData.fields.addAll([
-      MapEntry('type', type),
+      MapEntry('type', type.name),
       MapEntry('available', available.toString()),
       MapEntry('guestNumber', guestNumber.toString()),
       MapEntry('bedrooms', bedrooms.toString()),
+      MapEntry('startDate', startDate),
+      MapEntry('endDate', endDate),
       MapEntry('bathrooms', bathrooms.toString()),
       MapEntry('beds', beds.toString()),
       MapEntry('address', address),
@@ -162,10 +172,6 @@ class PropertyModel extends Equatable {
 
     for (final tag in tags) {
       formData.fields.add(MapEntry('tags', tag));
-    }
-
-    for (final date in availableDates) {
-      formData.fields.add(MapEntry('availableDates', date));
     }
 
     try {
@@ -228,7 +234,7 @@ class PropertyModel extends Equatable {
 
   PropertyModel copyWith({
     String? id,
-    String? type,
+    PropertyType? type,
     bool? available,
     int? guestNumber,
     int? bedrooms,
@@ -238,7 +244,8 @@ class PropertyModel extends Equatable {
     String? details,
     List<String>? tags,
     int? pricePerNight,
-    List<String>? availableDates,
+    String? startDate,
+    String? endDate,
     int? maxDays,
     List<String>? ownershipContract,
     List<String>? facilityLicense,
@@ -257,7 +264,8 @@ class PropertyModel extends Equatable {
       details: details ?? this.details,
       tags: tags ?? this.tags,
       pricePerNight: pricePerNight ?? this.pricePerNight,
-      availableDates: availableDates ?? this.availableDates,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
       maxDays: maxDays ?? this.maxDays,
       ownershipContract: ownershipContract ?? this.ownershipContract,
       medias: medias ?? this.medias,
@@ -277,7 +285,8 @@ class PropertyModel extends Equatable {
     details,
     tags,
     pricePerNight,
-    availableDates,
+    startDate,
+    endDate,
     maxDays,
     ownershipContract,
     medias,

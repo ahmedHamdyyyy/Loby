@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/constants/constance.dart';
-import '../../../models/user_model.dart';
+import '../../../models/user.dart';
 import 'auth_repo.dart';
 
 part 'auth_state.dart';

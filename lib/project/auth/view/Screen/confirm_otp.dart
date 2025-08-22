@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
-import '../../../../models/user_model.dart';
+import '../../../../models/user.dart';
 import '../../../home/view/luby_screen_splash.dart';
 import '../../logic/auth_cubit.dart';
 import 'reset_password.dart';

@@ -3,8 +3,8 @@ part of 'cubit.dart';
 class PropertiesState extends Equatable {
   final String msg;
   final PropertyModel property;
-  final Status createStatus, updateStatus, deleteStatus, getStatus, getPropertyStatus;
   final List<CustomPropertyModel> properties;
+  final Status createStatus, updateStatus, deleteStatus, getStatus, getPropertyStatus;
 
   const PropertiesState({
     this.msg = '',

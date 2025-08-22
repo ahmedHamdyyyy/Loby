@@ -97,5 +97,7 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     }
   }
 
+  void setActivity(ActivityModel activity) => emit(state.copyWith(activity: activity));
+
   void init() => emit(state.copyWith(createStatus: Status.initial, updateStatus: Status.initial));
 }

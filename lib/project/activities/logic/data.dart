@@ -11,7 +11,7 @@ class ActivitiesData {
   Future<ActivityModel> createActivity(ActivityModel activity) async {
     final response = await _apiService.dio.post(ApiConstance.createActivity, data: await activity.create());
     _checkIfSuccess(response);
-    return ActivityModel.fromJson(response.data['data']);
+    return ActivityModel.fromJson(response.data['data']['activity']);
   }
 
   Future<void> updateActivity(ActivityModel activity) async {
@@ -33,7 +33,7 @@ class ActivitiesData {
   Future<ActivityModel> getActivity(String id) async {
     final response = await _apiService.dio.get(ApiConstance.getActivity(id));
     _checkIfSuccess(response);
-    return ActivityModel.fromJson(response.data['data']);
+    return ActivityModel.fromJson(response.data['data']['activity']);
   }
 
   void _checkIfSuccess(Response<dynamic> response) {

@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../core/utils/utile.dart';
-import '../../../../models/user_model.dart';
+import '../../../../models/user.dart';
 import '../../logic/auth_cubit.dart';
 import '../Widget/wideget_sign_up.dart';
 import 'confirm_otp.dart';

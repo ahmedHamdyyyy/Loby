@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../config/constants/api_constance.dart';
 import '../../../../core/services/api_services.dart';
-import '../../../models/property_model.dart';
+import '../../../models/property.dart';
 
 class PropertiesData {
   const PropertiesData(this._apiService);
@@ -34,7 +34,7 @@ class PropertiesData {
   Future<PropertyModel> getProperty(String id) async {
     final response = await _apiService.dio.get(ApiConstance.getProperty(id));
     if (!(response.data['success'] ?? false) || response.data['data'] == null) throw _dioError(response);
-    return PropertyModel.fromJson(response.data['data']);
+    return PropertyModel.fromJson(response.data['data']['property']);
   }
 
   DioException _dioError(Response<dynamic> response) {

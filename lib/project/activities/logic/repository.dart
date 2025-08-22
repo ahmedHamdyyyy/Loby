@@ -112,8 +112,9 @@ class ActivitiesRepository {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
       throw Exception('Failed to get activities: ${e.message}');
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Unexpected error: $e');
+      debugPrint('Stack trace: $stackTrace');
       throw Exception('An unexpected error occurred');
     }
   }

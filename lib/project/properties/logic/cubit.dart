@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/constants/constance.dart';
-import '../../../models/property_model.dart';
+import '../../../models/property.dart';
 import 'repository.dart';
 
 part 'state.dart';
@@ -15,8 +15,6 @@ class PropertiesCubit extends Cubit<PropertiesState> {
     emit(state.copyWith(getStatus: Status.loading));
     try {
       final allProperties = await _propertiesRespository.getProperties();
-      // final userProperties = allProperties.where((property) => property.vendorId == ).toList();
-
       emit(state.copyWith(getStatus: Status.success, properties: allProperties));
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
@@ -36,6 +34,8 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       );
     } catch (e) {
       emit(state.copyWith(createStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(createStatus: Status.initial));
     }
   }
 
@@ -56,36 +56,50 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       );
     } catch (e) {
       emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(updateStatus: Status.initial));
     }
-    emit(state.copyWith(updateStatus: Status.initial));
   }
 
   void deleteProperty(String id) async {
-    emit(state.copyWith(updateStatus: Status.loading));
+    emit(state.copyWith(deleteStatus: Status.loading));
     try {
       await _propertiesRespository.deleteProperty(id);
       emit(
         state.copyWith(
-          updateStatus: Status.success,
+          deleteStatus: Status.success,
           properties: [...state.properties.where((property) => property.id != id)],
           property: PropertyModel.non,
         ),
       );
     } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(deleteStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(deleteStatus: Status.initial));
     }
   }
 
-  Future<PropertyModel> getProperty(String id) async {
-    if (id.isEmpty) return PropertyModel.non;
+  void getProperty(String id) async {
     emit(state.copyWith(getPropertyStatus: Status.loading));
     try {
       final property = await _propertiesRespository.getProperty(id);
       emit(state.copyWith(getPropertyStatus: Status.success, property: property));
-      return property;
     } catch (e) {
-      emit(state.copyWith(getPropertyStatus: Status.error, msg: e.toString()));
-      return PropertyModel.non;
+      emit(state.copyWith(getPropertyStatus: Status.error, msg: e.toString(), property: PropertyModel.non));
+    } finally {
+      emit(state.copyWith(getPropertyStatus: Status.initial));
     }
   }
+
+  void setProperty(PropertyModel property) => emit(state.copyWith(property: property));
+
+  void init() => emit(
+    state.copyWith(
+      property: PropertyModel.non,
+      getPropertyStatus: Status.initial,
+      createStatus: Status.initial,
+      updateStatus: Status.initial,
+      deleteStatus: Status.initial,
+    ),
+  );
 }

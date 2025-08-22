@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/images/image_assets.dart';
 import '../../../locator.dart';
-import '../../../models/property_model.dart';
+import '../../../models/property.dart';
 import '../logic/cubit.dart';
-import 'edite_property_screen.dart';
+import 'property_screen.dart';
 
 class PropertiesListView extends StatelessWidget {
   const PropertiesListView({super.key});
@@ -57,18 +57,14 @@ class PropertiesListView extends StatelessWidget {
               const SizedBox(height: 15),
               Row(
                 children: [
-                  Text(property.type, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(property.type.name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
                   const Spacer(),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => BlocProvider.value(
-                                value: getIt<PropertiesCubit>(),
-                                child: PropertyScreen(propertyId: properties[index].id, type: property.type),
-                              ),
+                          builder: (context) => PropertyScreen(propertyId: properties[index].id, type: property.type),
                         ),
                       );
                     },

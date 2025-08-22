@@ -5,7 +5,7 @@ import '../../../config/constants/api_constance.dart';
 import '../../../config/constants/constance.dart';
 import '../../../core/services/api_services.dart';
 import '../../../core/services/cach_services.dart';
-import '../../../models/user_model.dart';
+import '../../../models/user.dart';
 
 class AuthData {
   const AuthData(this._apiServices, this._cacheServices);

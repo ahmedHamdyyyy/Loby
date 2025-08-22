@@ -1,53 +1,23 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/helper.dart';
-import '../../../../locator.dart';
-import '../logic/cubit.dart';
-import 'edite_property_screen.dart';
+import '../../../models/property.dart';
 import 'lobby_offers_dialog.dart';
-
-typedef PropertyType = ({String name, String icon});
+import 'property_screen.dart';
 
 class PropertyTypesScreen extends StatefulWidget {
   const PropertyTypesScreen({super.key});
-
   @override
   State<PropertyTypesScreen> createState() => _PropertyTypesScreenState();
 }
 
 class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
-  // Selected property type
-  String? _selectedPropertyType;
-
-  // Helper function to convert display name to backend value
-  String _convertToBackendType(String displayName) {
-    switch (displayName.toLowerCase()) {
-      case 'house':
-        return 'house';
-      case 'flat / appartment':
-        return 'apartment';
-      case 'cabin':
-        return 'cabin';
-      case 'guest-house':
-        return 'guest_house';
-      case 'studio':
-        return 'studio';
-      case 'yacht':
-        return 'yacht';
-      case 'cruise':
-        return 'cruise';
-      default:
-        return displayName.toLowerCase();
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -59,29 +29,6 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
       showDialog(context: context, barrierDismissible: false, builder: (context) => const LobbyOffersDialog());
     });
   }
-
-  void _selectPropertyType(String typeName) {
-    final String backendType = _convertToBackendType(typeName);
-    setState(() => _selectedPropertyType = typeName);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        // builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen(type: backendType)),
-        builder: (context) => BlocProvider.value(value: getIt<PropertiesCubit>(), child: PropertyScreen(type: backendType)),
-      ),
-    );
-  }
-
-  // List of property types with their icons
-  final List<PropertyType> _propertyTypes = [
-    (name: 'House', icon: ImageAssets.houseCategories),
-    (name: 'Flat / Appartment', icon: ImageAssets.apartmentCategories),
-    (name: 'Cabin', icon: ImageAssets.conbinCategories),
-    (name: 'Guest-house', icon: ImageAssets.guesthouseCategories),
-    (name: 'Studio', icon: ImageAssets.studioCategories),
-    (name: 'Yacht', icon: ImageAssets.yachtCategories),
-    (name: 'Cruise', icon: ImageAssets.cruiseCategories),
-  ];
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -106,18 +53,19 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
                   crossAxisSpacing: 14,
                   mainAxisSpacing: 14,
                 ),
-                itemCount: _propertyTypes.length,
+                itemCount: PropertyType.values.length,
                 itemBuilder: (context, index) {
-                  final propertyType = _propertyTypes[index];
-                  final isSelected = _selectedPropertyType == _propertyTypes[index].name;
                   return GestureDetector(
-                    onTap: () => _selectPropertyType(_propertyTypes[index].name),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PropertyScreen(type: PropertyType.values[index])),
+                      );
+                    },
                     child: Container(
                       decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected ? AppColors.primaryColor : Colors.grey.shade300,
-                          width: isSelected ? 2 : 1,
-                        ),
+                        border: Border.all(color: Colors.grey.shade300, width: 1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
@@ -127,19 +75,23 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
-                              propertyType.icon,
+                              [
+                                ImageAssets.houseCategories,
+                                ImageAssets.apartmentCategories,
+                                ImageAssets.conbinCategories,
+                                ImageAssets.guesthouseCategories,
+                                ImageAssets.studioCategories,
+                                ImageAssets.yachtCategories,
+                                ImageAssets.cruiseCategories,
+                              ][index],
                               width: 40,
                               height: 40,
-                              color: isSelected ? AppColors.primaryColor : Colors.black54,
+                              color: Colors.black54,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              propertyType.name,
-                              style: GoogleFonts.poppins(
-                                fontSize: 14,
-                                color: isSelected ? AppColors.primaryColor : Colors.black87,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
-                              ),
+                              PropertyType.values[index].name,
+                              style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87, fontWeight: FontWeight.w400),
                               textAlign: TextAlign.center,
                             ),
                           ],

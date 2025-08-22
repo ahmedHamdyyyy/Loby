@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -97,9 +98,10 @@ class PriceTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
         hintText: "Enter price per night",
         hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
@@ -116,6 +118,10 @@ class PriceTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return "Please enter your Price";
+        return null;
+      },
     );
   }
 }

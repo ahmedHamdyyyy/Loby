@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
-import '../../../models/user_model.dart';
+import '../../../models/user.dart';
 import 'auth_data.dart';
 
 class AuthRepo {

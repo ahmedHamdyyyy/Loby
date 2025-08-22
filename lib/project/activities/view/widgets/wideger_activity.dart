@@ -117,6 +117,12 @@ class AddressField extends StatelessWidget {
             hintText: 'Enter your address',
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your address';
+            }
+            return null;
+          },
           controller: controller,
         ),
       ],
@@ -148,6 +154,12 @@ class DetailsField extends StatelessWidget {
             hintText: 'Add Details',
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some details';
+            }
+            return null;
+          },
           controller: controller,
         ),
       ],

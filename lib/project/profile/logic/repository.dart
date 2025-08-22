@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../config/constants/constance.dart';
-import '../../../models/user_model.dart';
+import '../../../models/user.dart';
 import 'data.dart';
 
 class ProfileRepository {

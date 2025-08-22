@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../config/constants/constance.dart';
-import '../../activities/view/screens/home_view.dart';
+import '../../activities/view/screens/activity_screen.dart';
 
 class VendorTypeDialog extends StatelessWidget {
   const VendorTypeDialog({super.key});
@@ -47,7 +47,7 @@ class VendorTypeDialog extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context, VendorRole.activity);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityRegistrationScreen(id: '')));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityScreen(activityId: '')));
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
