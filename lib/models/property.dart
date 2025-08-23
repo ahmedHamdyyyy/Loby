@@ -100,7 +100,7 @@ class PropertyModel extends Equatable {
     required this.facilityLicense,
   });
 
-  static const non = PropertyModel(
+  static const initial = PropertyModel(
     id: '',
     type: PropertyType.house,
     available: true,

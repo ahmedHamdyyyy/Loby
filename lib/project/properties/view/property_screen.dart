@@ -49,8 +49,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
   void _setProperty() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.propertyId.isEmpty) {
-        context.read<PropertiesCubit>().setProperty(PropertyModel.non);
-        _setPropertyFields(PropertyModel.non);
+        context.read<PropertiesCubit>().setProperty(PropertyModel.initial);
+        _setPropertyFields(PropertyModel.initial);
       } else {
         context.read<PropertiesCubit>().getProperty(widget.propertyId);
       }

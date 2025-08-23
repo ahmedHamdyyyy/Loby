@@ -69,7 +69,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
         state.copyWith(
           deleteStatus: Status.success,
           properties: [...state.properties.where((property) => property.id != id)],
-          property: PropertyModel.non,
+          property: PropertyModel.initial,
         ),
       );
     } catch (e) {
@@ -85,7 +85,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       final property = await _propertiesRespository.getProperty(id);
       emit(state.copyWith(getPropertyStatus: Status.success, property: property));
     } catch (e) {
-      emit(state.copyWith(getPropertyStatus: Status.error, msg: e.toString(), property: PropertyModel.non));
+      emit(state.copyWith(getPropertyStatus: Status.error, msg: e.toString(), property: PropertyModel.initial));
     } finally {
       emit(state.copyWith(getPropertyStatus: Status.initial));
     }
@@ -95,7 +95,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
 
   void init() => emit(
     state.copyWith(
-      property: PropertyModel.non,
+      property: PropertyModel.initial,
       getPropertyStatus: Status.initial,
       createStatus: Status.initial,
       updateStatus: Status.initial,

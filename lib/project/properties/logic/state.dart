@@ -14,7 +14,7 @@ class PropertiesState extends Equatable {
     this.getPropertyStatus = Status.initial,
     this.getStatus = Status.initial,
     this.properties = const [],
-    this.property = PropertyModel.non,
+    this.property = PropertyModel.initial,
   });
 
   PropertiesState copyWith({
