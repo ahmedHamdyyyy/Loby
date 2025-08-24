@@ -10,6 +10,7 @@ import 'project/auth/logic/auth_cubit.dart';
 import 'project/home/view/luby_screen_splash.dart';
 import 'project/profile/logic/cubit.dart';
 import 'project/properties/logic/cubit.dart';
+import 'project/reservation/logic/cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       BlocProvider(create: (context) => getIt<ProfileCubit>()),
       BlocProvider(create: (context) => getIt<ActivitiesCubit>()),
       BlocProvider(create: (context) => getIt<PropertiesCubit>()),
+      BlocProvider(create: (context) => getIt<ReservationsCubit>()),
     ],
     child: ScreenUtilInit(
       designSize: const Size(360, 690),

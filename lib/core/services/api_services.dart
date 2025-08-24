@@ -62,7 +62,6 @@ class _ApiInterceptor extends InterceptorsWrapper {
     } else if (response.statusCode == 401) {
       try {
         final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-        print(refreshToken);
         if (refreshToken == null || refreshToken.isEmpty) return handler.next(response);
         final accessToken = await getAccessToken(refreshToken);
         final opts = response.requestOptions;

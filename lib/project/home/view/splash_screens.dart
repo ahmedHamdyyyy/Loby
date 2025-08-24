@@ -42,9 +42,7 @@ class _SplashScreensState extends State<SplashScreens> {
       body: SplashScreensContent(
         pageController: _pageController,
         splashData: splashData,
-        onSkip: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen()));
-        },
+        onSkip: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignInScreen())),
       ),
     );
   }

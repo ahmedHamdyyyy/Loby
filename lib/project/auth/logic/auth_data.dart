@@ -20,6 +20,7 @@ class AuthData {
     if (response.data['success'] == false) throw _responseException(response);
     await _cacheServices.storage.remove(AppConst.accessToken);
     await _cacheServices.storage.remove(AppConst.refreshToken);
+    await _cacheServices.storage.remove(AppConst.vendorRole);
     return response.data['data']['message'];
   }
 

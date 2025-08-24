@@ -9,7 +9,7 @@ part 'state.dart';
 
 class PropertiesCubit extends Cubit<PropertiesState> {
   PropertiesCubit(this._propertiesRespository) : super(const PropertiesState());
-  final PropertiesRespository _propertiesRespository;
+  final PropertiesRepository _propertiesRespository;
 
   void getProperties() async {
     emit(state.copyWith(getStatus: Status.loading));

@@ -8,12 +8,7 @@ class LocationConfirmationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Stack(children: [
-        MapBackground(),
-        LocationSearchBar(),
-        MapMarker(),
-        LocationConfirmationPanel(),
-      ]),
+      body: Stack(children: [MapBackground(), LocationSearchBar(), MapMarker(), LocationConfirmationPanel()]),
     );
   }
 }

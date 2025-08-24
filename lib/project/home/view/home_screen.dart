@@ -8,15 +8,15 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../locator.dart';
-import '../../../core/services/cach_services.dart';
 import '../../../core/utils/utile.dart';
+import '../../activities/logic/cubit.dart';
 import '../../activities/view/screens/activity_screen.dart';
 import '../../activities/view/widgets/activetes_list.dart';
-import '../../home/view/vendor_type_dialog.dart';
 import '../../notifications/view/notifications_screen.dart';
-import '../logic/cubit.dart';
-import 'properties_list.dart';
-import 'property_types_screen.dart';
+import '../../properties/logic/cubit.dart';
+import '../../properties/view/properties_list.dart';
+import '../../properties/view/property_types_screen.dart';
+import 'vendor_type_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,17 +24,22 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+VendorRole _vendorRole = VendorRole.non;
+
 class _HomeScreenState extends State<HomeScreen> {
-  VendorRole _vendorRole = VendorRole.non;
+  void _updateVendorRole(String role) {
+    print('1' * 100);
+    _vendorRole = VendorRole.values.firstWhere((e) => e.name == role, orElse: () => VendorRole.non);
+    if (_vendorRole == VendorRole.property) {
+      getIt<PropertiesCubit>().getProperties();
+    } else if (_vendorRole == VendorRole.activity) {
+      getIt<ActivitiesCubit>().getActivities();
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
-    _vendorRole =
-        getIt<CacheService>().storage.getString(AppConst.vendorRole) != null
-            ? VendorRole.values.firstWhere(
-              (e) => e.name == getIt<CacheService>().storage.getString(AppConst.vendorRole),
-              orElse: () => VendorRole.non,
-            )
-            : VendorRole.non;
     return RefreshIndicator(
       onRefresh: () async => getIt<PropertiesCubit>().getProperties(),
       child: Scaffold(
@@ -63,7 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     right: 20,
                     child: Row(
                       children: [
-                        BlocBuilder<ProfileCubit, ProfileState>(
+                        BlocConsumer<ProfileCubit, ProfileState>(
+                          listener: (context, state) {
+                            if (state.fetchUserStatus == Status.success) _updateVendorRole(state.user.role);
+                          },
                           builder: (context, state) {
                             if (state.fetchUserStatus == Status.loading) {
                               return const CircleAvatar(
@@ -175,12 +183,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pop(context);
                                     Utils.errorDialog(context, state.callback);
                                   } else if (state.chooseVendorRole == Status.success) {
-                                    if (state.vendorRole == VendorRole.property) {
+                                    if (_vendorRole == VendorRole.property) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) => const PropertyTypesScreen()),
                                       );
-                                    } else if (state.vendorRole == VendorRole.activity) {
+                                    } else if (_vendorRole == VendorRole.activity) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(builder: (context) => const ActivityScreen(activityId: '')),
@@ -198,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     onPressed: () async {
                                       if (state.fetchUserStatus == Status.loading) return;
-                                      switch (state.vendorRole) {
+                                      switch (_vendorRole) {
                                         case VendorRole.non:
                                           final vendorRole = await showDialog<VendorRole?>(
                                             context: context,

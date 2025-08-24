@@ -15,17 +15,6 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerScreenState extends State<ImagePickerWidget> {
   final List<String> _imagePaths = [];
-  // final _picker = ImagePicker();
-
-  // Future<void> _pickImage() async {
-  //   try {
-  //     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-  //     if (pickedFile != null) setState(() => _imagePaths.add(pickedFile.path));
-  //     widget.onImagesUploaded(_imagePaths);
-  //   } catch (e) {
-  //     debugPrint('Error picking image: $e');
-  //   }
-  // }
 
   Future<void> _pickImage() async {
     try {

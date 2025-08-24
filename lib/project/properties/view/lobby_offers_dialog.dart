@@ -63,4 +63,3 @@ class LobbyOffersDialog extends StatelessWidget {
     ),
   );
 }
-

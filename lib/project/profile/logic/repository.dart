@@ -9,7 +9,7 @@ class ProfileRepository {
   const ProfileRepository(this._userData);
   final ProfileData _userData;
 
-  Future<({UserModel user, VendorRole role})> fetchUserData() async {
+  Future<UserModel> fetchUserData() async {
     try {
       return await _userData.fetchUserData();
     } on DioException catch (e) {

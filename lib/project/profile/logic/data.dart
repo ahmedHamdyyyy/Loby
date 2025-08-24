@@ -3,32 +3,23 @@ import 'package:flutter/material.dart';
 import '../../../../config/constants/api_constance.dart';
 import '../../../../core/services/api_services.dart';
 import '../../../config/constants/constance.dart';
-import '../../../core/services/cach_services.dart';
 import '../../../models/user.dart';
 
 class ProfileData {
-  const ProfileData(this._apiServices, this._cacheService);
+  const ProfileData(this._apiServices);
   final ApiService _apiServices;
-  final CacheService _cacheService;
 
-  Future<({UserModel user, VendorRole role})> fetchUserData() async {
+  Future<UserModel> fetchUserData() async {
     final response = await _apiServices.dio.get(ApiConstance.userProfile);
     debugPrint(response.data.toString());
     if (!(response.data['success'] ?? false) || response.data['data'] == null) throw Exception('فشل تحميل الملف الشخصي');
-    final role = VendorRole.values.firstWhere(
-      (e) => e.name == response.data['data']['vendorRole'],
-      orElse: () => VendorRole.non,
-    );
-    await _cacheService.storage.setString(AppConst.vendorRole, role.name);
-    return (user: UserModel.fromJson(response.data['data']), role: role);
+    return UserModel.fromJson(response.data['data']);
   }
 
   Future<void> setVendorRole(VendorRole role) async {
     try {
       final response = await _apiServices.dio.post(ApiConstance.setVendorRole, data: {'vendorRole': role.name});
-      print(response.data);
       if (response.data['success'] != true) throw Exception('فشل تعيين دور البائع');
-      await _cacheService.storage.setString(AppConst.vendorRole, role.name);
     } catch (e) {
       throw Exception('Failed to set vendor role: ${e.toString()}');
     }

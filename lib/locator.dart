@@ -14,6 +14,9 @@ import 'project/profile/logic/repository.dart';
 import 'project/properties/logic/cubit.dart';
 import 'project/properties/logic/data.dart';
 import 'project/properties/logic/repository.dart';
+import 'project/reservation/logic/cubit.dart';
+import 'project/reservation/logic/data.dart';
+import 'project/reservation/logic/repository.dart';
 
 final getIt = GetIt.instance;
 
@@ -23,11 +26,11 @@ void setup() {
   getIt.registerSingleton<ApiService>(ApiService(getIt<CacheService>()));
 
   // Home feature dependencies
-  // getIt.registerSingleton<HomeCubit>(HomeCubit(HomeRepository(getIt<ApiService>(), getIt<CacheService>())));
-  getIt.registerSingleton<ProfileCubit>(
-    ProfileCubit(ProfileRepository(ProfileData(getIt<ApiService>(), getIt<CacheService>()))),
-  );
+  getIt.registerSingleton<ProfileCubit>(ProfileCubit(ProfileRepository(ProfileData(getIt<ApiService>()))));
   getIt.registerSingleton<AuthCubit>(AuthCubit(AuthRepo(AuthData(getIt<ApiService>(), getIt<CacheService>()))));
   getIt.registerSingleton<ActivitiesCubit>(ActivitiesCubit(ActivitiesRepository(ActivitiesData(getIt<ApiService>()))));
-  getIt.registerSingleton<PropertiesCubit>(PropertiesCubit(PropertiesRespository(PropertiesData(getIt<ApiService>()))));
+  getIt.registerSingleton<PropertiesCubit>(PropertiesCubit(PropertiesRepository(PropertiesData(getIt<ApiService>()))));
+  getIt.registerSingleton<ReservationsCubit>(
+    ReservationsCubit(ReservationsRepository(ReservationsData(getIt<ApiService>()))),
+  );
 }

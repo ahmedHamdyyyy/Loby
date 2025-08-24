@@ -18,10 +18,7 @@ class TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: GoogleFonts.poppins(color: color, fontSize: fontSize, fontWeight: fontWeight),
-    );
+    return Text(text, style: GoogleFonts.poppins(color: color, fontSize: fontSize, fontWeight: fontWeight));
   }
 }
 
@@ -185,10 +182,7 @@ class LanguageButton extends StatelessWidget {
           backgroundColor: AppColors.primary,
           minimumSize: Size(double.infinity, 50.h),
         ),
-        child: Text(
-          language,
-          style: GoogleFonts.poppins(color: Colors.white, fontSize: 16.sp),
-        ),
+        child: Text(language, style: GoogleFonts.poppins(color: Colors.white, fontSize: 16.sp)),
       );
     } else {
       return OutlinedButton(
@@ -199,10 +193,7 @@ class LanguageButton extends StatelessWidget {
           side: const BorderSide(color: AppColors.primary),
           minimumSize: Size(double.infinity, 50.h),
         ),
-        child: Text(
-          language,
-          style: GoogleFonts.poppins(fontSize: 16.sp, color: AppColors.primary),
-        ),
+        child: Text(language, style: GoogleFonts.poppins(fontSize: 16.sp, color: AppColors.primary)),
       );
     }
   }
@@ -256,10 +247,7 @@ class SplashPageItem extends StatelessWidget {
             width: 335,
             child: Column(
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+                Text(title, style: GoogleFonts.poppins(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white)),
                 const SizedBox(height: 24),
                 Text(
                   description,

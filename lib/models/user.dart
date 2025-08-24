@@ -53,13 +53,13 @@ class UserModel {
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-    password: json[AppConst.password] ?? '',
-    firstName: json[AppConst.firstName] ?? '',
-    lastName: json[AppConst.lastName] ?? '',
+    id: json[AppConst.id] ?? '',
     email: json[AppConst.email] ?? '',
     phone: json[AppConst.phone] ?? '',
-    role: json[AppConst.role] ?? '',
-    id: json[AppConst.id] ?? '',
+    role: json[AppConst.vendorRole] ?? '',
+    password: json[AppConst.password] ?? '',
+    lastName: json[AppConst.lastName] ?? '',
+    firstName: json[AppConst.firstName] ?? '',
     profilePicture: json[AppConst.profilePicture] ?? '',
   );
 

@@ -23,5 +23,9 @@ class ApiConstance {
   static getProperty(String id) => "properties/$id";
   static updateProperty(String id) => "properties/$id";
   static const getProperties = 'properties/me';
+
+  static const getReservations = 'registrations/vendor-registrations';
   static deleteProperty(String id) => "properties/$id";
+
+  static String updateReservation(String id) => "registrations/vendor-registrations/$id";
 }

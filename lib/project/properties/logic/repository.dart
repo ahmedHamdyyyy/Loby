@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import '../../../models/property.dart';
 import 'data.dart';
 
-class PropertiesRespository {
-  const PropertiesRespository(this._propertiesData);
+class PropertiesRepository {
+  const PropertiesRepository(this._propertiesData);
   final PropertiesData _propertiesData;
 
   Future<PropertyModel> createProperty(PropertyModel property) async {
