@@ -7,9 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
 import '../../../../../config/widget/widgets.dart';
+import '../../../locator.dart';
 import '../../../models/activity.dart';
+import '../../../models/chat.dart';
 import '../../../models/property.dart';
 import '../../../models/reservation.dart';
+import '../../Conversations/chat_screen.dart';
+import '../../profile/logic/cubit.dart';
 
 class ReservationDetailsScreen extends StatefulWidget {
   const ReservationDetailsScreen(this.reservation, {super.key});
@@ -26,6 +30,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
     final difference = checkOutDate.difference(checkInDate).inDays;
     return difference;
   }
+  final vendor = getIt<ProfileCubit>().state.user;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +93,24 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                   ],
                 ),
                 const Spacer(),
-                SvgPicture.asset(ImageAssets.messages2),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(chat: ChatModel(
+                      id: widget.reservation.id,
+                      vendorId: vendor.id,
+                      userId: widget.reservation.userId,
+                      vendorName: '${vendor.firstName} ${vendor.lastName}',
+                      vendorImageUrl: vendor.profilePicture,
+                      userName: widget.reservation.userName,
+                      userImageUrl: widget.reservation.userImageUrl ?? '',
+                          lastMessage: '',
+                          lastTimestamp: DateTime.now(),
+                        ),
+                      ),
+                    ));
+                  },
+                  child: SvgPicture.asset(ImageAssets.messages2),
+                ),
               ],
             ),
             const SizedBox(height: 16),

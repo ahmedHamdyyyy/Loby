@@ -43,7 +43,8 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() => _isSending = true);
     await _firestoreService.sendMessage(
       widget.chat.id,
-      ChatMessage(id: '', text: _messageController.text.trim(), senderId: widget.chat.userId, timestamp: DateTime.now()),
+      ChatMessage(id: '', text: _messageController.text.trim(),
+       senderId: widget.chat.vendorId, timestamp: DateTime.now()),
     );
     _messageController.clear();
     setState(() => _isSending = false);
@@ -56,7 +57,7 @@ class _ChatScreenState extends State<ChatScreen> {
       children: [
         const SizedBox(height: 35),
         // User info header
-        UserInfoHeaderWidget(userName: widget.chat.userName, userImage: widget.chat.userImageUrl),
+        UserInfoHeaderWidget(userName: widget.chat.userName , userImage: widget.chat.userImageUrl),
         // Messages list
         Expanded(
           child: StreamBuilder(

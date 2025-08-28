@@ -150,7 +150,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
                 // Text(
                 //   isOnline ? "Online" : "Offline",
                 //   style: GoogleFonts.poppins(fontSize: 14, color: isOnline ? Colors.green : Colors.grey),
-                // ),
+                // ),   ` 
               ],
             ),
           ),

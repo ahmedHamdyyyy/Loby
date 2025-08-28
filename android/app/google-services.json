@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "244014039102",
+    "firebase_url": "https://gymahmed-cd701-default-rtdb.firebaseio.com",
+    "project_id": "gymahmed-cd701",
+    "storage_bucket": "gymahmed-cd701.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244014039102:android:572698968e4b0a1f52116f",
+        "android_client_info": {
+          "package_name": "com.example.Luby"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvli7t_UGgB2iBAc1LUejWxsq84izItoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244014039102:android:8fb9c16ad5590d2752116f",
+        "android_client_info": {
+          "package_name": "com.example.gemawy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvli7t_UGgB2iBAc1LUejWxsq84izItoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244014039102:android:8567d17d739035e952116f",
+        "android_client_info": {
+          "package_name": "com.example.luby2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvli7t_UGgB2iBAc1LUejWxsq84izItoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244014039102:android:2c72a8e9c62e9ac752116f",
+        "android_client_info": {
+          "package_name": "com.example.story"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvli7t_UGgB2iBAc1LUejWxsq84izItoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244014039102:android:61f8073d8418880a52116f",
+        "android_client_info": {
+          "package_name": "com.example.talabat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvli7t_UGgB2iBAc1LUejWxsq84izItoM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -11,9 +11,14 @@ import 'project/home/view/luby_screen_splash.dart';
 import 'project/profile/logic/cubit.dart';
 import 'project/properties/logic/cubit.dart';
 import 'project/reservation/logic/cubit.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   setup();
   await getIt<CacheService>().init();
   await getIt<ApiService>().init();
