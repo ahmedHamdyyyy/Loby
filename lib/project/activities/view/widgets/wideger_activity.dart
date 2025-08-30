@@ -85,8 +85,15 @@ class AgreementParagraph extends StatelessWidget {
 
 class AddressField extends StatelessWidget {
   final TextEditingController controller;
+  final Function(String)? onAddressSelected; // Callback for selected address
+  final Function(Map<String, dynamic>)? onLocationDataSelected; // Callback for full location data
 
-  const AddressField({super.key, required this.controller});
+  const AddressField({
+    super.key, 
+    required this.controller,
+    this.onAddressSelected,
+    this.onLocationDataSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +116,59 @@ class AddressField extends StatelessWidget {
             ),
             prefixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
             suffixIcon: IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LocationConfirmationScreen()));
+              onPressed: () async {
+                // Navigate to location selection screen
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LocationConfirmationScreen(address: controller.text),
+                  ),
+                );
+                
+                // Handle the returned location data
+                print('Result received: $result');
+                print('Result type: ${result.runtimeType}');
+                
+                if (result != null && result is Map<String, dynamic>) {
+                  print('Result is Map: true');
+                  print('Result keys: ${result.keys.toList()}');
+                  
+                  final address = result['address'] as String?;
+                  final latitude = result['latitude'] as double?;
+                  final longitude = result['longitude'] as double?;
+                  
+                  print('Extracted address: $address');
+                  print('Extracted latitude: $latitude');
+                  print('Extracted longitude: $longitude');
+                  
+                  if (address != null && address.isNotEmpty) {
+                    print('Address is valid, updating controller...');
+                    
+                    // Update the text controller
+                    controller.text = address;
+                    print('Controller text updated to: ${controller.text}');
+                    
+                    // Call the callback to pass the selected address
+                    onAddressSelected?.call(address);
+                    print('onAddressSelected callback called');
+                    
+                    // Call the callback to pass the full location data
+                    onLocationDataSelected?.call(result);
+                    print('onLocationDataSelected callback called');
+                    
+                    // You can also store the coordinates if needed
+                    print('Selected coordinates: $latitude, $longitude');
+                  } else {
+                    print('Address is null or empty');
+                  }
+                } else {
+                  print('Result is not a valid Map');
+                }
               },
-              icon: const Icon(Icons.add, color: AppColors.grayColorIcon),
+              icon: const Icon(Icons.map, color: AppColors.primaryColor),
+              tooltip: 'Select location on map',
             ),
-            hintText: 'Enter your address',
+            hintText: 'Enter your address or tap map icon to select',
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
           validator: (value) {
@@ -124,6 +178,7 @@ class AddressField extends StatelessWidget {
             return null;
           },
           controller: controller,
+          readOnly: false, // Allow manual input as well
         ),
       ],
     );

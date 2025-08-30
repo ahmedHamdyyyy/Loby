@@ -34,6 +34,11 @@ class _ActivityScreenState extends State<ActivityScreen> {
   final activityTimeController = TextEditingController(), maximumGuestNumberController = TextEditingController();
   List<String> _tags = [], _medias = [];
   bool _isAgreed = false;
+  
+  // Location data variables
+  double? _selectedLatitude;
+  double? _selectedLongitude;
+  String _selectedAddress = '';
 
   @override
   void initState() {
@@ -98,6 +103,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   void _submitForm() async {
     if (!await _validateForm()) return;
+    
+    // Create activity with location data
     final activity = ActivityModel(
       id: widget.activityId,
       vendorId: context.read<ProfileCubit>().state.user.id,
@@ -105,7 +112,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
       time: timeController.text,
       activityTime: activityTimeController.text,
       name: activityNameController.text,
-      address: addressController.text,
+      address: _selectedAddress.isNotEmpty ? _selectedAddress : addressController.text,
       details: detailsController.text,
       tags: _tags,
       price: double.parse(priceController.text),
@@ -113,6 +120,14 @@ class _ActivityScreenState extends State<ActivityScreen> {
       medias: _medias,
       verified: false,
     );
+    
+    // Log location information for debugging
+    if (_selectedLatitude != null && _selectedLongitude != null) {
+      print('Submitting activity with location:');
+      print('  Address: ${activity.address}');
+      print('  Coordinates: $_selectedLatitude, $_selectedLongitude');
+    }
+    
     if (widget.activityId.isEmpty) {
       context.read<ActivitiesCubit>().createActivity(activity);
     } else {
@@ -238,7 +253,82 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         const SizedBox(height: 15),
                         CustomTextField(controller: activityNameController, hintText: 'Enter your activity name'),
                         const SizedBox(height: 20),
-                        AddressField(controller: addressController),
+                        AddressField(
+                          controller: addressController,
+                          onAddressSelected: (selectedAddress) {
+                            // Store the selected address
+                            _selectedAddress = selectedAddress;
+                            print('Selected address: $_selectedAddress');
+                          },
+                          onLocationDataSelected: (locationData) {
+                            // Store the full location data
+                            _selectedLatitude = locationData['latitude'] as double?;
+                            _selectedLongitude = locationData['longitude'] as double?;
+                            _selectedAddress = locationData['address'] as String? ?? '';
+                            
+                            print('Location data:');
+                            print('  Address: $_selectedAddress');
+                            print('  Latitude: $_selectedLongitude');
+                            print('  Longitude: $_selectedLongitude');
+                          },
+                        ),
+                        
+                        // Display selected location information
+                        if (_selectedAddress.isNotEmpty) ...[
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.green.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.green.withOpacity(0.3)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on,
+                                      color: Colors.green,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Selected Location',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _selectedAddress,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppColors.primaryTextColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                if (_selectedLatitude != null && _selectedLongitude != null) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Coordinates: ${_selectedLatitude!.toStringAsFixed(6)}, ${_selectedLongitude!.toStringAsFixed(6)}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 12,
+                                      color: AppColors.grayTextColor,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                        
                         const SizedBox(height: 20),
                         DetailsField(controller: detailsController),
                         const SizedBox(height: 20),

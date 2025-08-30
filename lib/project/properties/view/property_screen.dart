@@ -275,7 +275,9 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               onPressed: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => const LocationConfirmationScreen()),
+                                  MaterialPageRoute(
+                                    builder: (context) => LocationConfirmationScreen(address: addressController.text),
+                                  ),
                                 );
                               },
                               icon: SvgPicture.asset(ImageAssets.locationIcon, width: 20, height: 20),
@@ -548,7 +550,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                             ),
-                            child: Text("تحديث", style: GoogleFonts.poppins(fontSize: 16, color: AppColors.whiteColor)),
+                            child: Text(widget.propertyId.isEmpty ? "Add" : "Update",
+                                style: GoogleFonts.poppins(fontSize: 16, color: AppColors.whiteColor)),
                           ),
                         ),
                         const SizedBox(height: 15),
