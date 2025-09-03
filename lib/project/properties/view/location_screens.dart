@@ -61,16 +61,14 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
       });
       print('Updated _selectedAddress to: $_selectedAddress');
     } else if (widget.address.isNotEmpty) {
-      print('Using widget.address: ${widget.address}');
+
       // In a real app, you'd geocode the address here
       // For now, we'll use the default location
       setState(() {
         _selectedAddress = widget.address;
       });
-      print('Updated _selectedAddress to: $_selectedAddress');
     } else {
-      print('No current location or widget address, using default coordinates');
-      // Get address from default location
+
       final address = await LocationService().getAddressFromCoordinates(_selectedLocation);
       setState(() {
         _selectedAddress = address;
@@ -86,7 +84,6 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
   void _onMapCreated(GoogleMapController controller) {
     print('=== MAP CREATED ===');
     _mapController = controller;
-    print('Map controller assigned: $_mapController');
     
     // Update address immediately when map is created
     _updateAddressForCurrentLocation();
@@ -173,14 +170,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
   }
 
   void _confirmLocation() {
-    // Log the data being returned
-    print('=== CONFIRM LOCATION CALLED ===');
-    print('  Latitude: ${_selectedLocation.latitude}');
-    print('  Longitude: ${_selectedLocation.longitude}');
-    print('  Address: "$_selectedAddress"');
-    print('  Address length: ${_selectedAddress.length}');
-    print('  Address isEmpty: ${_selectedAddress.isEmpty}');
-    
+  
     // Check if address is empty and provide fallback
     String finalAddress = _selectedAddress;
     if (finalAddress.isEmpty) {
@@ -195,7 +185,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
       'address': finalAddress,
     };
     
-    print('Final result being returned: $result');
+ 
     Navigator.pop(context, result);
   }
 
