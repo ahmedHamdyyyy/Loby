@@ -28,7 +28,6 @@ VendorRole _vendorRole = VendorRole.non;
 
 class _HomeScreenState extends State<HomeScreen> {
   void _updateVendorRole(String role) {
-    print('1' * 100);
     _vendorRole = VendorRole.values.firstWhere((e) => e.name == role, orElse: () => VendorRole.non);
     if (_vendorRole == VendorRole.property) {
       getIt<PropertiesCubit>().getProperties();
@@ -183,6 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Navigator.pop(context);
                                     Utils.errorDialog(context, state.callback);
                                   } else if (state.chooseVendorRole == Status.success) {
+                                    Navigator.pop(context);
+                                    _updateVendorRole(state.user.role);
                                     if (_vendorRole == VendorRole.property) {
                                       Navigator.push(
                                         context,

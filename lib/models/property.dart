@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 
 import '../config/constants/api_constance.dart';
+import 'address.dart';
 
 // ignore: constant_identifier_names
 enum PropertyType { apartment, house, cabin, guest_house, studio, yacht, cruise }
@@ -74,11 +75,12 @@ class CustomPropertyModel extends Equatable {
 }
 
 class PropertyModel extends Equatable {
-  final String id, address, details, startDate, endDate;
+  final String id, details, startDate, endDate;
   final int guestNumber, bedrooms, bathrooms, beds, pricePerNight, maxDays;
   final List<String> tags, medias, ownershipContract, facilityLicense;
   final bool available;
   final PropertyType type;
+  final Address address;
 
   const PropertyModel({
     required this.id,
@@ -108,7 +110,7 @@ class PropertyModel extends Equatable {
     bedrooms: 0,
     bathrooms: 0,
     beds: 0,
-    address: '',
+    address: Address.initial,
     details: '',
     tags: [],
     pricePerNight: 0,
@@ -138,7 +140,7 @@ class PropertyModel extends Equatable {
       bedrooms: json['bedrooms'] ?? 0,
       bathrooms: json['bathrooms'] ?? 0,
       beds: json['beds'] ?? 0,
-      address: json['address'] ?? '',
+      address: Address.fromJson(json['address'] ?? {}),
       details: json['details'] ?? '',
       tags: parseStringOrList(json['tags']),
       pricePerNight: json['pricePerNight'] ?? 0,
@@ -164,7 +166,8 @@ class PropertyModel extends Equatable {
       MapEntry('endDate', endDate),
       MapEntry('bathrooms', bathrooms.toString()),
       MapEntry('beds', beds.toString()),
-      MapEntry('address', address),
+      for (final entry in address.toJson().entries) MapEntry(entry.key, entry.value.toString()),
+      // MapEntry('address', address.toJson().toString()),
       MapEntry('details', details),
       MapEntry('pricePerNight', pricePerNight.toString()),
       MapEntry('maxDays', maxDays.toString()),
@@ -240,7 +243,7 @@ class PropertyModel extends Equatable {
     int? bedrooms,
     int? bathrooms,
     int? beds,
-    String? address,
+    Address? address,
     String? details,
     List<String>? tags,
     int? pricePerNight,

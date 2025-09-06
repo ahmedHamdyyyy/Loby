@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, deprecated_member_use
 
+import 'package:Luby/config/widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,6 +12,7 @@ import '../../../../config/constants/constance.dart';
 import '../../../../config/images/assets.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../core/utils/utile.dart';
+import '../../../models/address.dart';
 import '../../../models/property.dart';
 import '../../activities/view/widgets/wideger_activity.dart';
 import '../logic/cubit.dart';
@@ -18,7 +20,6 @@ import 'all_properts_widget.dart';
 import 'basics_section.dart';
 import 'document_section.dart';
 import 'images_section.dart';
-import 'location_screens.dart';
 
 class PropertyScreen extends StatefulWidget {
   const PropertyScreen({super.key, this.propertyId = '', required this.type});
@@ -33,12 +34,12 @@ class _PropertyScreenState extends State<PropertyScreen> {
   bool isStudioAvailable = false, showAvailabilitySection = false, isSelected = true;
   List<String> _imagePaths = [], _contractPaths = [], _licensePaths = [];
   int guests = 1, bedrooms = 1, beds = 1, bathrooms = 1;
-  final addressController = TextEditingController();
   final detailsController = TextEditingController();
   final priceController = TextEditingController();
   PropertyType propertyType = PropertyType.house;
   List<String> tags = [];
   String startDate = '---- -- --', endDate = '---- -- --';
+  Address address = Address.initial;
 
   @override
   void initState() {
@@ -62,7 +63,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
     bedrooms = property.bedrooms;
     beds = property.beds;
     bathrooms = property.bathrooms;
-    addressController.text = property.address;
+    address = property.address;
     detailsController.text = property.details;
     priceController.text = property.pricePerNight.toString();
     tags = [...property.tags];
@@ -80,6 +81,10 @@ class _PropertyScreenState extends State<PropertyScreen> {
   bool _validateForm() {
     if (_contractPaths.isEmpty || _imagePaths.isEmpty || tags.isEmpty || !_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
+      return false;
+    }
+    if (address.latitude == 0 && address.longitude == 0) {
+      showToast(text: 'Please Select the Address on The Map', stute: ToustStute.worning);
       return false;
     }
 
@@ -111,7 +116,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
       bedrooms: bedrooms,
       bathrooms: bathrooms,
       beds: beds,
-      address: addressController.text,
+      address: address,
       details: detailsController.text,
       tags: tags,
       pricePerNight: int.parse(priceController.text),
@@ -250,58 +255,23 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           onBedsChanged: (value) => beds = value,
                           onBathroomsChanged: (value) => bathrooms = value,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Address",
-                              style: GoogleFonts.poppins(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                            if (showAvailabilitySection)
-                              SvgPicture.asset(ImageAssets.editIcon, color: AppColors.editIconColor, width: 20, height: 20),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //   children: [
+                        //     Text(
+                        //       "Address",
+                        //       style: GoogleFonts.poppins(
+                        //         color: AppColors.primaryColor,
+                        //         fontWeight: FontWeight.w600,
+                        //         fontSize: 16,
+                        //       ),
+                        //     ),
+                        //     if (showAvailabilitySection)
+                        //       SvgPicture.asset(ImageAssets.editIcon, color: AppColors.editIconColor, width: 20, height: 20),
+                        //   ],
+                        // ),
                         const SizedBox(height: 10),
-                        TextFormField(
-                          controller: addressController,
-                          decoration: InputDecoration(
-                            hintText: "Enter your address",
-                            hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
-                            prefixIcon: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LocationConfirmationScreen(address: addressController.text),
-                                  ),
-                                );
-                              },
-                              icon: SvgPicture.asset(ImageAssets.locationIcon, width: 20, height: 20),
-                            ),
-                            suffixIcon: const Icon(Icons.add, color: AppColors.grayColorIcon),
-                            prefixIconColor: AppColors.primaryColor,
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) return "Please enter your address";
-                            return null;
-                          },
-                        ),
+                        AddressField(onAddressSelected: (address) => this.address = address),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -550,8 +520,10 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                             ),
-                            child: Text(widget.propertyId.isEmpty ? "Add" : "Update",
-                                style: GoogleFonts.poppins(fontSize: 16, color: AppColors.whiteColor)),
+                            child: Text(
+                              widget.propertyId.isEmpty ? "Add" : "Update",
+                              style: GoogleFonts.poppins(fontSize: 16, color: AppColors.whiteColor),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 15),

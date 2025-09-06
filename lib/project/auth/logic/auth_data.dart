@@ -53,8 +53,8 @@ class AuthData {
     final response = await _apiServices.dio.post(
       ApiConstance.verifyEmail,
       data: {AppConst.email: email},
-      options: Options(headers: {'X-Device-ID': 1111}),
       // options: Options(headers: {'X-Device-ID': await getDeviceId()}),
+      options: Options(headers: {'X-Device-ID': 111111}),
     );
     if (response.statusCode != 200) throw _responseException(response);
   }
@@ -73,6 +73,7 @@ class AuthData {
     if (await deviceInfo.deviceInfo is AndroidDeviceInfo) {
       final androidInfo = await deviceInfo.androidInfo;
       return androidInfo.id;
+      // return '123';
     } else if (await deviceInfo.deviceInfo is IosDeviceInfo) {
       final iosInfo = await deviceInfo.iosInfo;
       return iosInfo.identifierForVendor ?? '';

@@ -13,6 +13,7 @@ import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/widget.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../models/activity.dart';
+import '../../../../models/address.dart';
 import '../../../profile/logic/cubit.dart';
 import '../../../properties/view/images_section.dart';
 import '../../logic/cubit.dart';
@@ -28,25 +29,22 @@ class ActivityScreen extends StatefulWidget {
 
 class _ActivityScreenState extends State<ActivityScreen> {
   final _formKey = GlobalKey<FormState>();
-  final activityNameController = TextEditingController(), addressController = TextEditingController();
+  final activityNameController = TextEditingController();
   final detailsController = TextEditingController(), priceController = TextEditingController();
   final dateController = TextEditingController(), timeController = TextEditingController();
   final activityTimeController = TextEditingController(), maximumGuestNumberController = TextEditingController();
   List<String> _tags = [], _medias = [];
   bool _isAgreed = false;
-  
-  // Location data variables
-  double? _selectedLatitude;
-  double? _selectedLongitude;
-  String _selectedAddress = '';
+
+  Address _address = Address.initial;
 
   @override
   void initState() {
     super.initState();
-    _setProperty();
+    _setActivity();
   }
 
-  void _setProperty() {
+  void _setActivity() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.activityId.isEmpty) {
         context.read<ActivitiesCubit>().setActivity(ActivityModel.non);
@@ -59,7 +57,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   void _setActivityFields(ActivityModel activity) {
     activityNameController.text = activity.name;
-    addressController.text = activity.address;
+    _address = activity.address;
     detailsController.text = activity.details;
     priceController.text = activity.price.toString();
     dateController.text = activity.date;
@@ -81,6 +79,12 @@ class _ActivityScreenState extends State<ActivityScreen> {
       showToast(text: 'Please agree to the terms and conditions', stute: ToustStute.worning);
       return false;
     }
+
+    if (_address.latitude == 0 || _address.longitude == 0) {
+      showToast(text: 'Please select a valid address from the Map', stute: ToustStute.worning);
+      return false;
+    }
+
     if (_medias.isEmpty || _tags.isEmpty || !_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
       return false;
@@ -103,8 +107,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   void _submitForm() async {
     if (!await _validateForm()) return;
-    
-    // Create activity with location data
     final activity = ActivityModel(
       id: widget.activityId,
       vendorId: context.read<ProfileCubit>().state.user.id,
@@ -112,7 +114,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
       time: timeController.text,
       activityTime: activityTimeController.text,
       name: activityNameController.text,
-      address: _selectedAddress.isNotEmpty ? _selectedAddress : addressController.text,
+      address: _address,
       details: detailsController.text,
       tags: _tags,
       price: double.parse(priceController.text),
@@ -120,14 +122,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
       medias: _medias,
       verified: false,
     );
-    
-    // Log location information for debugging
-    if (_selectedLatitude != null && _selectedLongitude != null) {
-      print('Submitting activity with location:');
-      print('  Address: ${activity.address}');
-      print('  Coordinates: $_selectedLatitude, $_selectedLongitude');
-    }
-    
+
     if (widget.activityId.isEmpty) {
       context.read<ActivitiesCubit>().createActivity(activity);
     } else {
@@ -253,82 +248,58 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         const SizedBox(height: 15),
                         CustomTextField(controller: activityNameController, hintText: 'Enter your activity name'),
                         const SizedBox(height: 20),
-                        AddressField(
-                          controller: addressController,
-                          onAddressSelected: (selectedAddress) {
-                            // Store the selected address
-                            _selectedAddress = selectedAddress;
-                            print('Selected address: $_selectedAddress');
-                          },
-                          onLocationDataSelected: (locationData) {
-                            // Store the full location data
-                            _selectedLatitude = locationData['latitude'] as double?;
-                            _selectedLongitude = locationData['longitude'] as double?;
-                            _selectedAddress = locationData['address'] as String? ?? '';
-                            
-                            print('Location data:');
-                            print('  Address: $_selectedAddress');
-                            print('  Latitude: $_selectedLongitude');
-                            print('  Longitude: $_selectedLongitude');
-                          },
-                        ),
-                        
-                        // Display selected location information
-                        if (_selectedAddress.isNotEmpty) ...[
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.green.withOpacity(0.3)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      color: Colors.green,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Selected Location',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.green,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  _selectedAddress,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: AppColors.primaryTextColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                if (_selectedLatitude != null && _selectedLongitude != null) ...[
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    'Coordinates: ${_selectedLatitude!.toStringAsFixed(6)}, ${_selectedLongitude!.toStringAsFixed(6)}',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: AppColors.grayTextColor,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                        ],
-                        
+                        AddressField(onAddressSelected: (address) => _address = address),
+
+                        // if (addressController.text.isNotEmpty) ...[
+                        //   const SizedBox(height: 16),
+                        //   Container(
+                        //     padding: const EdgeInsets.all(16),
+                        //     decoration: BoxDecoration(
+                        //       color: Colors.green.withAlpha(25),
+                        //       borderRadius: BorderRadius.circular(8),
+                        //       border: Border.all(color: Colors.green.withAlpha(75)),
+                        //     ),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         Row(
+                        //           children: [
+                        //             Icon(Icons.location_on, color: Colors.green, size: 20),
+                        //             const SizedBox(width: 8),
+                        //             Text(
+                        //               'Selected Location',
+                        //               style: GoogleFonts.poppins(
+                        //                 fontSize: 14,
+                        //                 fontWeight: FontWeight.w600,
+                        //                 color: Colors.green,
+                        //               ),
+                        //             ),
+                        //           ],
+                        //         ),
+                        // const SizedBox(height: 8),
+                        // Text(
+                        //   addressController.text,
+                        //   style: GoogleFonts.poppins(
+                        //     fontSize: 14,
+                        //     color: AppColors.primaryTextColor,
+                        //     fontWeight: FontWeight.w500,
+                        //   ),
+                        // ),
+                        // if (_selectedLatitude != null && _selectedLongitude != null) ...[
+                        //   const SizedBox(height: 4),
+                        //   Text(
+                        //     'Coordinates: ${_selectedLatitude!.toStringAsFixed(6)}, ${_selectedLongitude!.toStringAsFixed(6)}',
+                        //     style: GoogleFonts.poppins(
+                        //       fontSize: 12,
+                        //       color: AppColors.grayTextColor,
+                        //       fontWeight: FontWeight.w400,
+                        //     ),
+                        //   ),
+                        // ],
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ],
                         const SizedBox(height: 20),
                         DetailsField(controller: detailsController),
                         const SizedBox(height: 20),

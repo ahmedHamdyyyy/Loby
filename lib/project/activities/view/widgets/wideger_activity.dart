@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../../models/address.dart';
 import '../../../properties/view/location_screens.dart';
 import 'tag_selector_widget.dart';
 
@@ -84,16 +85,9 @@ class AgreementParagraph extends StatelessWidget {
 }
 
 class AddressField extends StatelessWidget {
-  final TextEditingController controller;
-  final Function(String)? onAddressSelected; // Callback for selected address
-  final Function(Map<String, dynamic>)? onLocationDataSelected; // Callback for full location data
-
-  const AddressField({
-    super.key, 
-    required this.controller,
-    this.onAddressSelected,
-    this.onLocationDataSelected,
-  });
+  AddressField({super.key, required this.onAddressSelected});
+  final TextEditingController controller = TextEditingController();
+  final Function(Address) onAddressSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -106,79 +100,35 @@ class AddressField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          controller: controller,
           decoration: InputDecoration(
             border: buildOutlineBorder(),
             focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
             enabledBorder: buildOutlineBorder(),
-            prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 15, right: 5),
-              child: SvgPicture.asset(ImageAssets.locationIcon, width: 24, height: 24),
-            ),
-            prefixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-            suffixIcon: IconButton(
-              onPressed: () async {
+            prefixIcon: GestureDetector(
+              onTap: () async {
                 // Navigate to location selection screen
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => LocationConfirmationScreen(address: controller.text),
-                  ),
+                  MaterialPageRoute(builder: (context) => LocationConfirmationScreen(address: controller.text)),
                 );
-                
-                // Handle the returned location data
-                print('Result received: $result');
-                print('Result type: ${result.runtimeType}');
-                
-                if (result != null && result is Map<String, dynamic>) {
-                  print('Result is Map: true');
-                  print('Result keys: ${result.keys.toList()}');
-                  
-                  final address = result['address'] as String?;
-                  final latitude = result['latitude'] as double?;
-                  final longitude = result['longitude'] as double?;
-                  
-                  print('Extracted address: $address');
-                  print('Extracted latitude: $latitude');
-                  print('Extracted longitude: $longitude');
-                  
-                  if (address != null && address.isNotEmpty) {
-                    print('Address is valid, updating controller...');
-                    
-                    // Update the text controller
-                    controller.text = address;
-                    print('Controller text updated to: ${controller.text}');
-                    
-                    // Call the callback to pass the selected address
-                    onAddressSelected?.call(address);
-                    print('onAddressSelected callback called');
-                    
-                    // Call the callback to pass the full location data
-                    onLocationDataSelected?.call(result);
-                    print('onLocationDataSelected callback called');
-                    
-                    // You can also store the coordinates if needed
-                    print('Selected coordinates: $latitude, $longitude');
-                  } else {
-                    print('Address is null or empty');
-                  }
-                } else {
-                  print('Result is not a valid Map');
-                }
+                if (result == null) return;
+                controller.text = result.formattedAddress;
+                onAddressSelected(result);
               },
-              icon: const Icon(Icons.map, color: AppColors.primaryColor),
-              tooltip: 'Select location on map',
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15, right: 5),
+                child: SvgPicture.asset(ImageAssets.locationIcon, width: 24, height: 24),
+              ),
             ),
+            prefixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
             hintText: 'Enter your address or tap map icon to select',
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your address';
-            }
+            if (value == null || value.isEmpty) return 'Please enter your address';
             return null;
           },
-          controller: controller,
-          readOnly: false, // Allow manual input as well
         ),
       ],
     );

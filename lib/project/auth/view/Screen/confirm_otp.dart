@@ -5,7 +5,7 @@ import '../../../../config/constants/constance.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
 import '../../../../models/user.dart';
-import '../../../home/view/luby_screen_splash.dart';
+import '../../../home/view/main_vandor_home.dart';
 import '../../logic/auth_cubit.dart';
 import 'reset_password.dart';
 
@@ -71,7 +71,7 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const LubyScreenSplash()),
+            MaterialPageRoute(builder: (context) => const MainVendorHome()),
             (route) => false,
           );
           break;

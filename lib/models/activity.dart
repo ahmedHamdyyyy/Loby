@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
 
+import 'address.dart';
+
 class CustomActivityModel extends Equatable {
   final String id, name, image;
 
@@ -31,11 +33,12 @@ class CustomActivityModel extends Equatable {
 }
 
 class ActivityModel extends Equatable {
-  final String id, vendorId, name, address, details, date, time, activityTime;
+  final String id, vendorId, name, details, date, time, activityTime;
   final List<String> tags, medias;
   final int maximumGuestNumber;
   final double price;
   final bool verified;
+  final Address address;
 
   const ActivityModel({
     required this.id,
@@ -60,7 +63,7 @@ class ActivityModel extends Equatable {
     time: '',
     activityTime: '',
     name: '',
-    address: '',
+    address: Address.initial,
     details: '',
     tags: [],
     price: 0,
@@ -80,7 +83,7 @@ class ActivityModel extends Equatable {
     return ActivityModel(
       id: json['_id'] ?? '',
       vendorId: json['vendorId']?['_id'] ?? '',
-      address: json['address'] ?? '',
+      address: Address.fromJson(json['address'] ?? {}),
       details: json['details'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
       price: (json['price'] is String) ? double.tryParse(json['price']) ?? 0.0 : (json['price'] ?? 0).toDouble(),
@@ -105,7 +108,7 @@ class ActivityModel extends Equatable {
       MapEntry('time', time),
       MapEntry('activityTime', activityTime),
       MapEntry('name', name),
-      MapEntry('address', address),
+      MapEntry('address', address.toJson().toString()),
       MapEntry('details', details),
       MapEntry('maximumGuestNumber', maximumGuestNumber.toString()),
       MapEntry('price', price.toString()),
@@ -159,7 +162,7 @@ class ActivityModel extends Equatable {
 
   ActivityModel copyWith({
     String? id,
-    String? address,
+    Address? address,
     String? details,
     List<String>? tags,
     double? price,

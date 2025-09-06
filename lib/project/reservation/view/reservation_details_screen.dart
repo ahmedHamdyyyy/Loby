@@ -30,6 +30,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
     final difference = checkOutDate.difference(checkInDate).inDays;
     return difference;
   }
+
   final vendor = getIt<ProfileCubit>().state.user;
 
   @override
@@ -95,19 +96,26 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 const Spacer(),
                 InkWell(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(chat: ChatModel(
-                      id: widget.reservation.id,
-                      vendorId: vendor.id,
-                      userId: widget.reservation.userId,
-                      vendorName: '${vendor.firstName} ${vendor.lastName}',
-                      vendorImageUrl: vendor.profilePicture,
-                      userName: widget.reservation.userName,
-                      userImageUrl: widget.reservation.userImageUrl ?? '',
-                          lastMessage: '',
-                          lastTimestamp: DateTime.now(),
-                        ),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ChatScreen(
+                            chat: ChatModel(
+                              id: widget.reservation.id,
+                              vendorId: vendor.id,
+                              userId: widget.reservation.userId,
+                              vendorName: '${vendor.firstName} ${vendor.lastName}',
+                              vendorImageUrl: vendor.profilePicture,
+                              userName: widget.reservation.userName,
+                              userImageUrl: widget.reservation.userImageUrl,
+                              lastMessage: '',
+                              lastTimestamp: DateTime.now(),
+                            ),
+                          );
+                        },
                       ),
-                    ));
+                    );
                   },
                   child: SvgPicture.asset(ImageAssets.messages2),
                 ),
@@ -168,8 +176,8 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                         const SizedBox(height: 10),
                         Text(
                           widget.reservation.type == ReservationType.property
-                              ? (widget.reservation.item as PropertyModel).address
-                              : (widget.reservation.item as ActivityModel).address,
+                              ? (widget.reservation.item as PropertyModel).address.formattedAddress
+                              : (widget.reservation.item as ActivityModel).address.formattedAddress,
                           style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14),
                         ),
                         const SizedBox(height: 10),
@@ -206,8 +214,8 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 const SizedBox(height: 8),
                 buildOrderDetailText(
                   widget.reservation.type == ReservationType.property
-                      ? (widget.reservation.item as PropertyModel).address
-                      : (widget.reservation.item as ActivityModel).address,
+                      ? (widget.reservation.item as PropertyModel).address.formattedAddress
+                      : (widget.reservation.item as ActivityModel).address.formattedAddress,
                 ),
                 const SizedBox(height: 8),
                 buildOrderDetailText('Check in - ${widget.reservation.checkInDate.substring(0, 10)}'),

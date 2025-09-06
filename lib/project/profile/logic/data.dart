@@ -19,7 +19,7 @@ class ProfileData {
   Future<void> setVendorRole(VendorRole role) async {
     try {
       final response = await _apiServices.dio.post(ApiConstance.setVendorRole, data: {'vendorRole': role.name});
-      if (response.data['success'] != true) throw Exception('فشل تعيين دور البائع');
+      if (![200, 201, 202, 203].contains(response.statusCode)) throw Exception('فشل تعيين دور البائع');
     } catch (e) {
       throw Exception('Failed to set vendor role: ${e.toString()}');
     }

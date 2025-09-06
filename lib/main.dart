@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/services/api_services.dart';
 import 'core/services/cach_services.dart';
+import 'firebase_options.dart';
 import 'locator.dart';
 import 'project/activities/logic/cubit.dart';
 import 'project/auth/logic/auth_cubit.dart';
@@ -11,14 +13,10 @@ import 'project/home/view/luby_screen_splash.dart';
 import 'project/profile/logic/cubit.dart';
 import 'project/properties/logic/cubit.dart';
 import 'project/reservation/logic/cubit.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setup();
   await getIt<CacheService>().init();
   await getIt<ApiService>().init();

@@ -142,8 +142,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           isProperty
-                                              ? (reservation.item as PropertyModel).address
-                                              : (reservation.item as ActivityModel).address,
+                                              ? (reservation.item as PropertyModel).address.formattedAddress
+                                              : (reservation.item as ActivityModel).address.formattedAddress,
                                           style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey.shade600),
                                         ),
                                         const SizedBox(height: 4),
