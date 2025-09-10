@@ -44,14 +44,37 @@ class ProfileHeaderWidget extends StatelessWidget {
   final String firstName;
   final String lastName;
   final String email;
+  final String imageUrl;
 
-  const ProfileHeaderWidget({super.key, required this.firstName, required this.lastName, required this.email});
+  const ProfileHeaderWidget({
+    super.key,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CircleAvatar(radius: 50, backgroundImage: AssetImage(ImageAssets.profileImage)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child: FadeInImage.assetNetwork(
+            placeholder: ImageAssets.profileImage,
+            image: imageUrl,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+            imageErrorBuilder: (context, error, stackTrace) {
+              return const CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey,
+                backgroundImage: AssetImage(ImageAssets.profileImage),
+              );
+            },
+          ),
+        ),
         const SizedBox(height: 10),
         Text(
           "$firstName $lastName",
@@ -244,7 +267,7 @@ void showDeleteAccountDialog(BuildContext context) {
 }
 
 // Account Form Fields Widget
-class AccountFormFields extends StatelessWidget {
+/* class AccountFormFields extends StatelessWidget {
   final TextEditingController firstNameController;
   final TextEditingController lastNameController;
   final TextEditingController phoneController;
@@ -271,6 +294,32 @@ class AccountFormFields extends StatelessWidget {
         CustomTextField(controller: phoneController, isEnabled: isEditing),
         CustomTextField(controller: emailController, isEnabled: isEditing),
         CustomTextField(controller: passwordController, isEnabled: isEditing, isPassword: true),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+} */
+class AccountFormFields extends StatelessWidget {
+  final TextEditingController firstNameController;
+  final TextEditingController lastNameController;
+  final TextEditingController phoneController;
+  final bool isEditing;
+
+  const AccountFormFields({
+    super.key,
+    required this.firstNameController,
+    required this.lastNameController,
+    required this.phoneController,
+    required this.isEditing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CustomTextField(controller: firstNameController, isEnabled: isEditing),
+        CustomTextField(controller: lastNameController, isEnabled: isEditing),
+        CustomTextField(controller: phoneController, isEnabled: isEditing),
         const SizedBox(height: 20),
       ],
     );
@@ -570,6 +619,109 @@ class _EditableProfileImageState extends State<EditableProfileImage> {
   }
 }
 
+
+// Editable Profile Image
+class EditableProfileImageWidget extends StatefulWidget {
+  const EditableProfileImageWidget({super.key, required this.image, required this.onImageChanged});
+  final String image;
+  final ValueChanged<String> onImageChanged;
+  @override
+  State<EditableProfileImageWidget> createState() => _EditableProfileImageWidgetState();
+}
+
+class _EditableProfileImageWidgetState extends State<EditableProfileImageWidget> {
+  String imagePath = '';
+  @override
+  void initState() {
+    imagePath = widget.image;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(100),
+          child:
+              imagePath.startsWith('http')
+                  ? FadeInImage.assetNetwork(
+                    placeholder: ImageAssets.profileImage,
+                    image: imagePath,
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                    imageErrorBuilder: (context, error, stackTrace) {
+                      return const CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: AssetImage(ImageAssets.profileImage),
+                      );
+                    },
+                  )
+                  : imagePath.isEmpty
+                  ? Image.asset(ImageAssets.profileImage, width: 100, height: 100, fit: BoxFit.cover)
+                  : Image.file(File(imagePath), width: 100, height: 100, fit: BoxFit.cover),
+        ),
+        if (imagePath.isNotEmpty)
+          Positioned(
+            top: 0,
+            right: 0,
+            child: InkWell(
+              onTap: () {
+                setState(() => imagePath = '');
+                widget.onImageChanged(imagePath);
+              },
+              child: Icon(Icons.remove_circle, color: Colors.red),
+            ),
+          ),
+        Positioned(
+          bottom: 5,
+          right: 5,
+          child: InkWell(
+            onTap: () async {
+              final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+              if (pickedFile != null) {
+                setState(() => imagePath = pickedFile.path);
+                widget.onImageChanged(imagePath);
+              }
+            },
+            child: SvgPicture.asset('assets/svg/edit.svg', width: 24, height: 24),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+// Profile Info Text
+class ProfileInfoText extends StatelessWidget {
+  const ProfileInfoText({super.key, required this.firstName, required this.lastName, required this.email});
+  final String firstName;
+  final String lastName;
+  final String email;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        Text(
+          "$firstName $lastName",
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: AppColors.accountTextColor,
+          ),
+        ),
+        Text(email, style: TextStyle(fontFamily: 'Poppins', fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w400)),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+}
 // Registration TextField
 class RegistrationTextField extends StatelessWidget {
   final String hintText;

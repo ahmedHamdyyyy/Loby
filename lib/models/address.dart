@@ -32,12 +32,12 @@ class Address extends Equatable {
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(
-      formattedAddress: json['formattedAddress'],
-      city: json['city'],
-      state: json['state'],
-      country: json['country'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      formattedAddress: json['formattedAddress'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'] ?? '',
+      country: json['country'] ?? '',
+      latitude: json['latitude'] ?? 0,
+      longitude: json['longitude'] ?? 0,
     );
   }
 

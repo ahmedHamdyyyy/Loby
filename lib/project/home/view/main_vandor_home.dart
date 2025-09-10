@@ -15,7 +15,7 @@ class MainVendorHome extends StatefulWidget {
 }
 
 class _MainVendorHomeState extends State<MainVendorHome> {
-  final _pages = [const HomeScreen(), const ReservationScreen(), const ConversationScreen(), const AccountScreen()];
+  final _pages = [const HomeScreen(), const ReservationScreen(), const ConversationScreen(), const ProfileFeaturesScreen()];
   int currentIndex = 0;
   void updateCurrentIndex(int index) => setState(() => currentIndex = index);
 

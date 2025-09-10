@@ -34,4 +34,19 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(state.copyWith(chooseVendorRole: Status.initial));
     }
   }
+    void updateUser({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String imagePath,
+  }) async {
+    emit(state.copyWith(updateUserStatus: Status.loading));
+    try {
+      final user = await _userRepository.updateUser(firstName: firstName, lastName: lastName, phone: phone, imagePath: imagePath);
+      emit(state.copyWith(updateUserStatus: Status.success, user: user));
+    } catch (e) {
+      emit(state.copyWith(updateUserStatus: Status.error, callback: e.toString()));
+    }
+  }
+  
 }

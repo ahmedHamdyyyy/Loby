@@ -1,3 +1,5 @@
+import 'package:Luby/project/profile/logic/cubit.dart';
+import 'package:Luby/project/profile/view/account_info/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +20,6 @@ import '../privacy/privacy_view.dart';
 import '../terms_condition/terma_conditions_view.dart';
 import '../wallet/wallet_view.dart';
 import 'account_after_save.dart';
-import 'your_account.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -456,41 +457,46 @@ class AccountProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: Paddings.standard,
-      decoration: ContainerStyles.profileCard(),
-      child: const Column(
-        children: [
-          SizedBox(height: 20),
-          ProfileAvatar(),
-          SizedBox(height: 10),
-          ProfileInfo(name: "Your Name", email: "info@gmail.com"),
-          SizedBox(height: 20),
-          MenuItems(),
-          SizedBox(height: 20),
-        ],
-      ),
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Container(
+          margin: Paddings.standard,
+          decoration: ContainerStyles.profileCard(),
+          child:  Column(
+            children: [
+              SizedBox(height: 20),
+              ProfileAvatar(image: state.user.profilePicture),
+              SizedBox(height: 10),
+              ProfileInfo(name: state.user.firstName ?? " " + (state.user.lastName ?? ""), email: state.user.email),
+              SizedBox(height: 20),
+              MenuItems(),
+              SizedBox(height: 20),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({super.key});
+  final String image;
+  const ProfileAvatar({super.key, required this.image});
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
-      child: Image.asset(
-        "assets/images/profile.png",
+      child: Image.network(
+        image,
         width: 100,
         height: 100,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          return const CircleAvatar(
+          return  CircleAvatar(
             radius: 50,
-            backgroundColor: Colors.grey,
-            child: Icon(Icons.person, size: 50, color: Colors.white),
+            backgroundColor: Colors.black,
+            child: Image.asset("assets/images/logo1.png", width: 50, height: 50),
           );
         },
       ),
@@ -522,7 +528,7 @@ class MenuItems extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        MenuItemWithArrow(icon: ImageAssets.userIcon, title: "Your Account", screen: AccountInfoScreenVendor()),
+        MenuItemWithArrow(icon: ImageAssets.userIcon, title: "Your Account", screen: AccountScreen()),
         /*   MenuItemWithArrow(
           icon: ImageAssets.cardIcon,
           title: "Bank Cards",
@@ -672,7 +678,39 @@ class DeleteAccountDialog extends StatelessWidget {
     );
   }
 }
+class AccountInfoHeader extends StatelessWidget {
+  const AccountInfoHeader({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 22),
+        Row(
+          children: [
+            InkWell(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios, color: AppColors.grayColorIcon)),
+            const SizedBox(width: 8),
+            Text(
+              "Account info",
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                color: AppColors.grayTextColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Please complete the following\ninformation",
+          style: TextStyle(fontFamily: 'Poppins', color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w400),
+        ),
+      ],
+    );
+  }
+}
 class DeleteDialogHeader extends StatelessWidget {
   const DeleteDialogHeader({super.key});
 
@@ -748,5 +786,5 @@ class DeleteDialogActions extends StatelessWidget {
 }
 
 void navigateToAccountAfterSave(BuildContext context) {
-  Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountAfterSaveScreenVendor()));
+  Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
 }

@@ -83,8 +83,10 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/images/iconLOPY2.png"
   min_sdk_android: 21 # نسخة Android الدنيا
-  adaptive_icon_background: "#ffffff" # لون خلفية الأيقونة المتكيفة للإصدارات الأحدث من Android
-  adaptive_icon_foreground: "assets/images/iconLOPY2.png" # صورة المقدمة للأيقونة المتكيفة
+  adaptive_icon_background: "#ffffff"
+  
+  
+  adaptive_icon_foreground: "assets/images/iconLOPY2.png"
   remove_alpha_ios: true
   web:
     generate: false

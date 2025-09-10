@@ -91,10 +91,12 @@ class _PropertyScreenState extends State<PropertyScreen> {
     for (String imagePath in _imagePaths) {
       if (!imagePath.startsWith('http')) {
         String extension = path.extension(imagePath).toLowerCase().replaceAll('.', '');
-        if (!['jpg', 'jpeg', 'png'].contains(extension)) {
+        final List<String> allowedImages = ['jpg', 'jpeg', 'png'];
+        final List<String> allowedVideos = ['mp4'];
+        if (!allowedImages.contains(extension) && !allowedVideos.contains(extension)) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Please use only jpg, jpeg, or png files for images')));
+          ).showSnackBar(const SnackBar(content: Text('Please use only jpg, jpeg, png images or mp4 videos')));
           return false;
         }
       }

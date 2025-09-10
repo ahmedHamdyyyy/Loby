@@ -11,8 +11,8 @@ class PropertiesData {
   Future<PropertyModel> createProperty(PropertyModel property) async {
     print(await property.toJson());
     final response = await _apiService.dio.post(ApiConstance.createProperty, data: await property.toJson());
-    print(response.data);
-    if (!(response.data['success'] ?? false) || response.data['data'] == null) throw _dioError(response);
+   // print(response.data);
+    if (!(response.data?['success'] ?? false) || response.data?['data'] == null) throw _dioError(response);
     return PropertyModel.fromJson(response.data['data']);
   }
 
@@ -35,6 +35,8 @@ class PropertiesData {
 
   Future<PropertyModel> getProperty(String id) async {
     final response = await _apiService.dio.get(ApiConstance.getProperty(id));
+    print(response.data);
+    
     if (!(response.data['success'] ?? false) || response.data['data'] == null) throw _dioError(response);
     return PropertyModel.fromJson(response.data['data']['property']);
   }

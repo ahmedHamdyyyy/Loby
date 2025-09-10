@@ -1,7 +1,7 @@
 part of 'cubit.dart';
 
 class ProfileState extends Equatable {
-  final Status fetchUserStatus, chooseVendorRole;
+  final Status fetchUserStatus, chooseVendorRole, updateUserStatus;
   final String callback;
   final UserModel user;
 
@@ -10,6 +10,7 @@ class ProfileState extends Equatable {
     this.user = UserModel.non,
     this.fetchUserStatus = Status.initial,
     this.chooseVendorRole = Status.initial,
+    this.updateUserStatus = Status.initial,
   });
 
   ProfileState copyWith({
@@ -18,13 +19,16 @@ class ProfileState extends Equatable {
     VendorRole? vendorRole,
     Status? fetchUserStatus,
     Status? chooseVendorRole,
+    Status? updateUserStatus,
   }) => ProfileState(
     callback: callback ?? this.callback,
     user: user ?? this.user,
     fetchUserStatus: fetchUserStatus ?? this.fetchUserStatus,
     chooseVendorRole: chooseVendorRole ?? this.chooseVendorRole,
+    updateUserStatus: updateUserStatus ?? this.updateUserStatus,
   );
 
   @override
-  List<Object> get props => [callback, user, fetchUserStatus, chooseVendorRole];
+  List<Object> get props => [callback, user, fetchUserStatus,
+   chooseVendorRole, updateUserStatus];
 }

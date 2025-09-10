@@ -1,92 +1,82 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:Luby/project/profile/logic/cubit.dart';
+import 'package:Luby/project/profile/view/account_info/update_account_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'widgets_accounts.dart';
+import '../../../../../../config/constants/constance.dart';
+import '../../../auth/view/Widget/wideget_sign_up.dart';
 
-class AccountAfterSaveScreenVendor extends StatefulWidget {
-  const AccountAfterSaveScreenVendor({super.key});
-
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
   @override
-  State<AccountAfterSaveScreenVendor> createState() => _AccountAfterSaveScreenState();
+  _AccountScreenState createState() => _AccountScreenState();
 }
 
-class _AccountAfterSaveScreenState extends State<AccountAfterSaveScreenVendor> {
+class _AccountScreenState extends State<AccountScreen> {
   bool isEditing = false;
+  String _imageUrl = '';
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
+  final phoneController = TextEditingController();
 
-  final TextEditingController firstNameController = TextEditingController(text: "Mostafa");
-  final TextEditingController lastNameController = TextEditingController(text: "Abdallah");
-  final TextEditingController phoneController = TextEditingController(text: "+966 123456789");
-  final TextEditingController emailController = TextEditingController(text: "info@gmail.com");
-  final TextEditingController passwordController = TextEditingController(text: "********");
+  void _handleButtonAction() {
+    showDeleteAccountDialog(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        title: "Account info",
-        onBack: () => Navigator.pop(context),
-        onEdit: !isEditing ? _enableEditing : null,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            const ProfileImage(),
-            const SizedBox(height: 10),
-            ProfileNameAndEmail(
-              firstName: firstNameController.text,
-              lastName: lastNameController.text,
-              email: emailController.text,
-            ),
-            const SizedBox(height: 20),
-            ProfileForm(
-              firstNameController: firstNameController,
-              lastNameController: lastNameController,
-              phoneController: phoneController,
-              emailController: emailController,
-              passwordController: passwordController,
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        //if (state.fetchUserStatus == Status.success) {
+          firstNameController.text = state.user.firstName;
+          lastNameController.text = state.user.lastName;
+          phoneController.text = state.user.phone;
+          _imageUrl = state.user.profilePicture;
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AccountInfoAppBar(
               isEditing: isEditing,
-            ),
-            const SizedBox(height: 20),
-            ActionButton(
-              label: isEditing ? "Save" : "Delete Account",
-              onPressed: () {
-                if (isEditing) {
-                  _saveChanges();
-                } else {
-                  _showDeleteDialog(context);
-                }
+              onEditPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateAccountScreen(user: state.user)));
               },
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _enableEditing() {
-    setState(() {
-      isEditing = true;
-    });
-  }
-
-  void _saveChanges() {
-    setState(() {
-      isEditing = false;
-    });
-  }
-
-  void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => DeleteAccountDialog(
-        onConfirm: () {
-          Navigator.of(context).pop();
-        },
-        onCancel: () => Navigator.of(context).pop(),
-      ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  ProfileHeaderWidget(
+                    imageUrl: _imageUrl,
+                    firstName: firstNameController.text,
+                    lastName: lastNameController.text,
+                    email: state.user.email,
+                  ),
+                  AccountFormFields(
+                    firstNameController: firstNameController,
+                    lastNameController: lastNameController,
+                    phoneController: phoneController,
+                    isEditing: isEditing,
+                  ),
+                  ActionButton(isEditing: isEditing, onPressed: _handleButtonAction),
+                ],
+              ),
+            ),
+          );
+       /*  } *//*  else if (state.fetchUserStatus == Status.loading || state.fetchUserStatus == Status.initial) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AccountInfoAppBar(isEditing: isEditing, onEditPressed: () {}),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        } else {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AccountInfoAppBar(isEditing: isEditing, onEditPressed: () {}),
+            body: const Center(child: Text("Something went wrong!")),
+          );
+        } */
+      },
     );
   }
 }

@@ -116,8 +116,9 @@ class PropertiesRepository {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
       throw Exception('Failed to get properties: ${e.message}');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Unexpected error: $e');
+      debugPrint('Stack trace: $s');
       throw Exception('An unexpected error occurred');
     }
   }

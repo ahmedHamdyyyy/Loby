@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -166,8 +167,8 @@ class PropertyModel extends Equatable {
       MapEntry('endDate', endDate),
       MapEntry('bathrooms', bathrooms.toString()),
       MapEntry('beds', beds.toString()),
-      for (final entry in address.toJson().entries) MapEntry(entry.key, entry.value.toString()),
-      // MapEntry('address', address.toJson().toString()),
+      //for (final entry in address.toJson().entries) MapEntry(entry.key, entry.value.toString()),
+      MapEntry('address', jsonEncode(address.toJson())),
       MapEntry('details', details),
       MapEntry('pricePerNight', pricePerNight.toString()),
       MapEntry('maxDays', maxDays.toString()),
@@ -217,13 +218,15 @@ class PropertyModel extends Equatable {
         final extension = filePath.split('.').last.toLowerCase();
         if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
         if (!await File(filePath).exists()) continue;
+        final bool isVideo = extension == 'mp4';
+        final String subtype = extension == 'jpg' ? 'jpeg' : extension;
         formData.files.add(
           MapEntry(
             'medias',
             await MultipartFile.fromFile(
               filePath,
               filename: filePath.split('/').last,
-              contentType: MediaType('image', extension),
+              contentType: isVideo ? MediaType('video', 'mp4') : MediaType('image', subtype),
             ),
           ),
         );

@@ -34,4 +34,20 @@ class ProfileRepository {
       throw Exception('حدث خطأ غير متوقع');
     }
   }
+
+  Future<UserModel> updateUser({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    required String imagePath,
+  }) async {
+    try {
+      return await _userData.updateUser(firstName: firstName, lastName: lastName, phone: phone, imagePath: imagePath);
+    } on DioException catch (e) {
+      debugPrint('DioException: ${e.error}');
+      throw Exception(e.response?.data['error'].toString());
+    } catch (e) {
+      throw Exception('حدث خطأ غير متوقع');
+    }
+  } 
 }
