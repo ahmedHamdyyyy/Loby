@@ -37,8 +37,9 @@ class PropertiesRepository {
   Future<PropertyModel> updateProperty(PropertyModel property) async {
     try {
       return await _propertiesData.updateProperty(property);
-    } on DioException catch (e) {
+    } on DioException catch (e, s) {
       debugPrint('DioException: ${e.response?.data}');
+      debugPrint('Stack trace: $s');
       if (e.response?.data['error'] != null) {
         final errorMessage = e.response?.data['error'];
         if (errorMessage is List) {
@@ -50,8 +51,9 @@ class PropertiesRepository {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
       throw Exception('Failed to update property: ${e.message}');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Unexpected error: $e');
+      debugPrint('Stack trace: $s');
       throw Exception('An unexpected error occurred');
     }
   }

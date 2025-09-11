@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -156,8 +155,6 @@ class PropertyModel extends Equatable {
 
   Future<FormData> toJson() async {
     final formData = FormData();
-
-    // Add basic fields
     formData.fields.addAll([
       MapEntry('type', type.name),
       MapEntry('available', available.toString()),
@@ -167,8 +164,7 @@ class PropertyModel extends Equatable {
       MapEntry('endDate', endDate),
       MapEntry('bathrooms', bathrooms.toString()),
       MapEntry('beds', beds.toString()),
-      //for (final entry in address.toJson().entries) MapEntry(entry.key, entry.value.toString()),
-      MapEntry('address', jsonEncode(address.toJson())),
+      MapEntry('address', address.toJson()),
       MapEntry('details', details),
       MapEntry('pricePerNight', pricePerNight.toString()),
       MapEntry('maxDays', maxDays.toString()),

@@ -40,10 +40,10 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     }
   }
 
-  void createActivity(ActivityModel activity) async {
+  void createActivity(ActivityModel activity, String vendorId) async {
     emit(state.copyWith(createStatus: Status.loading));
     try {
-      final createdProperty = await _repo.createActivity(activity);
+      final createdProperty = await _repo.createActivity(activity, vendorId);
       emit(
         state.copyWith(
           createStatus: Status.success,
@@ -61,15 +61,17 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
     }
   }
 
-  void updateActivity(ActivityModel activity) async {
+  void updateActivity(ActivityModel activity, String vendorId) async {
     emit(state.copyWith(updateStatus: Status.loading));
     try {
-      await _repo.updateActivity(activity);
+      final updatedActivity = await _repo.updateActivity(activity, vendorId);
       emit(
         state.copyWith(
           updateStatus: Status.success,
-          activity: activity,
-          activities: [...state.activities.map((p) => p.id == activity.id ? CustomActivityModel.fromProperty(activity) : p)],
+          activity: updatedActivity,
+          activities: [
+            ...state.activities.map((p) => p.id == activity.id ? CustomActivityModel.fromProperty(updatedActivity) : p),
+          ],
         ),
       );
     } catch (e) {
@@ -80,20 +82,20 @@ class ActivitiesCubit extends Cubit<ActivitiesState> {
   }
 
   void deleteActivity(String id) async {
-    emit(state.copyWith(updateStatus: Status.loading));
+    emit(state.copyWith(deleteStatus: Status.loading));
     try {
       await _repo.deleteActivity(id);
       emit(
         state.copyWith(
-          updateStatus: Status.success,
-          activities: [...state.activities.where((activity) => activity.id != state.activity.id)],
+          deleteStatus: Status.success,
+          activities: [...state.activities.where((activity) => activity.id != id)],
           activity: ActivityModel.non,
         ),
       );
     } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(deleteStatus: Status.error, msg: e.toString()));
     } finally {
-      emit(state.copyWith(getActivityStatus: Status.initial));
+      emit(state.copyWith(deleteStatus: Status.initial));
     }
   }
 

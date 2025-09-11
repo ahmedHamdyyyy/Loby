@@ -8,9 +8,9 @@ class ActivitiesRepository {
   const ActivitiesRepository(this._data);
   final ActivitiesData _data;
 
-  Future<ActivityModel> createActivity(ActivityModel property) async {
+  Future<ActivityModel> createActivity(ActivityModel property, String vendorId) async {
     try {
-      return await _data.createActivity(property);
+      return await _data.createActivity(property, vendorId);
     } on DioException catch (e) {
       debugPrint('DioException: $e');
       if (e.response?.data['error'] != null) {
@@ -24,15 +24,16 @@ class ActivitiesRepository {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
       throw Exception('Failed to create property: ${e.message}');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('Unexpected error: $e');
+      debugPrint('Unexpected error: $s');
       throw Exception('An unexpected error occurred');
     }
   }
 
-  Future<void> updateActivity(ActivityModel property) async {
+  Future<ActivityModel> updateActivity(ActivityModel property, String vendorId) async {
     try {
-      return await _data.updateActivity(property);
+      return await _data.updateActivity(property, vendorId);
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       if (e.response?.data['error'] != null) {

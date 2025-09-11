@@ -273,7 +273,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                         //   ],
                         // ),
                         const SizedBox(height: 10),
-                        AddressField(onAddressSelected: (address) => this.address = address),
+                        AddressField(address, onAddressSelected: (address) => this.address = address),
                         const SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

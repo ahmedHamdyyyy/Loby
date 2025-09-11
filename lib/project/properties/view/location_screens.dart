@@ -10,73 +10,45 @@ import '../../../../models/address.dart';
 
 class LocationConfirmationScreen extends StatefulWidget {
   const LocationConfirmationScreen({super.key, required this.address});
-  final String address;
+  final Address address;
   @override
   State<LocationConfirmationScreen> createState() => _LocationConfirmationScreenState();
 }
 
 class _LocationConfirmationScreenState extends State<LocationConfirmationScreen> {
   GoogleMapController? _mapController;
-  LatLng _selectedLocation = const LatLng(24.7136, 46.6753); // Default: Riyadh
+  LatLng _selectedLocation = const LatLng(24.7136, 46.6753);
   String _selectedAddress = '';
   String _selectedCity = '';
   String _selectedState = '';
   String _selectedCountry = '';
-  String _street = '';
-  String _subLocality = '';
-  String _postalCode = '';
-  // bool _isLoading = true;
   bool _isLoadingAddress = false;
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize with default address if available
-    if (widget.address.isNotEmpty) _selectedAddress = widget.address;
-
     _initializeMap();
   }
 
   void _initializeMap() async {
-    // Try to get current location first, fallback to default
-    final currentLocation = await LocationService().getCurrentLocation();
-    if (currentLocation != null) {
-      setState(() => _isLoadingAddress = true);
-
-      // Get detailed place information including city, state, country
-      await _updateLocationDetails(currentLocation);
-    } else if (widget.address.isNotEmpty) {
-      // In a real app, you'd geocode the address here
-      // For now, we'll use the default location
-      setState(() {
-        _selectedAddress = widget.address;
-      });
-      await _updateLocationDetails(_selectedLocation);
+    setState(() => _isLoadingAddress = true);
+    if (widget.address == Address.initial) {
+      _selectedLocation = await LocationService().getCurrentLocation() ?? const LatLng(24.7136, 46.6753);
     } else {
-      await _updateLocationDetails(_selectedLocation);
+      _selectedLocation = LatLng(widget.address.latitude, widget.address.longitude);
     }
-    setState(() {
-      // _isLoading = false;
-    });
+    await _updateLocationDetails(_selectedLocation);
+    setState(() => _isLoadingAddress = false);
   }
 
   Future<void> _updateLocationDetails(LatLng location) async {
     try {
       final placeDetails = await LocationService().getPlaceDetails(location);
-
       setState(() {
         _selectedLocation = location;
-
-        // Extract detailed address components
-        _street = placeDetails['street'] ?? '';
-        _subLocality = placeDetails['subLocality'] ?? '';
         _selectedCity = placeDetails['locality'] ?? placeDetails['subLocality'] ?? '';
         _selectedState = placeDetails['administrativeArea'] ?? '';
         _selectedCountry = placeDetails['country'] ?? '';
-        _postalCode = placeDetails['postalCode'] ?? '';
-
-        // Create a well-formatted address
         _selectedAddress = _buildFormattedAddress();
         _isLoadingAddress = false;
       });
@@ -87,9 +59,6 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
         _selectedCity = '';
         _selectedState = '';
         _selectedCountry = '';
-        _street = '';
-        _subLocality = '';
-        _postalCode = '';
         _isLoadingAddress = false;
       });
     }
@@ -97,87 +66,34 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
 
   String _buildFormattedAddress() {
     List<String> addressParts = [];
-
-    // Add street if available
-    if (_street.isNotEmpty) {
-      addressParts.add(_street);
-    }
-
-    // Add sub-locality if available and different from street
-    if (_subLocality.isNotEmpty && _subLocality != _street) {
-      addressParts.add(_subLocality);
-    }
-
-    // Add city if available and different from sub-locality
-    if (_selectedCity.isNotEmpty && _selectedCity != _subLocality) {
-      addressParts.add(_selectedCity);
-    }
-
-    // Add state if available
-    if (_selectedState.isNotEmpty) {
-      addressParts.add(_selectedState);
-    }
-
-    // Add postal code if available
-    if (_postalCode.isNotEmpty) {
-      addressParts.add(_postalCode);
-    }
-
-    // Add country if available
-    if (_selectedCountry.isNotEmpty) {
-      addressParts.add(_selectedCountry);
-    }
-
-    // If we have address parts, join them with commas
-    if (addressParts.isNotEmpty) {
-      return addressParts.join(', ');
-    }
-
-    // Fallback to coordinates if no address components
+    if (_selectedCity.isNotEmpty) addressParts.add(_selectedCity);
+    if (_selectedState.isNotEmpty) addressParts.add(_selectedState);
+    if (_selectedCountry.isNotEmpty) addressParts.add(_selectedCountry);
+    if (addressParts.isNotEmpty) return addressParts.join(', ');
     return '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
   }
 
   String _buildLocationSummary() {
     List<String> locationParts = [];
-
-    if (_selectedCity.isNotEmpty) {
-      locationParts.add(_selectedCity);
-    }
-
-    if (_selectedState.isNotEmpty) {
-      locationParts.add(_selectedState);
-    }
-
-    if (_selectedCountry.isNotEmpty) {
-      locationParts.add(_selectedCountry);
-    }
-
+    if (_selectedCity.isNotEmpty) locationParts.add(_selectedCity);
+    if (_selectedState.isNotEmpty) locationParts.add(_selectedState);
+    if (_selectedCountry.isNotEmpty) locationParts.add(_selectedCountry);
     return locationParts.join(', ');
   }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-
-    // Update address immediately when map is created
     _updateAddressForCurrentLocation();
   }
 
   void _updateAddressForCurrentLocation() async {
-    setState(() {
-      _isLoadingAddress = true;
-    });
-
+    setState(() => _isLoadingAddress = true);
     await _updateLocationDetails(_selectedLocation);
   }
 
-  void _onCameraMove(CameraPosition position) {
-    setState(() {
-      _selectedLocation = position.target;
-    });
-  }
+  void _onCameraMove(CameraPosition position) => setState(() => _selectedLocation = position.target);
 
   void _onCameraIdle() async {
-    // When the map stops moving, update the selected location
     if (_mapController != null) {
       _mapController!
           .getVisibleRegion()
@@ -186,48 +102,30 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
               (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
               (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
             );
-
-            setState(() {
-              _isLoadingAddress = true;
-            });
-
+            setState(() => _isLoadingAddress = true);
             await _updateLocationDetails(center);
           })
           .catchError((error) {
-            // Fallback to simple coordinate format
             setState(() {
               _selectedAddress =
                   '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
               _selectedCity = '';
               _selectedState = '';
               _selectedCountry = '';
-              _street = '';
-              _subLocality = '';
-              _postalCode = '';
               _isLoadingAddress = false;
             });
           });
-    } else {}
+    }
   }
 
   void _confirmLocation() {
-    // Create a comprehensive formatted address
     String finalAddress = _selectedAddress;
     if (finalAddress.isEmpty) {
       finalAddress = '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
     }
-
-    // Clean and format the address components
     String cleanCity = _selectedCity.trim();
     String cleanState = _selectedState.trim();
     String cleanCountry = _selectedCountry.trim();
-
-    // If city is empty, try to use sub-locality
-    if (cleanCity.isEmpty && _subLocality.isNotEmpty) {
-      cleanCity = _subLocality.trim();
-    }
-
-    // Return the selected location and address to the previous screen
     final address = Address(
       formattedAddress: finalAddress,
       city: cleanCity,
@@ -236,7 +134,6 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
       latitude: _selectedLocation.latitude,
       longitude: _selectedLocation.longitude,
     );
-
     Navigator.pop(context, address);
   }
 

@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../config/constants/constance.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../../config/widget/widget.dart';
+import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
-import '../../../../models/activity.dart';
 import '../../logic/cubit.dart';
 import '../screens/activity_screen.dart';
 
@@ -13,9 +15,25 @@ class ActivitiesListView extends StatelessWidget {
   const ActivitiesListView({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocSelector<ActivitiesCubit, ActivitiesState, List<CustomActivityModel>>(
-    selector: (state) => state.activities,
-    builder: (context, activities) {
+  Widget build(BuildContext context) => BlocConsumer<ActivitiesCubit, ActivitiesState>(
+    listener: (context, state) {
+      switch (state.deleteStatus) {
+        case Status.loading:
+          Utils.loadingDialog(context);
+        case Status.success:
+          Navigator.pop(context);
+          showToast(text: 'Activity Deleted Successfully', stute: ToustStute.success);
+          break;
+        case Status.error:
+          Navigator.pop(context);
+          showToast(text: state.msg, stute: ToustStute.error);
+          break;
+        case Status.initial:
+          break;
+      }
+    },
+    builder: (context, state) {
+      final activities = state.activities;
       if (activities.isEmpty) return const Center(child: Text('No Added Items Here...'));
       return ListView.builder(
         scrollDirection: Axis.vertical,

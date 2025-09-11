@@ -33,7 +33,7 @@ class CustomActivityModel extends Equatable {
 }
 
 class ActivityModel extends Equatable {
-  final String id, vendorId, name, details, date, time, activityTime;
+  final String id, name, details, date, time, activityTime;
   final List<String> tags, medias;
   final int maximumGuestNumber;
   final double price;
@@ -42,7 +42,6 @@ class ActivityModel extends Equatable {
 
   const ActivityModel({
     required this.id,
-    required this.vendorId,
     required this.date,
     required this.time,
     required this.activityTime,
@@ -58,7 +57,6 @@ class ActivityModel extends Equatable {
 
   static const non = ActivityModel(
     id: '',
-    vendorId: '',
     date: '',
     time: '',
     activityTime: '',
@@ -82,7 +80,6 @@ class ActivityModel extends Equatable {
 
     return ActivityModel(
       id: json['_id'] ?? '',
-      vendorId: json['vendorId']?['_id'] ?? '',
       address: Address.fromJson(json['address'] ?? {}),
       details: json['details'] ?? '',
       tags: List<String>.from(json['tags'] ?? []),
@@ -98,14 +95,14 @@ class ActivityModel extends Equatable {
     );
   }
 
-  Future<FormData> create() async {
+  Future<FormData> create(String vendorId) async {
     final formData = FormData();
 
     // Add basic fields
     List<MapEntry<String, String>> fields = [
-      MapEntry('vendorId', vendorId),
       MapEntry('date', date),
       MapEntry('time', time),
+      MapEntry('vendorId', vendorId),
       MapEntry('activityTime', activityTime),
       MapEntry('name', name),
       MapEntry('address', address.toJson().toString()),
@@ -186,7 +183,6 @@ class ActivityModel extends Equatable {
       date: date ?? this.date,
       time: time ?? this.time,
       activityTime: activityTime ?? this.activityTime,
-      vendorId: vendorId ?? this.vendorId,
       verified: verified ?? this.verified,
       maximumGuestNumber: maximumGuestNumber ?? this.maximumGuestNumber,
     );
@@ -205,7 +201,6 @@ class ActivityModel extends Equatable {
     date,
     time,
     activityTime,
-    vendorId,
     verified,
   ];
 }

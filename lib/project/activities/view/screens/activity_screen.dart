@@ -109,7 +109,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
     if (!await _validateForm()) return;
     final activity = ActivityModel(
       id: widget.activityId,
-      vendorId: context.read<ProfileCubit>().state.user.id,
       date: dateController.text,
       time: timeController.text,
       activityTime: activityTimeController.text,
@@ -122,11 +121,11 @@ class _ActivityScreenState extends State<ActivityScreen> {
       medias: _medias,
       verified: false,
     );
-
+    final vendorId = context.read<ProfileCubit>().state.user.id;
     if (widget.activityId.isEmpty) {
-      context.read<ActivitiesCubit>().createActivity(activity);
+      context.read<ActivitiesCubit>().createActivity(activity, vendorId);
     } else {
-      context.read<ActivitiesCubit>().updateActivity(activity);
+      context.read<ActivitiesCubit>().updateActivity(activity, vendorId);
     }
   }
 
@@ -248,7 +247,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         const SizedBox(height: 15),
                         CustomTextField(controller: activityNameController, hintText: 'Enter your activity name'),
                         const SizedBox(height: 20),
-                        AddressField(onAddressSelected: (address) => _address = address),
+                        AddressField(_address, onAddressSelected: (address) => _address = address),
 
                         // if (addressController.text.isNotEmpty) ...[
                         //   const SizedBox(height: 16),

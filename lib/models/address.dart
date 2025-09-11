@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class Address extends Equatable {
@@ -19,15 +21,15 @@ class Address extends Equatable {
 
   static const initial = Address(formattedAddress: '', city: '', state: '', country: '', latitude: 0, longitude: 0);
 
-  Map<String, dynamic> toJson() {
-    return {
+  String toJson() {
+    return jsonEncode({
       'formattedAddress': formattedAddress,
       'city': city,
       'state': state,
       'country': country,
       'latitude': latitude,
       'longitude': longitude,
-    };
+    });
   }
 
   factory Address.fromJson(Map<String, dynamic> json) {

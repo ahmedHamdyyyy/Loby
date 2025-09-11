@@ -1,5 +1,4 @@
 import 'package:Luby/project/profile/logic/cubit.dart';
-import 'package:Luby/project/profile/view/account_info/account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -462,12 +461,12 @@ class AccountProfileCard extends StatelessWidget {
         return Container(
           margin: Paddings.standard,
           decoration: ContainerStyles.profileCard(),
-          child:  Column(
+          child: Column(
             children: [
               SizedBox(height: 20),
               ProfileAvatar(image: state.user.profilePicture),
               SizedBox(height: 10),
-              ProfileInfo(name: state.user.firstName ?? " " + (state.user.lastName ?? ""), email: state.user.email),
+              ProfileInfo(name: state.user.firstName, email: state.user.email),
               SizedBox(height: 20),
               MenuItems(),
               SizedBox(height: 20),
@@ -493,7 +492,7 @@ class ProfileAvatar extends StatelessWidget {
         height: 100,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) {
-          return  CircleAvatar(
+          return CircleAvatar(
             radius: 50,
             backgroundColor: Colors.black,
             child: Image.asset("assets/images/logo1.png", width: 50, height: 50),
@@ -678,6 +677,7 @@ class DeleteAccountDialog extends StatelessWidget {
     );
   }
 }
+
 class AccountInfoHeader extends StatelessWidget {
   const AccountInfoHeader({super.key});
 
@@ -711,6 +711,7 @@ class AccountInfoHeader extends StatelessWidget {
     );
   }
 }
+
 class DeleteDialogHeader extends StatelessWidget {
   const DeleteDialogHeader({super.key});
 

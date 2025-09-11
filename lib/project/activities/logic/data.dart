@@ -8,15 +8,19 @@ class ActivitiesData {
   const ActivitiesData(this._apiService);
   final ApiService _apiService;
 
-  Future<ActivityModel> createActivity(ActivityModel activity) async {
-    final response = await _apiService.dio.post(ApiConstance.createActivity, data: await activity.create());
+  Future<ActivityModel> createActivity(ActivityModel activity, String vendorId) async {
+    final response = await _apiService.dio.post(ApiConstance.createActivity, data: await activity.create(vendorId));
     _checkIfSuccess(response);
-    return ActivityModel.fromJson(response.data['data']['activity']);
+    return ActivityModel.fromJson(response.data['data']);
   }
 
-  Future<void> updateActivity(ActivityModel activity) async {
-    final response = await _apiService.dio.put(ApiConstance.updateActivity(activity.id), data: await activity.create());
+  Future<ActivityModel> updateActivity(ActivityModel activity, String vendorId) async {
+    final response = await _apiService.dio.put(
+      ApiConstance.updateActivity(activity.id),
+      data: await activity.create(vendorId),
+    );
     _checkIfSuccess(response);
+    return ActivityModel.fromJson(response.data['data']);
   }
 
   Future<void> deleteActivity(String id) async {
@@ -33,6 +37,7 @@ class ActivitiesData {
   Future<ActivityModel> getActivity(String id) async {
     final response = await _apiService.dio.get(ApiConstance.getActivity(id));
     _checkIfSuccess(response);
+    print(response.data);
     return ActivityModel.fromJson(response.data['data']['activity']);
   }
 

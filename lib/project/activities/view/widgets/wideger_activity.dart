@@ -84,10 +84,25 @@ class AgreementParagraph extends StatelessWidget {
   }
 }
 
-class AddressField extends StatelessWidget {
-  AddressField({super.key, required this.onAddressSelected});
-  final TextEditingController controller = TextEditingController();
+class AddressField extends StatefulWidget {
+  const AddressField(this.address, {super.key, required this.onAddressSelected});
   final Function(Address) onAddressSelected;
+  final Address address;
+  @override
+  State<AddressField> createState() => _AddressFieldState();
+}
+
+class _AddressFieldState extends State<AddressField> {
+  late final TextEditingController _controller;
+  late Address _address;
+
+  @override
+  void initState() {
+    super.initState();
+    _address = widget.address;
+    print('Initial address: ${_address.formattedAddress}');
+    _controller = TextEditingController(text: _address.formattedAddress);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +115,7 @@ class AddressField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
-          controller: controller,
+          controller: _controller,
           decoration: InputDecoration(
             border: buildOutlineBorder(),
             focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
@@ -110,11 +125,12 @@ class AddressField extends StatelessWidget {
                 // Navigate to location selection screen
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LocationConfirmationScreen(address: controller.text)),
+                  MaterialPageRoute(builder: (context) => LocationConfirmationScreen(address: _address)),
                 );
-                if (result == null) return;
-                controller.text = result.formattedAddress;
-                onAddressSelected(result);
+                if (result is Address) {
+                  _controller.text = result.formattedAddress;
+                  widget.onAddressSelected(result);
+                }
               },
               child: Padding(
                 padding: const EdgeInsets.only(left: 15, right: 5),
