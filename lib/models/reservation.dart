@@ -5,7 +5,7 @@ import 'property.dart';
 
 enum ReservationType { activity, property }
 
-enum ReservationStatus { pending, approved, rejected }
+enum ReservationStatus { draft, completed, cancelled }
 
 class ReservationModel extends Equatable {
   final String id, userId, userName, userImageUrl, checkInDate, checkOutDate;
@@ -38,7 +38,7 @@ class ReservationModel extends Equatable {
     checkInDate: '',
     checkOutDate: '',
     type: ReservationType.property,
-    status: ReservationStatus.pending,
+    status: ReservationStatus.draft,
     guestNumber: 1,
     registrationNumber: 0,
     totalPrice: 0.0,
@@ -94,9 +94,9 @@ class ReservationModel extends Equatable {
       userName: '${map['user']['firstName'] ?? ''} ${map['user']['lastName'] ?? ''}',
       userImageUrl: map['user']['imageUrl'] ?? '',
       type: type,
-      checkInDate: map['checkInDate'] ?? '',
-      checkOutDate: map['checkOutDate'] ?? '',
-      status: ReservationStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => ReservationStatus.pending),
+      checkInDate: type == ReservationType.activity ? map['activity']['date'] ?? '' : map['checkInDate'] ?? '',
+      checkOutDate: type == ReservationType.activity ? map['activity']['date'] ?? '' : map['checkOutDate'] ?? '',
+      status: ReservationStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => ReservationStatus.draft),
       guestNumber: map['guestNumber'] ?? 1,
       registrationNumber: map['registrationNumber'] ?? 0,
       totalPrice: (map['totalPrice'] as num?)?.toDouble() ?? 0.0,

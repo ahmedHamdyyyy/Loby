@@ -42,6 +42,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   void initState() {
     super.initState();
     _setActivity();
+    context.read<ActivitiesCubit>().initStatus();
   }
 
   void _setActivity() {
@@ -59,7 +60,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
     activityNameController.text = activity.name;
     _address = activity.address;
     detailsController.text = activity.details;
-    priceController.text = activity.price.toString();
+    priceController.text = activity.price > 0 ? activity.price.toString() : '';
     dateController.text = activity.date;
     timeController.text = activity.time;
     activityTimeController.text = activity.activityTime.toString();
