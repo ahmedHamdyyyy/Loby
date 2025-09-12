@@ -34,4 +34,21 @@ class FirestoreService {
       .orderBy('timestamp', descending: true)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => ChatMessage.fromFirestore(doc.data(), doc.id)).toList());
+
+  // إضافة دالة حذف المحادثة
+  Future<void> deleteChat(String chatId) async {
+    // حذف جميع الرسائل في المحادثة أولاً
+    final messagesSnapshot = await _firestore
+        .collection(_chatsCollection)
+        .doc(chatId)
+        .collection(_messagesCollection)
+        .get();
+    
+    for (var doc in messagesSnapshot.docs) {
+      await doc.reference.delete();
+    }
+    
+    // حذف المحادثة نفسها
+    await _firestore.collection(_chatsCollection).doc(chatId).delete();
+  }
 }
