@@ -8,6 +8,7 @@ import '../../../../../core/services/firestore_service.dart';
 import '../../../../../locator.dart';
 import '../profile/logic/cubit.dart';
 import 'chat_screen.dart';
+import '../../models/chat.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({super.key});
@@ -17,11 +18,85 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   final _searchController = TextEditingController();
+  final _firestoreService = FirestoreService();
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final dateStr = timestamp.toString();
+    if (dateStr.length >= 16) {
+      return dateStr.substring(0, 16).replaceAll('T', '  ');
+    }
+    return dateStr.replaceAll('T', '  ');
+  }
+
+  Future<void> _showDeleteDialog(ChatModel chat) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            ' Delete Conversation',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+          ),
+          content: Text(
+            'Are you sure you want to delete the conversation with ${chat.userName}?',
+            style: GoogleFonts.poppins(),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: GoogleFonts.poppins(color: AppColors.grayTextColor),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                'Delete',
+                style: GoogleFonts.poppins(color: Colors.red),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                try {
+                  await _firestoreService.deleteChat(chat.id);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Conversation deleted successfully',
+                          style: GoogleFonts.poppins(),
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'An error occurred while deleting the conversation',
+                          style: GoogleFonts.poppins(),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -43,7 +118,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
         // Search bar
         Padding(
-          padding: const EdgeInsets.only(left: 8.0, right: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20),
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
@@ -70,6 +145,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 final chats = snapshot.data ?? [];
+                
+                // Sort conversations by lastTimestamp in descending order (most recent first)
+                chats.sort((a, b) => b.lastTimestamp.compareTo(a.lastTimestamp));
+                
                 return ListView.separated(
                   shrinkWrap: true,
                   itemCount: chats.length,
@@ -78,9 +157,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     final chat = chats[index];
                     return ListTile(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(chat: chat))),
+                      onLongPress: () => _showDeleteDialog(chat),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: FadeInImage.assetNetwork(
+                          
                           placeholder: 'assets/images/saudian_man.png',
                           image: chat.userImageUrl,
                           imageErrorBuilder: (context, error, stackTrace) => Image.asset('assets/images/saudian_man.png'),
@@ -112,7 +193,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           Align(
                             alignment: AlignmentDirectional.centerEnd,
                             child: Text(
-                              chat.lastTimestamp.toString().substring(0, 16).replaceAll('T', '  '),
+                              _formatTimestamp(chat.lastTimestamp),
                               style: GoogleFonts.poppins(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
