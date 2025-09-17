@@ -294,27 +294,6 @@ class TimeField extends StatelessWidget {
   }
 }
 
-class ActivityDurationField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const ActivityDurationField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Activity time',
-          style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 8),
-        CustomTextField(controller: controller, hintText: '2 hours'),
-      ],
-    );
-  }
-}
-
 class PriceField extends StatelessWidget {
   final TextEditingController controller;
 

@@ -11,6 +11,7 @@ class ActivitiesData {
   Future<ActivityModel> createActivity(ActivityModel activity, String vendorId) async {
     final response = await _apiService.dio.post(ApiConstance.createActivity, data: await activity.create(vendorId));
     _checkIfSuccess(response);
+    print(response.data);
     return ActivityModel.fromJson(response.data['data']);
   }
 
@@ -19,6 +20,7 @@ class ActivitiesData {
       ApiConstance.updateActivity(activity.id),
       data: await activity.create(vendorId),
     );
+    print(response.data);
     _checkIfSuccess(response);
     return ActivityModel.fromJson(response.data['data']);
   }
