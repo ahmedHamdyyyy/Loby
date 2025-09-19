@@ -6,9 +6,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../core/services/firestore_service.dart';
 import '../../../../../locator.dart';
+import '../../models/chat.dart';
 import '../profile/logic/cubit.dart';
 import 'chat_screen.dart';
-import '../../models/chat.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({super.key});
@@ -40,29 +40,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            ' Delete Conversation',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-          ),
+          title: Text(' Delete Conversation', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
           content: Text(
             'Are you sure you want to delete the conversation with ${chat.userName}?',
             style: GoogleFonts.poppins(),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.poppins(color: AppColors.grayTextColor),
-              ),
+              child: Text('Cancel', style: GoogleFonts.poppins(color: AppColors.grayTextColor)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                'Delete',
-                style: GoogleFonts.poppins(color: Colors.red),
-              ),
+              child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
@@ -70,10 +61,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'Conversation deleted successfully',
-                          style: GoogleFonts.poppins(),
-                        ),
+                        content: Text('Conversation deleted successfully', style: GoogleFonts.poppins()),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -82,10 +70,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          'An error occurred while deleting the conversation',
-                          style: GoogleFonts.poppins(),
-                        ),
+                        content: Text('An error occurred while deleting the conversation', style: GoogleFonts.poppins()),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -145,10 +130,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
                 final chats = snapshot.data ?? [];
-                
+
                 // Sort conversations by lastTimestamp in descending order (most recent first)
                 chats.sort((a, b) => b.lastTimestamp.compareTo(a.lastTimestamp));
-                
+
                 return ListView.separated(
                   shrinkWrap: true,
                   itemCount: chats.length,
@@ -161,7 +146,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: FadeInImage.assetNetwork(
-                          
                           placeholder: 'assets/images/saudian_man.png',
                           image: chat.userImageUrl,
                           imageErrorBuilder: (context, error, stackTrace) => Image.asset('assets/images/saudian_man.png'),

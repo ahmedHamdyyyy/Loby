@@ -320,7 +320,41 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         const SizedBox(height: 20),
                         TimeField(controller: timeController),
                         const SizedBox(height: 20),
-                        ActivityDurationField(controller: activityTimeController),
+                        Text(
+                          'Activity time',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: AppColors.primaryTextColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: activityTimeController,
+                          decoration: InputDecoration(
+                            hintText: "2 hours",
+                            hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
+                            prefixIconColor: AppColors.primaryColor,
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return "Please enter the Activity time";
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 20),
                         Text(
                           'Maximum Guests',
@@ -358,7 +392,41 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        PriceField(controller: priceController),
+                        Text(
+                          'Price',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            color: AppColors.primaryTextColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: priceController,
+                          decoration: InputDecoration(
+                            hintText: "Enter Price",
+                            hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
+                            prefixIconColor: AppColors.primaryColor,
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) return "Please enter the Price";
+                            return null;
+                          },
+                        ),
                         const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
