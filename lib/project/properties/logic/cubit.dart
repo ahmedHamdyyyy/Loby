@@ -56,9 +56,9 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       );
     } catch (e) {
       emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
-    } finally {
+    } /* finally {
       emit(state.copyWith(updateStatus: Status.initial));
-    }
+    } */
   }
 
   void deleteProperty(String id) async {

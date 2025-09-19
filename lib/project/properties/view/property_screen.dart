@@ -158,11 +158,11 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث العقار بنجاح')));
+          showToast(text: 'Property created successfully', stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+          showToast(text: state.msg, stute: ToustStute.error);
           break;
         default:
           break;
@@ -173,11 +173,11 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث العقار بنجاح')));
+          showToast(text: 'Property updated successfully', stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+          showToast(text: state.msg, stute: ToustStute.error);
           break;
         default:
           break;

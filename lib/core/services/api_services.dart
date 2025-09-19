@@ -36,6 +36,7 @@ class _ApiInterceptor extends InterceptorsWrapper {
   _ApiInterceptor(this._cacheService, this._dio);
   final CacheService _cacheService;
   final Dio _dio;
+  bool _isRefreshing = false;
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -59,19 +60,28 @@ class _ApiInterceptor extends InterceptorsWrapper {
         if (accessToken != null) await _cacheService.storage.setString(AppConst.accessToken, accessToken);
         if (refreshToken != null) await _cacheService.storage.setString(AppConst.refreshToken, refreshToken);
       }
-    } else if (response.statusCode == 401) {
-      try {
-        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-        if (refreshToken == null || refreshToken.isEmpty) return handler.next(response);
-        final accessToken = await getAccessToken(refreshToken);
-        final opts = response.requestOptions;
-        opts.headers['Authorization'] = 'Bearer $accessToken';
-        final cloneReq = await _dio.fetch(opts);
-        return handler.resolve(cloneReq);
-      } catch (e) {
-        await _cacheService.storage.remove(AppConst.accessToken);
-        await _cacheService.storage.remove(AppConst.refreshToken);
-        return handler.next(response);
+    } else if (response.statusCode == 401 && !response.requestOptions.path.contains(ApiConstance.refreshToken)) {
+      // Only attempt refresh if this is not already a refresh token request
+      if (!_isRefreshing) {
+        try {
+          _isRefreshing = true;
+          final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+          if (refreshToken == null || refreshToken.isEmpty) {
+            _isRefreshing = false;
+            return handler.next(response);
+          }
+          final accessToken = await getAccessToken(refreshToken);
+          final opts = response.requestOptions;
+          opts.headers['Authorization'] = 'Bearer $accessToken';
+          final cloneReq = await _dio.fetch(opts);
+          _isRefreshing = false;
+          return handler.resolve(cloneReq);
+        } catch (e) {
+          _isRefreshing = false;
+          await _cacheService.storage.remove(AppConst.accessToken);
+          await _cacheService.storage.remove(AppConst.refreshToken);
+          return handler.next(response);
+        }
       }
     }
     return handler.next(response);
@@ -79,28 +89,64 @@ class _ApiInterceptor extends InterceptorsWrapper {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
-      try {
-        final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
-        if (refreshToken == null || refreshToken.isEmpty) return handler.next(err);
-        final accessToken = await getAccessToken(refreshToken);
-        final opts = err.requestOptions;
-        opts.headers['Authorization'] = 'Bearer $accessToken';
-        final cloneReq = await _dio.fetch(opts);
-        return handler.resolve(cloneReq);
-      } catch (e) {
-        await _cacheService.storage.remove(AppConst.accessToken);
-        await _cacheService.storage.remove(AppConst.refreshToken);
-        return handler.next(err);
+    if (err.response?.statusCode == 401 && !err.requestOptions.path.contains(ApiConstance.refreshToken)) {
+      // Only attempt refresh if this is not already a refresh token request
+      if (!_isRefreshing) {
+        try {
+          _isRefreshing = true;
+          final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
+          if (refreshToken == null || refreshToken.isEmpty) {
+            _isRefreshing = false;
+            return handler.next(err);
+          }
+          final accessToken = await getAccessToken(refreshToken);
+          final opts = err.requestOptions;
+          opts.headers['Authorization'] = 'Bearer $accessToken';
+          final cloneReq = await _dio.fetch(opts);
+          _isRefreshing = false;
+          return handler.resolve(cloneReq);
+        } catch (e) {
+          _isRefreshing = false;
+          await _cacheService.storage.remove(AppConst.accessToken);
+          await _cacheService.storage.remove(AppConst.refreshToken);
+          return handler.next(err);
+        }
       }
     }
     super.onError(err, handler);
   }
 
   Future<String> getAccessToken(String refreshToken) async {
-    final response = await _dio.post(ApiConstance.refreshToken, data: {AppConst.refreshToken: refreshToken});
-    final accessToken = response.data['data']['accessToken'];
-    await _cacheService.storage.setString(AppConst.accessToken, accessToken);
-    return accessToken;
+    try {
+      final response = await _dio.post(
+        ApiConstance.refreshToken, 
+        data: {AppConst.refreshToken: refreshToken},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+          },
+        ),
+      );
+      
+      if (response.statusCode == 200 && response.data != null && response.data['success']) {
+        final accessToken = response.data['data']['accessToken'];
+        final newRefreshToken = response.data['data']['refreshToken'];
+        
+        if (accessToken != null) {
+          await _cacheService.storage.setString(AppConst.accessToken, accessToken);
+        }
+        if (newRefreshToken != null) {
+          await _cacheService.storage.setString(AppConst.refreshToken, newRefreshToken);
+        }
+        
+        return accessToken;
+      } else {
+        throw Exception('Failed to refresh token: ${response.data?['message'] ?? 'Unknown error'}');
+      }
+    } on DioException catch (e) {
+      debugPrint('Refresh token error: ${e.message}');
+      throw Exception('Refresh token failed: ${e.message}');
+    }
   }
 }
