@@ -212,4 +212,41 @@ class FilePickerWidget {
       return null;
     }
   }
+
+  static Future<File?> pickVideo(
+    BuildContext context, {
+    ImageSource source = ImageSource.gallery,
+    int maxSizeMB = 15,
+  }) async {
+    try {
+      final video = await _picker.pickVideo(source: source, maxDuration: const Duration(minutes: 10));
+      if (video != null) {
+        final file = File(video.path);
+        final ext = video.path.split('.').last.toLowerCase();
+        if (ext != 'mp4') {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يُسمح فقط برفع فيديو MP4')));
+          }
+          return null;
+        }
+        final fileSize = await file.length();
+        if (fileSize > maxSizeMB * 1024 * 1024) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('حجم الفيديو كبير جداً. يجب أن يكون أقل من $maxSizeMB ميجابايت')));
+          }
+          return null;
+        }
+        return file;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error picking video: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الفيديو')));
+      }
+      return null;
+    }
+  }
 }

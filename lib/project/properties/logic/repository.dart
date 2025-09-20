@@ -11,8 +11,9 @@ class PropertiesRepository {
   Future<PropertyModel> createProperty(PropertyModel property) async {
     try {
       return await _propertiesData.createProperty(property);
-    } on DioException catch (e) {
+    } on DioException catch (e, s) {
       debugPrint('DioException: $e');
+      debugPrint('DioException: $s');
       debugPrint('DioException: ${e.response?.data}');
       debugPrint('DioException: ${e.response}');
       debugPrint('DioException: ${e.stackTrace}');

@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart' as path;
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
@@ -15,7 +14,7 @@ import '../../../../core/utils/utile.dart';
 import '../../../../models/activity.dart';
 import '../../../../models/address.dart';
 import '../../../profile/logic/cubit.dart';
-import '../../../properties/view/images_section.dart';
+import '../../../properties/view/medias_section.dart';
 import '../../logic/cubit.dart';
 import '../widgets/usage_agreement.dart';
 import '../widgets/wideger_activity.dart';
@@ -89,18 +88,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
     if (_medias.isEmpty || _tags.isEmpty || !_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
       return false;
-    }
-
-    for (String imagePath in _medias) {
-      if (!imagePath.startsWith('http')) {
-        String extension = path.extension(imagePath).toLowerCase().replaceAll('.', '');
-        if (!['jpg', 'jpeg', 'png'].contains(extension)) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Please use only jpg, jpeg, or png files for images')));
-          return false;
-        }
-      }
     }
 
     return true;
@@ -314,7 +301,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        PropertyImagesSection(imagePaths: _medias, onImagesChanged: (imagesPaths) => _medias = imagesPaths),
+                        MediasSection(medias: _medias, onMediasChanged: (imagesPaths) => _medias = imagesPaths),
                         const SizedBox(height: 20),
                         DateField(controller: dateController),
                         const SizedBox(height: 20),

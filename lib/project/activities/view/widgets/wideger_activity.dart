@@ -227,11 +227,12 @@ class DateField extends StatelessWidget {
           controller: controller,
           readOnly: true,
           onTap: () async {
+            final now = DateTime.now();
             final selectedDate = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
+              initialDate: DateTime(now.year, now.month, now.day),
+              firstDate: DateTime(now.year, now.month, now.day),
+              lastDate: DateTime(now.year, now.month, now.day).add(const Duration(days: 365)),
             );
             if (selectedDate != null) {
               // تنسيق التاريخ بصيغة yyyy-MM-dd

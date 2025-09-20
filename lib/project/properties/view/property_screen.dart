@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart' as path;
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../config/images/assets.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../core/utils/utile.dart';
+import '../../../locator.dart';
 import '../../../models/address.dart';
 import '../../../models/property.dart';
 import '../../activities/view/widgets/wideger_activity.dart';
@@ -19,7 +19,7 @@ import '../logic/cubit.dart';
 import 'all_properts_widget.dart';
 import 'basics_section.dart';
 import 'document_section.dart';
-import 'images_section.dart';
+import 'medias_section.dart';
 
 class PropertyScreen extends StatefulWidget {
   const PropertyScreen({super.key, this.propertyId = '', required this.type});
@@ -88,18 +88,9 @@ class _PropertyScreenState extends State<PropertyScreen> {
       return false;
     }
 
-    for (String imagePath in _imagePaths) {
-      if (!imagePath.startsWith('http')) {
-        String extension = path.extension(imagePath).toLowerCase().replaceAll('.', '');
-        final List<String> allowedImages = ['jpg', 'jpeg', 'png'];
-        final List<String> allowedVideos = ['mp4'];
-        if (!allowedImages.contains(extension) && !allowedVideos.contains(extension)) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Please use only jpg, jpeg, png images or mp4 videos')));
-          return false;
-        }
-      }
+    if (_imagePaths.isEmpty) {
+      showToast(text: 'Please upload at least one image', stute: ToustStute.worning);
+      return false;
     }
 
     return true;
@@ -131,6 +122,14 @@ class _PropertyScreenState extends State<PropertyScreen> {
     } else {
       context.read<PropertiesCubit>().updateProperty(property);
     }
+  }
+
+  @override
+  void dispose() {
+    detailsController.dispose();
+    priceController.dispose();
+    getIt<PropertiesCubit>().init();
+    super.dispose();
   }
 
   @override
@@ -344,10 +343,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        PropertyImagesSection(
-                          imagePaths: _imagePaths,
-                          onImagesChanged: (imagesPaths) => _imagePaths = imagesPaths,
-                        ),
+                        MediasSection(medias: _imagePaths, onMediasChanged: (imagesPaths) => _imagePaths = imagesPaths),
                         const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -460,11 +456,15 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               SizedBox(width: 16),
                               IconButton(
                                 onPressed: () async {
+                                  final now = DateTime.now();
                                   final newDate = await showDatePicker(
                                     context: context,
-                                    initialDate: startDate.isNotEmpty ? DateTime.parse(startDate) : DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2100),
+                                    initialDate:
+                                        startDate.isNotEmpty
+                                            ? DateTime.parse(startDate)
+                                            : DateTime(now.year, now.month, now.day),
+                                    firstDate: DateTime(now.year, now.month, now.day),
+                                    lastDate: DateTime(now.year, now.month, now.day).add(const Duration(days: 365)),
                                   );
                                   if (newDate != null) setState(() => startDate = newDate.toIso8601String());
                                 },
@@ -495,10 +495,14 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               SizedBox(width: 16),
                               IconButton(
                                 onPressed: () async {
+                                  final now = DateTime.now();
                                   final newDate = await showDatePicker(
                                     context: context,
-                                    initialDate: endDate.isNotEmpty ? DateTime.parse(endDate) : DateTime.now(),
-                                    firstDate: DateTime.now(),
+                                    initialDate:
+                                        endDate.isNotEmpty
+                                            ? DateTime.parse(endDate)
+                                            : DateTime(now.year, now.month, now.day),
+                                    firstDate: DateTime(now.year, now.month, now.day),
                                     lastDate: DateTime(2100),
                                   );
                                   if (newDate != null) setState(() => endDate = newDate.toIso8601String());

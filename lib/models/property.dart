@@ -214,17 +214,11 @@ class PropertyModel extends Equatable {
         final extension = filePath.split('.').last.toLowerCase();
         if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
         if (!await File(filePath).exists()) continue;
-        final bool isVideo = extension == 'mp4';
-        final String subtype = extension == 'jpg' ? 'jpeg' : extension;
+        final isVideo = extension == 'mp4';
+        final contentType = isVideo ? MediaType('video', 'mp4') : MediaType('image', extension);
+        final filename = filePath.split(Platform.pathSeparator).last;
         formData.files.add(
-          MapEntry(
-            'medias',
-            await MultipartFile.fromFile(
-              filePath,
-              filename: filePath.split('/').last,
-              contentType: isVideo ? MediaType('video', 'mp4') : MediaType('image', subtype),
-            ),
-          ),
+          MapEntry('medias', await MultipartFile.fromFile(filePath, filename: filename, contentType: contentType)),
         );
       }
     } catch (e) {

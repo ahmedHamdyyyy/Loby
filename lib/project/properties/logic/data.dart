@@ -10,8 +10,21 @@ class PropertiesData {
 
   Future<PropertyModel> createProperty(PropertyModel property) async {
     final response = await _apiService.dio.post(ApiConstance.createProperty, data: await property.toJson());
-    if (!(response.data?['success'] ?? false) || response.data?['data'] == null) throw _dioError(response);
-    return PropertyModel.fromJson(response.data['data']);
+    try {
+      final data = response.data;
+      if (data is! Map<String, dynamic>) {
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: 'Unexpected response format (not JSON map)',
+        );
+      }
+      if (!(data['success'] ?? false) || data['data'] == null) throw _dioError(response);
+      return PropertyModel.fromJson(data['data']);
+    } catch (e) {
+      if (e is DioException) rethrow;
+      throw DioException(requestOptions: response.requestOptions, response: response, error: 'Failed to parse response: $e');
+    }
   }
 
   Future<PropertyModel> updateProperty(PropertyModel property) async {
@@ -40,6 +53,13 @@ class PropertiesData {
   }
 
   DioException _dioError(Response<dynamic> response) {
-    return DioException(requestOptions: response.requestOptions, response: response, error: response.data['error']);
+    final dynamic raw = response.data;
+    dynamic errorMsg;
+    if (raw is Map<String, dynamic>) {
+      errorMsg = raw['error'] ?? raw['message'] ?? raw.toString();
+    } else {
+      errorMsg = raw?.toString() ?? 'Unknown error';
+    }
+    return DioException(requestOptions: response.requestOptions, response: response, error: errorMsg);
   }
 }

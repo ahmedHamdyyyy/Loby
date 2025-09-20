@@ -105,7 +105,7 @@ class ActivityModel extends Equatable {
       MapEntry('vendorId', vendorId),
       MapEntry('activityTime', activityTime),
       MapEntry('name', name),
-      MapEntry('address', address.toJson().toString()),
+      MapEntry('address', address.toJson()),
       MapEntry('details', details),
       MapEntry('maximumGuestNumber', maximumGuestNumber.toString()),
       MapEntry('price', price.toString()),
@@ -138,15 +138,11 @@ class ActivityModel extends Equatable {
         final extension = filePath.split('.').last.toLowerCase();
         if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
         if (!await File(filePath).exists()) continue;
+        final isVideo = extension == 'mp4';
+        final contentType = isVideo ? MediaType('video', 'mp4') : MediaType('image', extension);
+        final filename = filePath.split(Platform.pathSeparator).last;
         formData.files.add(
-          MapEntry(
-            'medias',
-            await MultipartFile.fromFile(
-              filePath,
-              filename: filePath.split('/').last,
-              contentType: MediaType('image', extension),
-            ),
-          ),
+          MapEntry('medias', await MultipartFile.fromFile(filePath, filename: filename, contentType: contentType)),
         );
       }
     } catch (e) {
