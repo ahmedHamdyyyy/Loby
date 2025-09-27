@@ -6,7 +6,22 @@ import 'package:http_parser/http_parser.dart';
 import '../config/constants/constance.dart';
 
 class UserModel {
-  final String firstName, lastName, email, phone, password, role, id, profilePicture;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final String password;
+  final String role;
+  final String id;
+  final String profilePicture;
+  // Vendor specific optional fields
+  final String nationalId;
+  final String iban;
+  final String certificateNumber;
+  final String nationalIdDocument; // file path
+  final String ibanDocument; // file path
+  final String certificateNumberDocument; // file path
+  final bool isVerified;
 
   const UserModel({
     required this.id,
@@ -17,6 +32,13 @@ class UserModel {
     required this.phone,
     required this.role,
     required this.profilePicture,
+    required this.nationalId,
+    required this.iban,
+    required this.certificateNumber,
+    required this.nationalIdDocument,
+    required this.ibanDocument,
+    required this.certificateNumberDocument,
+    required this.isVerified,
   });
 
   static const non = UserModel(
@@ -28,6 +50,13 @@ class UserModel {
     phone: '',
     role: '',
     profilePicture: '',
+    nationalId: '',
+    iban: '',
+    certificateNumber: '',
+    nationalIdDocument: '',
+    ibanDocument: '',
+    certificateNumberDocument: '',
+    isVerified: false,
   );
 
   UserModel copyWith({
@@ -39,44 +68,87 @@ class UserModel {
     String? role,
     String? id,
     String? profilePicture,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      password: password ?? this.password,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      email: email ?? this.email,
-      phone: phone ?? this.phone,
-      role: role ?? this.role,
-      profilePicture: profilePicture ?? this.profilePicture,
-    );
-  }
+    bool? isVerified,
+    String? nationalId,
+    String? iban,
+    String? certificateNumber,
+    String? nationalIdDocument,
+    String? ibanDocument,
+    String? certificateNumberDocument,
+  }) => UserModel(
+    id: id ?? this.id,
+    password: password ?? this.password,
+    firstName: firstName ?? this.firstName,
+    lastName: lastName ?? this.lastName,
+    email: email ?? this.email,
+    phone: phone ?? this.phone,
+    role: role ?? this.role,
+    profilePicture: profilePicture ?? this.profilePicture,
+    nationalId: nationalId ?? this.nationalId,
+    iban: iban ?? this.iban,
+    certificateNumber: certificateNumber ?? this.certificateNumber,
+    nationalIdDocument: nationalIdDocument ?? this.nationalIdDocument,
+    ibanDocument: ibanDocument ?? this.ibanDocument,
+    certificateNumberDocument: certificateNumberDocument ?? this.certificateNumberDocument,
+    isVerified: isVerified ?? this.isVerified,
+  );
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
     id: json[AppConst.id] ?? '',
     email: json[AppConst.email] ?? '',
     phone: json[AppConst.phone] ?? '',
-    role: json[AppConst.vendorRole] ?? '',
+    role: json[AppConst.vendorRole] ?? json[AppConst.role] ?? '',
     password: json[AppConst.password] ?? '',
     lastName: json[AppConst.lastName] ?? '',
     firstName: json[AppConst.firstName] ?? '',
     profilePicture: json[AppConst.profilePicture] ?? '',
+    nationalId: json[AppConst.nationalId] ?? '',
+    iban: json[AppConst.iban] ?? '',
+    certificateNumber: json[AppConst.certificateNumber] ?? '',
+    nationalIdDocument: json[AppConst.nationalIdDocument] ?? '',
+    ibanDocument: json[AppConst.ibanDocument] ?? '',
+    certificateNumberDocument: json[AppConst.certificateNumberDocument] ?? '',
+    isVerified: json['verified'] ?? false,
   );
 
-  Future<FormData> signUp() async => FormData.fromMap({
-    AppConst.firstName: firstName,
-    AppConst.lastName: lastName,
-    AppConst.password: password,
-    AppConst.email: email,
-    AppConst.phone: phone,
-    AppConst.role: role,
-    if (profilePicture.isNotEmpty)
-      AppConst.profilePicture: await MultipartFile.fromFile(
-        profilePicture,
-        filename: profilePicture.split('/').last,
-        contentType: MediaType('image', 'jpg'),
-      ),
-  });
+  Future<FormData> signUp() async {
+    final map = <String, dynamic>{
+      AppConst.firstName: firstName,
+      AppConst.lastName: lastName,
+      AppConst.password: password,
+      AppConst.email: email,
+      AppConst.phone: phone,
+      AppConst.role: role,
+      if (nationalId.isNotEmpty) AppConst.nationalId: nationalId,
+      if (iban.isNotEmpty) AppConst.iban: iban,
+      if (certificateNumber.isNotEmpty) AppConst.certificateNumber: certificateNumber,
+      if (profilePicture.isNotEmpty)
+        AppConst.profilePicture: await MultipartFile.fromFile(
+          profilePicture,
+          filename: profilePicture.split('/').last,
+          contentType: MediaType('image', 'jpg'),
+        ),
+      if (nationalIdDocument.isNotEmpty)
+        AppConst.nationalIdDocument: await MultipartFile.fromFile(
+          nationalIdDocument,
+          filename: nationalIdDocument.split('/').last,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      if (ibanDocument.isNotEmpty)
+        AppConst.ibanDocument: await MultipartFile.fromFile(
+          ibanDocument,
+          filename: ibanDocument.split('/').last,
+          contentType: MediaType('application', 'pdf'),
+        ),
+      if (certificateNumberDocument.isNotEmpty)
+        AppConst.certificateNumberDocument: await MultipartFile.fromFile(
+          certificateNumberDocument,
+          filename: certificateNumberDocument.split('/').last,
+          contentType: MediaType('application', 'pdf'),
+        ),
+    };
+    return FormData.fromMap(map);
+  }
 
   String toCache() => jsonEncode({
     AppConst.id: id,
@@ -87,6 +159,13 @@ class UserModel {
     AppConst.phone: phone,
     AppConst.role: role,
     AppConst.profilePicture: profilePicture,
+    AppConst.nationalId: nationalId,
+    AppConst.iban: iban,
+    AppConst.certificateNumber: certificateNumber,
+    AppConst.nationalIdDocument: nationalIdDocument,
+    AppConst.ibanDocument: ibanDocument,
+    AppConst.certificateNumberDocument: certificateNumberDocument,
+    'verified': isVerified,
   });
 
   factory UserModel.fromCache(String user) => UserModel.fromJson(jsonDecode(user) as Map<String, dynamic>);

@@ -3,6 +3,8 @@ class ApiConstance {
 
   static const signin = "auth/signin";
   static const signup = "auth/signup";
+  // Vendor specific signup route
+  static const vendorSignup = "auth/vendor/signup";
   static const logout = "auth/logout";
   static const refreshToken = "auth/refresh-token";
   static const resetpassword = "auth/reset-password";

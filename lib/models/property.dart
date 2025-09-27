@@ -207,7 +207,7 @@ class PropertyModel extends Equatable {
       }
       for (final filePath in medias) {
         if (filePath.isEmpty) continue;
-        if (filePath.startsWith('https://') || filePath.startsWith('http://')) {
+        if (filePath.startsWith('http')) {
           formData.fields.add(MapEntry('existingMedias', filePath));
           continue;
         }

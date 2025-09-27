@@ -18,6 +18,8 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       emit(state.copyWith(getStatus: Status.success, properties: allProperties));
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(getStatus: Status.initial));
     }
   }
 

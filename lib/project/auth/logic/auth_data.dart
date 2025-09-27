@@ -26,7 +26,7 @@ class AuthData {
 
   Future<UserModel> signup({required UserModel user}) async {
     final mapData = await user.signUp();
-    final response = await _apiServices.dio.post(ApiConstance.signup, data: mapData);
+    final response = await _apiServices.dio.post(ApiConstance.vendorSignup, data: mapData);
     final data = response.data['data'];
     if (data == null || data['user'] == null) throw _responseException(response);
     final addedUser = user.copyWith(id: data['user'][AppConst.id], profilePicture: data['user'][AppConst.profilePicture]);
@@ -53,8 +53,8 @@ class AuthData {
     final response = await _apiServices.dio.post(
       ApiConstance.verifyEmail,
       data: {AppConst.email: email},
-      // options: Options(headers: {'X-Device-ID': await getDeviceId()}),
-      options: Options(headers: {'X-Device-ID': 111111}),
+      options: Options(headers: {'X-Device-ID': await getDeviceId()}),
+      // options: Options(headers: {'X-Device-ID': 111111}),
     );
     if (response.statusCode != 200) throw _responseException(response);
   }

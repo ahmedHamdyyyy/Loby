@@ -207,6 +207,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     onPressed: () async {
                                       if (state.fetchUserStatus == Status.loading) return;
+                                      if (!state.user.isVerified) {
+                                        Utils.errorDialog(
+                                          context,
+                                          "Your email is not verified please wait until it is verified then try again.",
+                                        );
+                                        return;
+                                      }
                                       switch (_vendorRole) {
                                         case VendorRole.non:
                                           final vendorRole = await showDialog<VendorRole?>(
@@ -214,7 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             barrierDismissible: false,
                                             builder: (context) => const VendorTypeDialog(),
                                           );
-                                          getIt<ProfileCubit>().chooseVendorRole(vendorRole ?? VendorRole.property);
+                                          if (vendorRole == null) break;
+                                          getIt<ProfileCubit>().chooseVendorRole(vendorRole);
                                           break;
                                         case VendorRole.property:
                                           Navigator.push(

@@ -1,11 +1,13 @@
+import 'package:Luby/config/widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/images/image_assets.dart';
+import '../../../config/constants/constance.dart';
+import '../../../core/utils/utile.dart';
 import '../../../locator.dart';
-import '../../../models/property.dart';
 import '../logic/cubit.dart';
 import 'property_screen.dart';
 
@@ -13,9 +15,27 @@ class PropertiesListView extends StatelessWidget {
   const PropertiesListView({super.key});
 
   @override
-  Widget build(BuildContext context) => BlocSelector<PropertiesCubit, PropertiesState, List<CustomPropertyModel>>(
-    selector: (state) => state.properties,
-    builder: (context, properties) {
+  Widget build(BuildContext context) => BlocConsumer<PropertiesCubit, PropertiesState>(
+    listener: (context, state) {
+      if (state.getStatus == Status.error) showToast(text: state.msg, stute: ToustStute.error);
+      switch (state.deleteStatus) {
+        case Status.loading:
+          Utils.loadingDialog(context);
+          break;
+        case Status.success:
+          Navigator.pop(context);
+          showToast(text: 'Property updated successfully', stute: ToustStute.success);
+          break;
+        case Status.error:
+          Navigator.pop(context);
+          showToast(text: state.msg, stute: ToustStute.error);
+          break;
+        default:
+          break;
+      }
+    },
+    builder: (context, state) {
+      final properties = state.properties;
       if (properties.isEmpty) return const Center(child: Text('No Added Items Here...'));
       return ListView.builder(
         scrollDirection: Axis.vertical,
@@ -32,11 +52,12 @@ class PropertiesListView extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => BlocProvider.value(
-                            value: getIt<PropertiesCubit>(),
-                            child: PropertyScreen(propertyId: properties[index].id, type: property.type),
-                          ),
+                      builder: (context) {
+                        return BlocProvider.value(
+                          value: getIt<PropertiesCubit>(),
+                          child: PropertyScreen(propertyId: properties[index].id, type: property.type),
+                        );
+                      },
                     ),
                   );
                 },

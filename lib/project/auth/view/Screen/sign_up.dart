@@ -8,6 +8,7 @@ import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../models/user.dart';
+import '../../../home/view/pick_image_widget.dart';
 import '../../logic/auth_cubit.dart';
 import '../Widget/wideget_sign_up.dart';
 import 'confirm_otp.dart';
@@ -26,6 +27,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final nationalIdController = TextEditingController();
+  final ibanController = TextEditingController();
+  final certificateNumberController = TextEditingController();
+
+  File? nationalIdDocument;
+  File? ibanDocument;
+  File? certificateNumberDocument;
 
   bool agreeToTerms = false;
   File? profileImage;
@@ -38,6 +46,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     emailController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    nationalIdController.dispose();
+    ibanController.dispose();
+    certificateNumberController.dispose();
     super.dispose();
   }
 
@@ -53,7 +64,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
         phoneController.text.isEmpty ||
         emailController.text.isEmpty ||
         passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
+        confirmPasswordController.text.isEmpty ||
+        nationalIdController.text.isEmpty ||
+        ibanController.text.isEmpty ||
+        certificateNumberController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('يرجى ملء جميع الحقول'), backgroundColor: Colors.red));
@@ -90,8 +104,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             MaterialPageRoute(
               builder: (context) {
                 return ConfirmOtpScreen(
-                  user: UserModel(
-                    id: '',
+                  user: UserModel.non.copyWith(
                     firstName: firstNameController.text.trim(),
                     lastName: lastNameController.text.trim(),
                     email: emailController.text.trim(),
@@ -99,6 +112,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     password: passwordController.text.trim(),
                     role: AppConst.vendor,
                     profilePicture: profileImage == null ? '' : profileImage!.path,
+                    nationalId: nationalIdController.text.trim(),
+                    iban: ibanController.text.trim(),
+                    certificateNumber: certificateNumberController.text.trim(),
+                    nationalIdDocument: nationalIdDocument?.path ?? '',
+                    ibanDocument: ibanDocument?.path ?? '',
+                    certificateNumberDocument: certificateNumberDocument?.path ?? '',
                   ),
                   email: emailController.text.trim(),
                   willSignup: true,
@@ -139,6 +158,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               RegistrationTextField(hintText: "كلمة المرور", controller: passwordController, isPassword: true),
               RegistrationTextField(hintText: "تأكيد كلمة المرور", controller: confirmPasswordController, isPassword: true),
+              RegistrationTextField(hintText: "الرقم القومي", controller: nationalIdController),
+              RegistrationTextField(hintText: "رقم الآيبان", controller: ibanController),
+              RegistrationTextField(hintText: "رقم الشهادة", controller: certificateNumberController),
+              const SizedBox(height: 10),
+              _DocumentPicker(
+                label: 'مستند الهوية',
+                file: nationalIdDocument,
+                onPick: (f) => setState(() => nationalIdDocument = f),
+              ),
+              _DocumentPicker(label: 'مستند الآيبان', file: ibanDocument, onPick: (f) => setState(() => ibanDocument = f)),
+              _DocumentPicker(
+                label: 'مستند الشهادة',
+                file: certificateNumberDocument,
+                onPick: (f) => setState(() => certificateNumberDocument = f),
+              ),
               const SizedBox(height: 10),
               TermsCheckbox(value: agreeToTerms, onChanged: (value) => setState(() => agreeToTerms = value)),
               const SizedBox(height: 20),
@@ -174,4 +208,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     ),
   );
+}
+
+class _DocumentPicker extends StatelessWidget {
+  const _DocumentPicker({required this.label, required this.onPick, this.file});
+  final String label;
+  final void Function(File) onPick;
+  final File? file;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        final pickedFile = await FilePickerWidget.pickPdfFile(context);
+        if (pickedFile != null) onPick(File(pickedFile.path));
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.attach_file, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                file == null ? label : file!.path.split('/').last,
+                style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (file != null) const Icon(Icons.check_circle, color: Colors.green, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
 }

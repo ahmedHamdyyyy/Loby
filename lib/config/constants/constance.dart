@@ -32,6 +32,13 @@ class AppConst {
   static const profilePicture = 'profilePicture';
   static const user = 'user';
   static const vendorRole = 'vendorRole';
+  // Vendor signup extra fields
+  static const nationalId = 'nationalId';
+  static const iban = 'iban';
+  static const certificateNumber = 'certificateNumber';
+  static const nationalIdDocument = 'nationalIdDocument';
+  static const ibanDocument = 'ibanDocument';
+  static const certificateNumberDocument = 'certificateNumberDocument';
   //screens
   /*   static const splashScreen = '/';
   static const signInScreen = '/signInScreen';
