@@ -11,12 +11,11 @@ class AuthRepo {
   Future<UserModel> signup({required UserModel user}) async {
     try {
       return await _authData.signup(user: user);
-    } on DioException catch (_, s) {
-      debugPrintStack(stackTrace: s);
+    } on DioException catch (e, s) {
+      debugPrint('$e \n${e.response?.data} \n${e.response?.statusCode} \n${e.response?.statusMessage} ${s.toString()}');
       rethrow;
     } catch (e, s) {
-      debugPrintStack(stackTrace: s);
-      debugPrint(e.toString());
+      debugPrint('$e \n${s.toString()}');
       throw Exception('An unexpected error occurred');
     }
   }
@@ -48,7 +47,7 @@ class AuthRepo {
       await _authData.verifyEmail(email: email);
     } on DioException catch (e, s) {
       debugPrintStack(stackTrace: s);
-      throw Exception(e.response?.data);
+      throw Exception(e.response?.data?['error'] ?? 'An unexpected error occurred');
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');

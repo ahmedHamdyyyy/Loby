@@ -13,6 +13,7 @@ import '../../activities/logic/cubit.dart';
 import '../../activities/view/screens/activity_screen.dart';
 import '../../activities/view/widgets/activetes_list.dart';
 import '../../notifications/view/notifications_screen.dart';
+import '../../profile/view/account_info/account_after_save.dart';
 import '../../properties/logic/cubit.dart';
 import '../../properties/view/properties_list.dart';
 import '../../properties/view/property_types_screen.dart';
@@ -25,10 +26,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 VendorRole _vendorRole = VendorRole.non;
+bool _isVerified = false;
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _updateVendorRole(String role) {
+  void _updateVendorRole(String role, bool verified) {
     _vendorRole = VendorRole.values.firstWhere((e) => e.name == role, orElse: () => VendorRole.non);
+    _isVerified = verified;
     if (_vendorRole == VendorRole.property) {
       getIt<PropertiesCubit>().getProperties();
     } else if (_vendorRole == VendorRole.activity) {
@@ -69,7 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         BlocConsumer<ProfileCubit, ProfileState>(
                           listener: (context, state) {
-                            if (state.fetchUserStatus == Status.success) _updateVendorRole(state.user.role);
+                            if (state.fetchUserStatus == Status.success) {
+                              _updateVendorRole(state.user.role, state.user.isVerified);
+                            }
                           },
                           builder: (context, state) {
                             if (state.fetchUserStatus == Status.loading) {
@@ -79,34 +84,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: CircularProgressIndicator(),
                               );
                             }
-                            return ClipRRect(
-                              borderRadius: const BorderRadius.all(Radius.circular(40)),
-                              child:
-                                  state.user.profilePicture.isEmpty
-                                      ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
-                                      : Image.network(
-                                        state.user.profilePicture,
-                                        width: 56,
-                                        height: 56,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, _, _) {
-                                          return Image.asset(
-                                            ImageAssets.profileImage,
-                                            width: 56,
-                                            height: 56,
-                                            fit: BoxFit.cover,
-                                          );
-                                        },
-                                        loadingBuilder: (context, child, loadingProgress) {
-                                          if (loadingProgress == null) return child;
-                                          return Container(
-                                            width: 56,
-                                            height: 56,
-                                            color: Colors.grey[300],
-                                            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                                          );
-                                        },
-                                      ),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
+                              },
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                child:
+                                    state.user.profilePicture.isEmpty
+                                        ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
+                                        : Image.network(
+                                          state.user.profilePicture,
+                                          width: 56,
+                                          height: 56,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, _, _) {
+                                            return Image.asset(
+                                              ImageAssets.profileImage,
+                                              width: 56,
+                                              height: 56,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                          loadingBuilder: (context, child, loadingProgress) {
+                                            if (loadingProgress == null) return child;
+                                            return Container(
+                                              width: 56,
+                                              height: 56,
+                                              color: Colors.grey[300],
+                                              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                            );
+                                          },
+                                        ),
+                              ),
                             );
                           },
                         ),
@@ -183,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Utils.errorDialog(context, state.callback);
                                   } else if (state.chooseVendorRole == Status.success) {
                                     Navigator.pop(context);
-                                    _updateVendorRole(state.user.role);
+                                    _updateVendorRole(state.user.role, state.user.isVerified);
                                     if (_vendorRole == VendorRole.property) {
                                       Navigator.push(
                                         context,
@@ -290,7 +300,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               else
-                Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Select Your Role Now!')),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (!_isVerified) IconButton(onPressed: getIt<ProfileCubit>().fetchUser, icon: Icon(Icons.refresh)),
+                        Text('Select Your Role Now!'),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

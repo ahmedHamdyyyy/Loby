@@ -2,29 +2,28 @@ import 'package:flutter/material.dart';
 
 class Utils {
   static void errorDialog(
-    BuildContext context, 
-    String error, 
-    {
-      void Function()? onPressed,
-      String title = 'Error',
-      String dismissText = 'Dismiss',
-      String retryText = 'Retry',
-      Color? accentColor,
-      IconData? icon,
-    }
-  ) => showDialog(
+    BuildContext context,
+    String error, {
+    void Function()? onPressed,
+    String title = 'Error',
+    String dismissText = 'Dismiss',
+    String retryText = 'Retry',
+    Color? accentColor,
+    IconData? icon,
+  }) => showDialog(
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black54,
-    builder: (context) => _ModernErrorDialog(
-      error: error,
-      title: title,
-      dismissText: dismissText,
-      retryText: retryText,
-      onRetry: onPressed,
-      accentColor: accentColor,
-      icon: icon,
-    ),
+    builder:
+        (context) => _ModernErrorDialog(
+          error: error,
+          title: title,
+          dismissText: dismissText,
+          retryText: retryText,
+          onRetry: onPressed,
+          accentColor: accentColor,
+          icon: icon,
+        ),
   );
 
   // Success dialog with modern design
@@ -40,14 +39,15 @@ class Utils {
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black54,
-    builder: (context) => _ModernSuccessDialog(
-      message: message,
-      title: title,
-      buttonText: buttonText,
-      onPressed: onPressed,
-      accentColor: accentColor,
-      icon: icon,
-    ),
+    builder:
+        (context) => _ModernSuccessDialog(
+          message: message,
+          title: title,
+          buttonText: buttonText,
+          onPressed: onPressed,
+          accentColor: accentColor,
+          icon: icon,
+        ),
   );
 
   // Confirmation dialog with modern design
@@ -63,14 +63,15 @@ class Utils {
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black54,
-    builder: (context) => _ModernConfirmationDialog(
-      message: message,
-      title: title,
-      confirmText: confirmText,
-      cancelText: cancelText,
-      accentColor: accentColor,
-      icon: icon,
-    ),
+    builder:
+        (context) => _ModernConfirmationDialog(
+          message: message,
+          title: title,
+          confirmText: confirmText,
+          cancelText: cancelText,
+          accentColor: accentColor,
+          icon: icon,
+        ),
   );
 
   // Info dialog with modern design
@@ -86,13 +87,14 @@ class Utils {
     context: context,
     barrierDismissible: true,
     barrierColor: Colors.black54,
-    builder: (context) => _ModernInfoDialog(
-      message: message,
-      title: title,
-      buttonText: buttonText,
-      onPressed: onPressed,
-      accentColor: accentColor,
-      icon: icon,
+    builder:
+        (context) => _ModernInfoDialog(
+          message: message,
+          title: title,
+          buttonText: buttonText,
+          onPressed: onPressed,
+          accentColor: accentColor,
+          icon: icon,
         ),
   );
 
@@ -107,15 +109,16 @@ class Utils {
     context: context,
     barrierDismissible: barrierDismissible,
     barrierColor: Colors.black54,
-    builder: (context) => PopScope(
+    builder:
+        (context) => PopScope(
           canPop: barrierDismissible,
-      child: _ModernLoadingDialog(
-        message: message,
-        accentColor: accentColor,
-        showProgress: showProgress,
-        autoDismissDuration: autoDismissDuration,
-      ),
-    ),
+          child: _ModernLoadingDialog(
+            message: message,
+            accentColor: accentColor,
+            showProgress: showProgress,
+            autoDismissDuration: autoDismissDuration,
+          ),
+        ),
   );
 }
 
@@ -126,19 +129,13 @@ class _ModernLoadingDialog extends StatefulWidget {
   final bool showProgress;
   final Duration? autoDismissDuration;
 
-  const _ModernLoadingDialog({
-    required this.message,
-    this.accentColor,
-    this.showProgress = true,
-    this.autoDismissDuration,
-  });
+  const _ModernLoadingDialog({required this.message, this.accentColor, this.showProgress = true, this.autoDismissDuration});
 
   @override
   State<_ModernLoadingDialog> createState() => _ModernLoadingDialogState();
 }
 
-class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
-    with TickerProviderStateMixin {
+class _ModernLoadingDialogState extends State<_ModernLoadingDialog> with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _rotateController;
   late Animation<double> _pulseAnimation;
@@ -147,24 +144,20 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
   @override
   void initState() {
     super.initState();
-    
-    _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    
-    _rotateController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
 
-    _pulseAnimation = Tween<double>(begin: 0.8, end: 1.2).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
+    _pulseController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this);
 
-    _rotateAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _rotateController, curve: Curves.linear),
-    );
+    _rotateController = AnimationController(duration: const Duration(milliseconds: 2000), vsync: this);
+
+    _pulseAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.2,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut));
+
+    _rotateAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _rotateController, curve: Curves.linear));
 
     _pulseController.repeat(reverse: true);
     _rotateController.repeat();
@@ -190,7 +183,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accentColor = widget.accentColor ?? theme.colorScheme.primary;
-    
+
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -198,12 +191,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: 0,
-            ),
+            BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: 0),
           ],
         ),
         child: Padding(
@@ -226,10 +214,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              accentColor.withOpacity(0.1),
-                              accentColor.withOpacity(0.3),
-                            ],
+                            colors: [accentColor.withAlpha(25), accentColor.withAlpha(75)],
                           ),
                         ),
                         child: Center(
@@ -238,11 +223,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
                             builder: (context, child) {
                               return Transform.rotate(
                                 angle: _rotateAnimation.value * 2 * 3.14159,
-                                child: Icon(
-                                  Icons.refresh_rounded,
-                                  color: accentColor,
-                                  size: 40,
-                                ),
+                                child: Icon(Icons.refresh_rounded, color: accentColor, size: 40),
                               );
                             },
                           ),
@@ -253,7 +234,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
                 ),
                 const SizedBox(height: 24),
               ],
-              
+
               // Message text with modern typography
               Text(
                 widget.message,
@@ -266,7 +247,7 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               // Subtle progress dots
               if (widget.showProgress) ...[
                 const SizedBox(height: 20),
@@ -279,15 +260,12 @@ class _ModernLoadingDialogState extends State<_ModernLoadingDialog>
                         final delay = index * 0.2;
                         final animationValue = (_pulseController.value + delay) % 1.0;
                         final scale = 0.5 + (0.5 * animationValue);
-                        
+
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           width: 8 * scale,
                           height: 8 * scale,
-                          decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.6),
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(color: accentColor.withAlpha(150), shape: BoxShape.circle),
                         );
                       },
                     );
@@ -327,7 +305,7 @@ class _ModernErrorDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final errorColor = accentColor ?? theme.colorScheme.error;
     final errorIcon = icon ?? Icons.error_outline_rounded;
-    
+
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -335,36 +313,24 @@ class _ModernErrorDialog extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: 0,
-            ),
+            BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: 0),
           ],
         ),
-            child: Padding(
+        child: Padding(
           padding: const EdgeInsets.all(32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               // Error icon with background
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: errorColor.withOpacity(0.1),
-                ),
-                child: Icon(
-                  errorIcon,
-                  size: 40,
-                  color: errorColor,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: errorColor.withAlpha(25)),
+                child: Icon(errorIcon, size: 40, color: errorColor),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Error title
               Text(
                 title,
@@ -375,23 +341,20 @@ class _ModernErrorDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Error message
               Text(
                 error,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  height: 1.4,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Action buttons
               Row(
                 children: [
@@ -401,12 +364,8 @@ class _ModernErrorDialog extends StatelessWidget {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(
-                          color: theme.colorScheme.outline.withOpacity(0.3),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(color: theme.colorScheme.outline.withAlpha(75)),
                       ),
                       child: Text(
                         dismissText,
@@ -417,10 +376,10 @@ class _ModernErrorDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   if (onRetry != null) ...[
                     const SizedBox(width: 16),
-                    
+
                     // Retry button
                     Expanded(
                       child: ElevatedButton(
@@ -432,17 +391,12 @@ class _ModernErrorDialog extends StatelessWidget {
                           backgroundColor: errorColor,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           elevation: 0,
                         ),
                         child: Text(
                           retryText,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -480,7 +434,7 @@ class _ModernInfoDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final infoColor = accentColor ?? theme.colorScheme.primary;
     final infoIcon = icon ?? Icons.info_outline_rounded;
-    
+
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -488,12 +442,7 @@ class _ModernInfoDialog extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: 0,
-            ),
+            BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: 0),
           ],
         ),
         child: Padding(
@@ -505,19 +454,12 @@ class _ModernInfoDialog extends StatelessWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: infoColor.withOpacity(0.1),
-                ),
-                child: Icon(
-                  infoIcon,
-                  size: 40,
-                  color: infoColor,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: infoColor.withAlpha(25)),
+                child: Icon(infoIcon, size: 40, color: infoColor),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Info title
               Text(
                 title,
@@ -528,23 +470,20 @@ class _ModernInfoDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Info message
               Text(
                 message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  height: 1.4,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Action button
               SizedBox(
                 width: double.infinity,
@@ -557,17 +496,12 @@ class _ModernInfoDialog extends StatelessWidget {
                     backgroundColor: infoColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: Text(
                     buttonText,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -602,7 +536,7 @@ class _ModernConfirmationDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final confirmColor = accentColor ?? theme.colorScheme.primary;
     final confirmIcon = icon ?? Icons.help_outline_rounded;
-    
+
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -610,12 +544,7 @@ class _ModernConfirmationDialog extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: 0,
-            ),
+            BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: 0),
           ],
         ),
         child: Padding(
@@ -627,19 +556,12 @@ class _ModernConfirmationDialog extends StatelessWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: confirmColor.withOpacity(0.1),
-                ),
-                child: Icon(
-                  confirmIcon,
-                  size: 40,
-                  color: confirmColor,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: confirmColor.withAlpha(25)),
+                child: Icon(confirmIcon, size: 40, color: confirmColor),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Confirmation title
               Text(
                 title,
@@ -650,23 +572,20 @@ class _ModernConfirmationDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
-                  const SizedBox(height: 16),
-              
+
+              const SizedBox(height: 16),
+
               // Confirmation message
               Text(
                 message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  height: 1.4,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Action buttons
               Row(
                 children: [
@@ -676,12 +595,8 @@ class _ModernConfirmationDialog extends StatelessWidget {
                       onPressed: () => Navigator.pop(context, false),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(
-                          color: theme.colorScheme.outline.withOpacity(0.3),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(color: theme.colorScheme.outline.withAlpha(75)),
                       ),
                       child: Text(
                         cancelText,
@@ -692,9 +607,9 @@ class _ModernConfirmationDialog extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(width: 16),
-                  
+
                   // Confirm button
                   Expanded(
                     child: ElevatedButton(
@@ -703,17 +618,12 @@ class _ModernConfirmationDialog extends StatelessWidget {
                         backgroundColor: confirmColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 0,
                       ),
                       child: Text(
                         confirmText,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -750,7 +660,7 @@ class _ModernSuccessDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final successColor = accentColor ?? Colors.green;
     final successIcon = icon ?? Icons.check_circle_outline_rounded;
-    
+
     return Center(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -758,12 +668,7 @@ class _ModernSuccessDialog extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-              spreadRadius: 0,
-            ),
+            BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, 10), spreadRadius: 0),
           ],
         ),
         child: Padding(
@@ -775,19 +680,12 @@ class _ModernSuccessDialog extends StatelessWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: successColor.withOpacity(0.1),
-                ),
-                child: Icon(
-                  successIcon,
-                  size: 40,
-                  color: successColor,
-                ),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: successColor.withAlpha(25)),
+                child: Icon(successIcon, size: 40, color: successColor),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Success title
               Text(
                 title,
@@ -798,23 +696,20 @@ class _ModernSuccessDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Success message
               Text(
                 message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
-                  height: 1.4,
-                ),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 32),
-              
+
               // Action button
               SizedBox(
                 width: double.infinity,
@@ -827,24 +722,19 @@ class _ModernSuccessDialog extends StatelessWidget {
                     backgroundColor: successColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: Text(
                     buttonText,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: theme.textTheme.labelLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
             ],
-            ),
           ),
         ),
-  );
+      ),
+    );
   }
 }

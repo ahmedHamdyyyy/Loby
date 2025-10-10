@@ -65,7 +65,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
     bathrooms = property.bathrooms;
     address = property.address;
     detailsController.text = property.details;
-    priceController.text = property.pricePerNight.toString();
+    if (property.pricePerNight > 0) priceController.text = property.pricePerNight.toString();
+
     tags = [...property.tags];
     propertyType = property.type;
     isSelected = !property.available;

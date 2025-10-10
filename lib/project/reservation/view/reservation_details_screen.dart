@@ -43,7 +43,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
         widget.reservation.type == ReservationType.property
             ? nights(widget.reservation.checkInDate, widget.reservation.checkOutDate)
             : 1;
-
+    print(widget.reservation.userImageUrl);
     return Scaffold(
       appBar: appBarPop(context, isRefused ? 'Last Reservation' : 'Current Reservations', AppColors.primaryColor),
       backgroundColor: Colors.white,
@@ -130,21 +130,17 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
             // ),
             Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.horizontal(left: Radius.circular(10), right: Radius.circular(10)),
-                        child: FadeInImage.assetNetwork(
-                          placeholder: 'assets/images/image6.png',
-                          image:
-                              widget.reservation.type == ReservationType.property
-                                  ? (widget.reservation.item as PropertyModel).medias.first
-                                  : (widget.reservation.item as ActivityModel).medias.first,
-                        ),
-                      ),
-                    ],
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: FadeInImage.assetNetwork(
+                    width: 125,
+                    height: 125,
+                    fit: BoxFit.cover,
+                    placeholder: 'assets/images/image6.png',
+                    image:
+                        widget.reservation.type == ReservationType.property
+                            ? (widget.reservation.item as PropertyModel).medias.first
+                            : (widget.reservation.item as ActivityModel).medias.first,
                   ),
                 ),
                 Expanded(
@@ -154,24 +150,13 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.reservation.type == ReservationType.property
-                                    ? (widget.reservation.item as PropertyModel).type.name
-                                    : (widget.reservation.item as ActivityModel).name,
-                                style: GoogleFonts.poppins(fontSize: 14, color: AppColors.secondTextColor),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            Text(
-                              price.toString(),
-                              style: GoogleFonts.poppins(color: AppColors.secondTextColor, fontSize: 14),
-                            ),
-                          ],
+                        Text(
+                          widget.reservation.type == ReservationType.property
+                              ? (widget.reservation.item as PropertyModel).type.name
+                              : (widget.reservation.item as ActivityModel).name,
+                          style: GoogleFonts.poppins(fontSize: 14, color: AppColors.secondTextColor),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                         const SizedBox(height: 10),
                         Text(
@@ -233,16 +218,16 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
               style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryTextColor),
             ),
             const SizedBox(height: 8),
-            SummaryRow(title: '$nightsNumber Night × $price', price: '${nightsNumber * price} SAR'),
             SummaryRow(
-              title: '${widget.reservation.guestNumber} Person × $price',
-              price: '${widget.reservation.guestNumber * price} SAR',
+              title:
+                  '$nightsNumber Night${nightsNumber > 1 ? 's' : ''} × ${widget.reservation.guestNumber} Person${widget.reservation.guestNumber > 1 ? 's' : ''} × $price Per Night',
+              price: '${nightsNumber * widget.reservation.guestNumber * price} SAR',
             ),
-            SummaryRow(title: 'Vat', price: '0 SAR'),
-            SummaryRow(title: 'Discount', price: '-200 SAR'),
-            SummaryRow(title: 'Discount', price: '-1000 SAR'),
-            if (!isRefused) buildNoteSection(),
-            if (!isRefused) const SizedBox(height: 16),
+            // SummaryRow(title: '$price', price: '${widget.reservation.guestNumber * price} SAR'),
+            // SummaryRow(title: 'Vat', price: '0 SAR'),
+            // SummaryRow(title: 'Discount', price: '-200 SAR'),
+            // if (!isRefused) buildNoteSection(),
+            if (!isRefused) const SizedBox(height: 54),
             if (!isRefused) buildActionButtons(),
             const Divider(height: 32, thickness: 1, color: AppColors.editIconColor),
             const ViewReservationSummary(),
@@ -279,11 +264,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              setState(() {
-                isRefused = !isRefused;
-              });
-            },
+            onTap: () {},
             child: Container(
               width: double.infinity,
               height: 40,
@@ -302,9 +283,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
         if (!isRefused)
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                // showRefuseDialoge(context);
-              },
+              onTap: () {},
               child: Container(
                 width: double.infinity,
                 height: 40,

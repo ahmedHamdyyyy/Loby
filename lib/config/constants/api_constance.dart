@@ -1,5 +1,6 @@
 class ApiConstance {
-  static const baseUrl = "https://Luby-rafiks-projects-827f7443.vercel.app/api/v1/";
+  // static const baseUrl = "https://Luby-rafiks-projects-827f7443.vercel.app/api/v1/";
+  static const baseUrl = "https://luby-one.vercel.app/api/v1/";
 
   static const signin = "auth/signin";
   static const signup = "auth/signup";

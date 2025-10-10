@@ -20,8 +20,6 @@ void main() async {
   setup();
   await getIt<CacheService>().init();
   await getIt<ApiService>().init();
-  
-  // await getIt<CacheService>().storage.clear();
   runApp(const MyApp());
 }
 

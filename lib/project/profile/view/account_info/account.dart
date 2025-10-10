@@ -9,8 +9,6 @@ class ProfileFeaturesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Scaffold(
     backgroundColor: AppColors.whiteColor,
-    body: SingleChildScrollView(child: Column(children: [
-      SizedBox(height: 52), AccountHeader(),
-       AccountProfileCard()])),
+    body: SingleChildScrollView(child: Column(children: [SizedBox(height: 44), AccountHeader(), AccountProfileCard()])),
   );
 }

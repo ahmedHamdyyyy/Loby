@@ -192,10 +192,11 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 2))],
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, offset: const Offset(0, 2))],
         ),
         child: Row(
           children: [
+            // ignore: deprecated_member_use
             SvgPicture.asset(ImageAssets.searchIcon, width: 24, height: 24, color: AppColors.grayColorIcon),
             const SizedBox(width: 10),
             Expanded(
@@ -227,7 +228,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 2))],
+              boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 8, offset: const Offset(0, 2))],
             ),
             child: Text(
               'Drag to select location',
@@ -248,9 +249,9 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
+          color: Colors.white.withAlpha(245),
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5))],
+          boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 20, offset: const Offset(0, -5))],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -258,6 +259,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
             // Location address
             Row(
               children: [
+                // ignore: deprecated_member_use
                 SvgPicture.asset(ImageAssets.locationIcon, width: 24, height: 24, color: AppColors.primaryColor),
                 const SizedBox(width: 10),
                 Expanded(

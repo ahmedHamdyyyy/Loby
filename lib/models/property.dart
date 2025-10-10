@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -155,6 +156,19 @@ class PropertyModel extends Equatable {
 
   Future<FormData> toJson() async {
     final formData = FormData();
+
+    // Create address as a Map and let FormData handle the serialization
+    final addressMap = {
+      'formattedAddress': address.formattedAddress,
+      'city': address.city,
+      'state': address.state,
+      'country': address.country,
+      'latitude': address.latitude,
+      'longitude': address.longitude,
+    };
+
+    print('Creating address JSON: ${jsonEncode(addressMap)}');
+
     formData.fields.addAll([
       MapEntry('type', type.name),
       MapEntry('available', available.toString()),
@@ -164,7 +178,8 @@ class PropertyModel extends Equatable {
       MapEntry('endDate', endDate),
       MapEntry('bathrooms', bathrooms.toString()),
       MapEntry('beds', beds.toString()),
-      MapEntry('address', address.toJson()),
+      // Try encoding the address as a clean JSON string
+      MapEntry('address', jsonEncode(addressMap)),
       MapEntry('details', details),
       MapEntry('pricePerNight', pricePerNight.toString()),
       MapEntry('maxDays', maxDays.toString()),
@@ -174,34 +189,32 @@ class PropertyModel extends Equatable {
       formData.fields.add(MapEntry('tags', tag));
     }
 
+    print('FormData fields created successfully');
+    // Re-enable file uploads with safe checks
     try {
       for (final filePath in ownershipContract) {
         if (filePath.isEmpty) continue;
         if (filePath.startsWith('https://') || filePath.startsWith('http://')) continue;
-        if (!await File(filePath).exists()) continue;
+        final f = File(filePath);
+        if (!await f.exists()) continue;
+        final filename = filePath.split('\\').last.split('/').last;
         formData.files.add(
           MapEntry(
             'ownershipContract',
-            await MultipartFile.fromFile(
-              filePath,
-              filename: filePath.split('/').last,
-              contentType: MediaType('application', 'pdf'),
-            ),
+            await MultipartFile.fromFile(filePath, filename: filename, contentType: MediaType('application', 'pdf')),
           ),
         );
       }
       for (final filePath in facilityLicense) {
         if (filePath.isEmpty) continue;
         if (filePath.startsWith('https://') || filePath.startsWith('http://')) continue;
-        if (!await File(filePath).exists()) continue;
+        final f = File(filePath);
+        if (!await f.exists()) continue;
+        final filename = filePath.split('\\').last.split('/').last;
         formData.files.add(
           MapEntry(
             'facilityLicense',
-            await MultipartFile.fromFile(
-              filePath,
-              filename: filePath.split('/').last,
-              contentType: MediaType('application', 'pdf'),
-            ),
+            await MultipartFile.fromFile(filePath, filename: filename, contentType: MediaType('application', 'pdf')),
           ),
         );
       }
@@ -213,10 +226,13 @@ class PropertyModel extends Equatable {
         }
         final extension = filePath.split('.').last.toLowerCase();
         if (!['jpg', 'jpeg', 'png', 'mp4'].contains(extension)) continue;
-        if (!await File(filePath).exists()) continue;
+        final f = File(filePath);
+        if (!await f.exists()) continue;
         final isVideo = extension == 'mp4';
-        final contentType = isVideo ? MediaType('video', 'mp4') : MediaType('image', extension);
-        final filename = filePath.split(Platform.pathSeparator).last;
+        final imageSubtype = (extension == 'jpg') ? 'jpeg' : extension; // http content-type should be image/jpeg
+        final contentType = isVideo ? MediaType('video', 'mp4') : MediaType('image', imageSubtype);
+        final filename = filePath.split('\\').last.split('/').last;
+        debugPrint('Attaching media file: path=$filePath, filename=$filename, type=$contentType');
         formData.files.add(
           MapEntry('medias', await MultipartFile.fromFile(filePath, filename: filename, contentType: contentType)),
         );

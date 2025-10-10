@@ -20,6 +20,7 @@ class ApiService {
           sendTimeout: const Duration(seconds: 30),
           validateStatus: (status) => status! < 500,
           headers: {'Accept': '*/*', 'Content-Type': 'application/json', 'Connection': 'keep-alive'},
+          responseType: ResponseType.json, // Ensure JSON parsing
         ),
       );
 
@@ -41,18 +42,41 @@ class _ApiInterceptor extends InterceptorsWrapper {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     debugPrint('REQUEST[${options.method}] => PATH: ${options.path}');
+    debugPrint('REQUEST URL: ${options.baseUrl}${options.path}');
+    debugPrint('REQUEST DATA TYPE: ${options.data.runtimeType}');
+    if (options.data is FormData) {
+      final formData = options.data as FormData;
+      debugPrint('FORM DATA FIELDS: ${formData.fields.map((e) => '${e.key}: ${e.value}').join(', ')}');
+      debugPrint('FORM DATA FILES: ${formData.files.map((e) => '${e.key}: ${e.value.filename}').join(', ')}');
+    }
+
     final isMultipart = options.data is FormData;
     final accessToken = _cacheService.storage.getString(AppConst.accessToken);
-    print(accessToken);
-    options.headers['Content-Type'] = isMultipart ? 'multipart/form-data' : 'application/json';
-    if (isMultipart) options.headers['Accept-Encoding'] = 'gzip, deflate, br';
+    print('Access Token: $accessToken');
+    // Let Dio set proper multipart boundaries automatically
+    if (!isMultipart) {
+      options.headers['Content-Type'] = 'application/json';
+    } else {
+      options.headers.remove('Content-Type');
+      options.headers.remove('content-type');
+    }
     if (accessToken != null && accessToken.isNotEmpty) options.headers['Authorization'] = 'Bearer $accessToken';
+
+    debugPrint('REQUEST HEADERS: ${options.headers}');
     return handler.next(options);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     debugPrint('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
+    debugPrint('RESPONSE CONTENT TYPE: ${response.headers['content-type']}');
+    debugPrint('RESPONSE DATA TYPE: ${response.data.runtimeType}');
+    if (response.data is String) {
+      final dataStr = response.data as String;
+      debugPrint('RESPONSE STRING LENGTH: ${dataStr.length}');
+      debugPrint('RESPONSE STRING PREVIEW: ${dataStr.length > 200 ? dataStr.substring(0, 200) + "..." : dataStr}');
+    }
+
     if ([ApiConstance.signin, ApiConstance.signup, ApiConstance.resetpassword].contains(response.requestOptions.path)) {
       if (response.data != null && response.data['success']) {
         final accessToken = (response.data['data'] ?? {})['accessToken'];
@@ -89,6 +113,13 @@ class _ApiInterceptor extends InterceptorsWrapper {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    debugPrint('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
+    debugPrint('ERROR TYPE: ${err.type}');
+    debugPrint('ERROR MESSAGE: ${err.message}');
+    debugPrint('ERROR RESPONSE: ${err.response}');
+    debugPrint('ERROR RESPONSE DATA: ${err.response?.data}');
+    debugPrint('ERROR RESPONSE HEADERS: ${err.response?.headers}');
+
     if (err.response?.statusCode == 401 && !err.requestOptions.path.contains(ApiConstance.refreshToken)) {
       // Only attempt refresh if this is not already a refresh token request
       if (!_isRefreshing) {
@@ -119,27 +150,22 @@ class _ApiInterceptor extends InterceptorsWrapper {
   Future<String> getAccessToken(String refreshToken) async {
     try {
       final response = await _dio.post(
-        ApiConstance.refreshToken, 
+        ApiConstance.refreshToken,
         data: {AppConst.refreshToken: refreshToken},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': '*/*',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'application/json', 'Accept': '*/*'}),
       );
-      
+
       if (response.statusCode == 200 && response.data != null && response.data['success']) {
         final accessToken = response.data['data']['accessToken'];
         final newRefreshToken = response.data['data']['refreshToken'];
-        
+
         if (accessToken != null) {
           await _cacheService.storage.setString(AppConst.accessToken, accessToken);
         }
         if (newRefreshToken != null) {
           await _cacheService.storage.setString(AppConst.refreshToken, newRefreshToken);
         }
-        
+
         return accessToken;
       } else {
         throw Exception('Failed to refresh token: ${response.data?['message'] ?? 'Unknown error'}');

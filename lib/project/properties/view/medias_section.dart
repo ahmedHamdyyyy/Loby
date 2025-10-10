@@ -112,6 +112,7 @@ class _MediasSectionState extends State<MediasSection> {
       if (file == null) return;
       final ext = file.path.split('.').last.toLowerCase();
       if (ext != 'mp4') {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يُسمح فقط برفع فيديو MP4')));
         return;
       }
