@@ -95,9 +95,10 @@ class _ActivityScreenState extends State<ActivityScreen> {
 
   void _submitForm() async {
     if (!await _validateForm()) return;
+    final date = dateController.text.split('/');
     final activity = ActivityModel(
       id: widget.activityId,
-      date: dateController.text,
+      date: DateTime(int.parse(date[0]), int.parse(date[1]), int.parse(date[2])).toIso8601String(),
       time: timeController.text,
       activityTime: activityTimeController.text,
       name: activityNameController.text,

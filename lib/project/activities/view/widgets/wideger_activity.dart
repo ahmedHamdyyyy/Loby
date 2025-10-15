@@ -236,8 +236,7 @@ class DateField extends StatelessWidget {
             );
             if (selectedDate != null) {
               // تنسيق التاريخ بصيغة yyyy-MM-dd
-              controller.text =
-                  "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+              controller.text = selectedDate.toIso8601String().split('T').first.replaceAll('-', '/');
             }
           },
           decoration: InputDecoration(
