@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../config/constants/constance.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../../locator.dart';
 import '../../../models/property.dart';
 import '../logic/cubit.dart';
@@ -30,7 +31,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 24, top: 46),
             child: Text(
-              'Reservation',
+              context.l10n.reservationTitle,
               style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
@@ -41,7 +42,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
               children: [
                 Expanded(
                   child: _buildTabButton(
-                    text: 'Current Reservations',
+                    text: context.l10n.currentReservations,
                     isSelected: isCurrentReservations,
                     onTap: () => setState(() => isCurrentReservations = true),
                   ),
@@ -49,7 +50,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildTabButton(
-                    text: 'Last Reservations',
+                    text: context.l10n.lastReservations,
                     isSelected: !isCurrentReservations,
                     onTap: () => setState(() => isCurrentReservations = false),
                   ),
@@ -67,7 +68,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 } else if (state.reservations.isEmpty) {
                   return Center(
                     child: Text(
-                      'No Reservations found',
+                      context.l10n.noReservationsFound,
                       style: GoogleFonts.poppins(fontSize: 16, color: AppColors.grayTextColor),
                     ),
                   );
@@ -132,7 +133,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '${reservation.guestNumber} person',
+                                          context.l10n.personCount(reservation.guestNumber),
                                           style: GoogleFonts.poppins(
                                             fontSize: 14,
                                             color: AppColors.grayTextColor,
@@ -152,7 +153,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                             style: const TextStyle(fontSize: 14, color: AppColors.secondTextColor),
                                             children: [
                                               TextSpan(
-                                                text: 'Date ',
+                                                text: '${context.l10n.dateLabelInline} ',
                                                 style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.w400,
                                                   fontSize: 14,
@@ -176,7 +177,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                               style: const TextStyle(fontSize: 14, color: AppColors.secondTextColor),
                                               children: [
                                                 TextSpan(
-                                                  text: 'CheckOut ',
+                                                  text: '${context.l10n.checkOutInline} ',
                                                   style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 14,
@@ -204,9 +205,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 padding: const EdgeInsets.only(right: 16),
                                 child: ElevatedButton(
                                   onPressed: () {
+                                    getIt<ReservationsCubit>().setReservation(reservation);
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => ReservationDetailsScreen(reservation)),
+                                      MaterialPageRoute(builder: (context) => ReservationDetailsScreen()),
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -218,7 +220,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                     minimumSize: Size(double.infinity, 48),
                                   ),
                                   child: Text(
-                                    'View Reservations Details',
+                                    context.l10n.viewReservationDetails,
                                     style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w400),
                                   ),
                                 ),

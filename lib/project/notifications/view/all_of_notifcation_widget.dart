@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 import 'notifications_screen.dart';
 
 class HeaderSection extends StatelessWidget {
@@ -11,11 +12,12 @@ class HeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Row(
       children: [
         const SizedBox(width: 20),
         Text(
-          "Notifications",
+          l10n.notificationsTitle,
           style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontWeight: FontWeight.w500, fontSize: 14),
         ),
       ],
@@ -30,6 +32,7 @@ class NotificationsHeaderWithNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return InkWell(
       onTap: () => _navigateToNotifications(context),
       child: Padding(
@@ -37,7 +40,7 @@ class NotificationsHeaderWithNavigation extends StatelessWidget {
         child: GestureDetector(
           onTap: () => _navigateToNotifications(context),
           child: Text(
-            'Your Notifications',
+            l10n.yourNotifications,
             style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
           ),
         ),
@@ -55,6 +58,7 @@ class EmptyNotificationsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Expanded(
       child: Center(
         child: Column(
@@ -67,7 +71,7 @@ class EmptyNotificationsContent extends StatelessWidget {
               child: SvgPicture.asset(ImageAssets.chat),
             ),
             Text(
-              "You don't have any notifications \n right now",
+              l10n.noNotificationsYet,
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 16,

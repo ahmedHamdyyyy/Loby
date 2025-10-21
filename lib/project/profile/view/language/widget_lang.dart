@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../config/widget/helper.dart';
+import '../../../../../core/localization/l10n_ext.dart';
 
 enum Language { english, arabic }
 
@@ -20,7 +21,7 @@ class LanguageScreenHeader extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new, size: 24),
             color: const Color(0xFF757575),
           ),
-          const TextWidget(text: 'Language', color: Color(0xFF757575), fontSize: 14, fontWeight: FontWeight.w500),
+          TextWidget(text: context.l10n.language, color: const Color(0xFF757575), fontSize: 14, fontWeight: FontWeight.w500),
         ],
       ),
     );
@@ -33,9 +34,14 @@ class LanguageScreenTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextWidget(text: 'Choose Your Language', color: Color(0xFF1C1C1C), fontSize: 16, fontWeight: FontWeight.w600),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextWidget(
+        text: context.l10n.selectLanguageTitle,
+        color: const Color(0xFF1C1C1C),
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }
@@ -108,7 +114,10 @@ class SaveButton extends StatelessWidget {
           backgroundColor: const Color(0xFF262626),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: const Text('Save', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+        child: Text(
+          context.l10n.save,
+          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

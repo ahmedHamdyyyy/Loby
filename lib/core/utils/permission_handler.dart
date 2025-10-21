@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../localization/l10n_ext.dart';
+
 class PermissionHelper {
   static Future<bool> requestStoragePermission(BuildContext context) async {
     if (await Permission.storage.isGranted) {
@@ -69,19 +71,16 @@ class PermissionHelper {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('$permissionName Permission Required'),
-            content: Text(
-              'This app needs $permissionName permission to function properly. '
-              'Please grant the permission in app settings.',
-            ),
+            title: Text(context.l10n.permissionRequiredTitle(permissionName)),
+            content: Text(context.l10n.permissionRequiredBody(permissionName, 'to function properly')),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
               TextButton(
                 onPressed: () {
                   openAppSettings();
                   Navigator.pop(context);
                 },
-                child: const Text('Open Settings'),
+                child: Text(context.l10n.commonOpenSettings),
               ),
             ],
           ),

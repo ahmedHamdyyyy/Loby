@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../models/address.dart';
 import '../../../properties/view/location_screens.dart';
 import 'tag_selector_widget.dart';
@@ -14,7 +15,7 @@ class AgreementTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Loby Platform Usage Agreement',
+      context.l10n.lobyPlatformUsageAgreement,
       style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
     );
   }
@@ -110,7 +111,7 @@ class _AddressFieldState extends State<AddressField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Address',
+          context.l10n.address,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.grayTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
@@ -138,11 +139,11 @@ class _AddressFieldState extends State<AddressField> {
               ),
             ),
             prefixIconConstraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-            hintText: 'Enter your address or tap map icon to select',
+            hintText: context.l10n.enterYourAddressOrTapMap,
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) return 'Please enter your address';
+            if (value == null || value.isEmpty) return context.l10n.pleaseEnterYourAddress;
             return null;
           },
         ),
@@ -162,7 +163,7 @@ class DetailsField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Add Some details',
+          context.l10n.addSomeDetailsLabel,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.grayTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 10),
@@ -172,13 +173,11 @@ class DetailsField extends StatelessWidget {
             border: buildOutlineBorder(),
             focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
             enabledBorder: buildOutlineBorder(),
-            hintText: 'Add Details',
+            hintText: context.l10n.addDetailsHint,
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
           validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter some details';
-            }
+            if (value == null || value.isEmpty) return context.l10n.pleaseEnterSomeDetails;
             return null;
           },
           controller: controller,
@@ -199,7 +198,7 @@ class TagsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Tell guests what your place has to offer',
+          context.l10n.tellGuestsOffers,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
         ),
         TagSelectorWidget(selectedTags: selectedTags, onTagsSelected: onTagsSelected),
@@ -219,7 +218,7 @@ class DateField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Date',
+          context.l10n.dateLabel,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
@@ -243,7 +242,7 @@ class DateField extends StatelessWidget {
             border: buildOutlineBorder(),
             focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
             enabledBorder: buildOutlineBorder(),
-            hintText: 'yyyy-MM-dd',
+            hintText: context.l10n.yyyyMMdd,
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
             suffixIcon: const Icon(Icons.calendar_today),
           ),
@@ -264,7 +263,7 @@ class TimeField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Time',
+          context.l10n.timeLabel,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
@@ -284,7 +283,7 @@ class TimeField extends StatelessWidget {
             border: buildOutlineBorder(),
             focusedBorder: buildOutlineBorder(AppColors.grayTextColor),
             enabledBorder: buildOutlineBorder(),
-            hintText: 'HH:MM',
+            hintText: context.l10n.hhmm,
             hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
             suffixIcon: const Icon(Icons.access_time),
           ),
@@ -305,11 +304,11 @@ class PriceField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Price',
+          context.l10n.priceLabel,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        CustomTextField(controller: controller, hintText: 'Enter price per person'),
+        CustomTextField(controller: controller, hintText: context.l10n.pricePerPersonHint),
       ],
     );
   }
@@ -326,11 +325,11 @@ class GuestNumber extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Guest Number',
+          context.l10n.guestNumber,
           style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryTextColor, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        CustomTextField(controller: controller, hintText: 'Enter Maximum Guest Number'),
+        CustomTextField(controller: controller, hintText: context.l10n.enterMaxGuestNumber),
       ],
     );
   }
@@ -352,7 +351,7 @@ class CustomTextField extends StatelessWidget {
       hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
     ),
     validator: (value) {
-      if (value == null || value.isEmpty) return 'Please enter $hintText';
+      if (value == null || value.isEmpty) return context.l10n.pleaseEnterField(hintText);
       return null;
     },
     controller: controller,

@@ -1,11 +1,16 @@
 // ignore_for_file: library_private_types_in_public_api, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/widget/widgets.dart';
+import '../../../../config/constants/constance.dart';
+import '../../../../locator.dart';
+import '../../../core/localization/l10n_ext.dart';
+import '../logic/cubit.dart';
 import 'notification_detail_screen.dart';
 
 class NotificationsScreenVendor extends StatefulWidget {
@@ -56,37 +61,62 @@ class _NotificationsScreenVendorState extends State<NotificationsScreenVendor> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBarPop(context, "Notifications", AppColors.primary),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-              child: Text(
-                "Your Notifications",
-                style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryTextColor),
+      appBar: appBarPop(context, l10n.notificationsTitle, AppColors.primary),
+      body: BlocProvider(
+        create: (_) => getIt<NotificationsCubit>()..loadNotifications(),
+        child: BlocBuilder<NotificationsCubit, NotificationsState>(
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
+                    child: Text(
+                      l10n.yourNotifications,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryTextColor,
+                      ),
+                    ),
+                  ),
+                  if (state.loadStatus == Status.loading)
+                    const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
+                  else if (state.notifications.isEmpty)
+                    const EmptyNotificationsState()
+                  else
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: state.notifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = state.notifications[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: NotificationItem(
+                            notification: {
+                              'id': notification.id,
+                              'type': 'notification',
+                              'title': notification.title,
+                              'subtitle': notification.body,
+                              'date': notification.timestamp,
+                              'image': 'assets/svg/loby.svg',
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                ],
               ),
-            ),
-            hasNotifications ? _buildNotificationsList() : const EmptyNotificationsState(),
-          ],
+            );
+          },
         ),
       ),
-    );
-  }
-
-  Widget _buildNotificationsList() {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        return Padding(padding: const EdgeInsets.only(bottom: 16), child: NotificationItem(notification: notification));
-      },
     );
   }
 }
@@ -96,6 +126,7 @@ class EmptyNotificationsState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +135,7 @@ class EmptyNotificationsState extends StatelessWidget {
           Icon(Icons.notifications_off_outlined, size: 130, color: Colors.grey[400]),
           const SizedBox(height: 20),
           Text(
-            'You don\'t have any notifications\nright now',
+            l10n.noNotificationsYet,
             textAlign: TextAlign.center,
             style: GoogleFonts.poppins(color: Colors.grey[600], fontSize: 16, fontWeight: FontWeight.w500),
           ),
@@ -145,9 +176,7 @@ class NotificationItem extends StatelessWidget {
 
 class NotificationIcon extends StatelessWidget {
   final String imagePath;
-
   const NotificationIcon({super.key, required this.imagePath});
-
   @override
   Widget build(BuildContext context) {
     return Container(

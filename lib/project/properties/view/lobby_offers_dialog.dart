@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 
 class LobbyOffersDialog extends StatelessWidget {
   const LobbyOffersDialog({super.key});
@@ -33,13 +34,13 @@ class LobbyOffersDialog extends StatelessWidget {
             ],
           ),
           Text(
-            "Lobby Offers",
+            context.l10n.lobbyOffersTitle,
             style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
           ),
           Container(margin: const EdgeInsets.symmetric(vertical: 8), height: 1.2, width: 120, color: AppColors.primaryColor),
           const SizedBox(height: 16),
           Text(
-            'If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%',
+            context.l10n.lobbyOffersDescription,
             style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
             textAlign: TextAlign.center,
           ),
@@ -53,7 +54,7 @@ class LobbyOffersDialog extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('continue', style: GoogleFonts.poppins(fontSize: 16, color: Colors.white)),
+              child: Text(context.l10n.continueLabel, style: GoogleFonts.poppins(fontSize: 16, color: Colors.white)),
             ),
           ),
           const SizedBox(height: 10),

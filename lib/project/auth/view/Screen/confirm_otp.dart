@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/constants/constance.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
 import '../../../../models/user.dart';
@@ -25,7 +26,7 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
   void _confirmOtp() async {
     _errorText = null;
     if (_otpController.text.isEmpty || _otpController.text.length < 6) {
-      _errorText = 'Please enter a valid OTP';
+      _errorText = context.l10n.pleaseEnterValidOtp;
       return;
     }
     context.read<AuthCubit>().confirmOtp(widget.email, _otpController.text, widget.willSignup);
@@ -85,15 +86,26 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Enter the OTP sent to ${widget.email}', style: const TextStyle(fontSize: 16), textAlign: TextAlign.center),
+            Text(
+              context.l10n.enterOtpSentTo(widget.email),
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 24),
             TextField(
               controller: _otpController,
               maxLength: 6,
-              decoration: InputDecoration(labelText: 'OTP', errorText: _errorText, border: const OutlineInputBorder()),
+              decoration: InputDecoration(
+                labelText: context.l10n.otp,
+                errorText: _errorText,
+                border: const OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 24),
-            SizedBox(width: double.infinity, child: ElevatedButton(onPressed: _confirmOtp, child: const Text('Confirm'))),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(onPressed: _confirmOtp, child: Text(context.l10n.confirmButton)),
+            ),
           ],
         ),
       ),

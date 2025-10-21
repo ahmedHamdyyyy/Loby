@@ -28,6 +28,10 @@ class _MainVendorHomeState extends State<MainVendorHome> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: _pages[currentIndex],
-    bottomNavigationBar: buildBottomNavigationBarVendor(currentIndex: currentIndex, onTap: updateCurrentIndex),
+    bottomNavigationBar: buildBottomNavigationBarVendor(
+      context: context,
+      currentIndex: currentIndex,
+      onTap: updateCurrentIndex,
+    ),
   );
 }

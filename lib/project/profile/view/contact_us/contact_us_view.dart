@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/localization/l10n_ext.dart';
 import 'widgets_contact_us_view.dart';
 
 class ContactUsViewVendor extends StatelessWidget {
@@ -27,7 +28,9 @@ class ContactUsViewVendor extends StatelessWidget {
                 child: SendButton(
                   onPressed: () {
                     // Handle send message action
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Message sent successfully')));
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(context.l10n.messageSentSuccessfully)));
                   },
                 ),
               ),

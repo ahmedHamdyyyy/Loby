@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
+import '../../../../core/localization/l10n_ext.dart';
 
 class TagSelectorWidget extends StatefulWidget {
   const TagSelectorWidget({super.key, required this.selectedTags, required this.onTagsSelected});
@@ -12,7 +13,26 @@ class TagSelectorWidget extends StatefulWidget {
 }
 
 class _TagSelectorScreenState extends State<TagSelectorWidget> {
-  final List<String> _allTags = ['Photography', 'Transfer', 'Pool', 'Waterfront'];
+  final List<String> _allTags = [
+    'Photography',
+    'Transfer',
+    'Pool',
+    'Waterfront',
+    'Beach',
+    'WiFi',
+    'Parking',
+    'Pet Friendly',
+    'Gym',
+    'Breakfast',
+    'Air Conditioning',
+    'Kitchen',
+    'Fireplace',
+    'Washer',
+    'Dryer',
+    'Hot Tub',
+    'Garden',
+    'Balcony',
+  ];
   late final List<String> _selectedTags;
   final _textController = TextEditingController();
 
@@ -78,13 +98,13 @@ class _TagSelectorScreenState extends State<TagSelectorWidget> {
         builder: (context) {
           return AlertDialog(
             title: Text(
-              'Add a new tag',
+              context.l10n.addNewTagTitle,
               style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 14, fontWeight: FontWeight.w400),
             ),
             content: TextField(
               controller: _textController,
               decoration: InputDecoration(
-                hintText: 'Enter tag name',
+                hintText: context.l10n.enterTagNameHint,
                 hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
               ),
               autofocus: true,
@@ -96,7 +116,7 @@ class _TagSelectorScreenState extends State<TagSelectorWidget> {
                   _textController.clear();
                 },
                 child: Text(
-                  'Cancel',
+                  context.l10n.commonCancel,
                   style: GoogleFonts.poppins(
                     color: AppColors.secondGrayTextColor,
                     fontSize: 14,
@@ -120,7 +140,7 @@ class _TagSelectorScreenState extends State<TagSelectorWidget> {
                   }
                 },
                 child: Text(
-                  'Add',
+                  context.l10n.commonAdd,
                   style: GoogleFonts.poppins(
                     color: AppColors.secondGrayTextColor,
                     fontSize: 14,
@@ -146,7 +166,7 @@ class _TagSelectorScreenState extends State<TagSelectorWidget> {
           Icon(Icons.add, size: 16, color: AppColors.grayTextColor),
           const SizedBox(width: 4),
           Text(
-            'Add other things',
+            context.l10n.addOtherThings,
             style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14, fontWeight: FontWeight.w400),
           ),
         ],

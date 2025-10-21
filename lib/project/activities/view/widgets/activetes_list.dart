@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/widget.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
 import '../../logic/cubit.dart';
@@ -22,7 +23,7 @@ class ActivitiesListView extends StatelessWidget {
           Utils.loadingDialog(context);
         case Status.success:
           Navigator.pop(context);
-          showToast(text: 'Activity Deleted Successfully', stute: ToustStute.success);
+          showToast(text: context.l10n.activityDeletedSuccessfully, stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
@@ -34,12 +35,13 @@ class ActivitiesListView extends StatelessWidget {
     },
     builder: (context, state) {
       final activities = state.activities;
-      if (activities.isEmpty) return const Center(child: Text('No Added Items Here...'));
+      if (activities.isEmpty) return Center(child: Text(context.l10n.commonNoItems));
       return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: activities.length,
+        padding: const EdgeInsets.symmetric(vertical: 10),
         itemBuilder: (context, index) {
           final activity = activities[index];
           return Column(
@@ -73,11 +75,12 @@ class ActivitiesListView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder:
-                              (context) => BlocProvider.value(
-                                value: getIt<ActivitiesCubit>(),
-                                child: ActivityScreen(activityId: activities[index].id),
-                              ),
+                          builder: (context) {
+                            return BlocProvider.value(
+                              value: getIt<ActivitiesCubit>(),
+                              child: ActivityScreen(activityId: activities[index].id),
+                            );
+                          },
                         ),
                       );
                     },
@@ -91,19 +94,22 @@ class ActivitiesListView extends StatelessWidget {
                         builder:
                             (context) => AlertDialog(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              title: Text('Delete Property', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-                              content: Text('Are you sure you want to delete this property?', style: GoogleFonts.poppins()),
+                              title: Text(
+                                context.l10n.deletePropertyTitle,
+                                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                              ),
+                              content: Text(context.l10n.deletePropertyContent, style: GoogleFonts.poppins()),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: Text('Cancel', style: GoogleFonts.poppins()),
+                                  child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins()),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     getIt<ActivitiesCubit>().deleteActivity(activity.id);
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+                                  child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins(color: Colors.red)),
                                 ),
                               ],
                             ),

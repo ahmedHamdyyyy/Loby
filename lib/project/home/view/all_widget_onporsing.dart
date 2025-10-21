@@ -5,6 +5,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 
 // ------------------------ Text Widget ------------------------
 
@@ -48,18 +49,17 @@ class FirstSplashScreenContent extends StatelessWidget {
           right: 20,
           child: Column(
             children: [
-              const TextWidget(
-                text: "Welcome to LOBY",
+              TextWidget(
+                text: context.l10n.welcomeToLoby,
                 color: AppColors.primaryWhite,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
               const SizedBox(height: 10),
-              const SizedBox(
+              SizedBox(
                 width: 335,
                 child: TextWidget(
-                  text:
-                      "LLorem ipsum dolor sit amet, consecr adipiscing elit. Ut hendrerit triueasdwfa prm gravida felis, sociis in felis.",
+                  text: context.l10n.onboardingWelcomeDescription,
                   color: AppColors.primaryWhite,
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -92,8 +92,8 @@ class StartedButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 0,
       ),
-      child: const TextWidget(
-        text: "Let's Started",
+      child: TextWidget(
+        text: context.l10n.letsStart,
         color: AppColors.primaryWhite,
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -144,18 +144,23 @@ class LanguageSelectionContainer extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const TextWidget(
-              text: "Select your Language",
+            TextWidget(
+              text: context.l10n.selectLanguageTitle,
               color: AppColors.secondTextColor,
               fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
             SizedBox(height: 8.h),
-            const TextWidget(text: "اختر لغتك", color: AppColors.secondTextColor, fontSize: 20, fontWeight: FontWeight.w500),
+            TextWidget(
+              text: context.l10n.selectLanguageTitle,
+              color: AppColors.secondTextColor,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ),
             SizedBox(height: 32.h),
-            LanguageButton(language: "English", isPrimary: true, onPressed: onSelectEnglish),
+            LanguageButton(language: context.l10n.english, isPrimary: true, onPressed: onSelectEnglish),
             SizedBox(height: 16.h),
-            LanguageButton(language: "العربية", isPrimary: false, onPressed: onSelectArabic),
+            LanguageButton(language: context.l10n.arabic, isPrimary: false, onPressed: onSelectArabic),
           ],
         ),
       ),
@@ -305,7 +310,7 @@ class SkipButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: Text("Skip", style: GoogleFonts.poppins(color: Colors.white, fontSize: 16)),
+      child: Text(context.l10n.skipLabel, style: GoogleFonts.poppins(color: Colors.white, fontSize: 16)),
     );
   }
 }

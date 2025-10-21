@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import 'core/localization/localization_cubit.dart';
 import 'core/services/api_services.dart';
 import 'core/services/cach_services.dart';
 import 'project/activities/logic/cubit.dart';
@@ -8,6 +9,9 @@ import 'project/activities/logic/repository.dart';
 import 'project/auth/logic/auth_cubit.dart';
 import 'project/auth/logic/auth_data.dart';
 import 'project/auth/logic/auth_repo.dart';
+import 'project/notifications/logic/cubit.dart';
+import 'project/notifications/logic/data.dart';
+import 'project/notifications/logic/repository.dart';
 import 'project/profile/logic/cubit.dart';
 import 'project/profile/logic/data.dart';
 import 'project/profile/logic/repository.dart';
@@ -33,4 +37,9 @@ void setup() {
   getIt.registerSingleton<ReservationsCubit>(
     ReservationsCubit(ReservationsRepository(ReservationsData(getIt<ApiService>()))),
   );
+  getIt.registerSingleton<NotificationsCubit>(
+    NotificationsCubit(NotificationsRepository(NotificationsData(getIt<ApiService>()))),
+  );
+  // Localization cubit
+  getIt.registerSingleton<LocalizationCubit>(LocalizationCubit());
 }

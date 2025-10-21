@@ -8,7 +8,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../locator.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../../core/utils/utile.dart';
+import '../../../models/user.dart';
 import '../../activities/logic/cubit.dart';
 import '../../activities/view/screens/activity_screen.dart';
 import '../../activities/view/widgets/activetes_list.dart';
@@ -73,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         BlocConsumer<ProfileCubit, ProfileState>(
                           listener: (context, state) {
                             if (state.fetchUserStatus == Status.success) {
-                              _updateVendorRole(state.user.role, state.user.isVerified);
+                              _updateVendorRole(state.user.role, state.user.status == UserStatus.approved);
                             }
                           },
                           builder: (context, state) {
@@ -129,13 +131,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    fullName.isEmpty ? "Guest User" : fullName,
+                                    fullName.isEmpty ? context.l10n.guestUser : fullName,
                                     style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    "Welcom to our App",
+                                    context.l10n.welcomeToOurApp,
                                     style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w400),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -182,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              textVendorNow(),
+                              textVendorNow(context),
                               const SizedBox(height: 16),
                               BlocConsumer<ProfileCubit, ProfileState>(
                                 listener: (context, state) {
@@ -193,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Utils.errorDialog(context, state.callback);
                                   } else if (state.chooseVendorRole == Status.success) {
                                     Navigator.pop(context);
-                                    _updateVendorRole(state.user.role, state.user.isVerified);
+                                    _updateVendorRole(state.user.role, state.user.status == UserStatus.approved);
                                     if (_vendorRole == VendorRole.property) {
                                       Navigator.push(
                                         context,
@@ -217,10 +219,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                     onPressed: () async {
                                       if (state.fetchUserStatus == Status.loading) return;
-                                      if (!state.user.isVerified) {
+                                      if (state.user.status == UserStatus.pending) {
+                                        Utils.errorDialog(context, context.l10n.emailNotVerifiedMsg);
+                                        return;
+                                      } else if (state.user.status == UserStatus.rejected) {
+                                        // redirect to support or show message.
                                         Utils.errorDialog(
                                           context,
-                                          "Your email is not verified please wait until it is verified then try again.",
+                                          'Rejected Account: Please contact support for more information.',
                                         );
                                         return;
                                       }
@@ -252,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         state.fetchUserStatus == Status.loading
                                             ? const CircularProgressIndicator()
                                             : Text(
-                                              "Start",
+                                              context.l10n.start,
                                               style: GoogleFonts.poppins(
                                                 fontSize: 16,
                                                 color: Colors.white,
@@ -278,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Your properties",
+                        context.l10n.yourProperties,
                         style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                       ),
                       const PropertiesListView(),
@@ -292,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Your activities",
+                        context.l10n.yourActivities,
                         style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                       ),
                       const ActivitiesListView(),
@@ -308,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (!_isVerified) IconButton(onPressed: getIt<ProfileCubit>().fetchUser, icon: Icon(Icons.refresh)),
-                        Text('Select Your Role Now!'),
+                        Text(context.l10n.commonSelectRole),
                       ],
                     ),
                   ),
@@ -321,27 +327,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Column textVendorNow() {
+Column textVendorNow(BuildContext context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "Be a vendor now !",
+        context.l10n.beVendorNow,
         style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
       ),
       const SizedBox(height: 20),
       Text(
-        "Lorem ipsum dolor sit amet, consecr text adipiscing edit text hendrerit triueas dfay lorem ipsum dolor sit amet, consecr text \nDiam habitant .",
+        context.l10n.vendorIntroText,
         style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
       ),
       const SizedBox(height: 20),
       Text(
-        "App Commission",
+        context.l10n.appCommission,
         style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
       ),
       const SizedBox(height: 10),
       Text(
-        "The first party's commission for every reservation made by the second party is 14% of the rent (not including value added tax).",
+        context.l10n.commissionDetails,
         style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
       ),
     ],

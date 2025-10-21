@@ -15,6 +15,7 @@ class ApiConstance {
   static const verifyEmail = "auth/signup/initiate";
   static const userProfile = "users/me";
   static const setVendorRole = "users/choose-vendor-role";
+  static const updateFcmToken = "auth/update-fcm-token";
 
   static const createActivity = "activities";
   static const getActivities = 'activities/me';
@@ -31,4 +32,10 @@ class ApiConstance {
   static deleteProperty(String id) => "properties/$id";
 
   static String updateReservation(String id) => "registrations/vendor-registrations/$id";
+  static String acceptReservation(String id) => "registrations/$id/confirm-payment";
+  static const refundReservation = "payments/refund";
+
+  // Notifications
+  static const notifications = "notifications";
+  static String readNotification(String id) => "notifications/$id";
 }

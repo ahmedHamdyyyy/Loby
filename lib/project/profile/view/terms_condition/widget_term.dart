@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/images/image_assets.dart';
 import '../../../../../config/widget/helper.dart';
+import '../../../../../core/localization/l10n_ext.dart';
 
 class NavigationHeader extends StatelessWidget {
   const NavigationHeader({super.key});
@@ -19,7 +20,12 @@ class NavigationHeader extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, size: 24),
           color: const Color(0xFF757575),
         ),
-        const TextWidget(text: 'Terms and Conditions', color: Color(0xFF757575), fontSize: 14, fontWeight: FontWeight.w500),
+        TextWidget(
+          text: context.l10n.termsAndConditions,
+          color: const Color(0xFF757575),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
       ],
     );
   }
@@ -30,9 +36,14 @@ class TermsTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 16),
-      child: TextWidget(text: 'Terms and Conditions', color: Color(0xFF1C1C1C), fontSize: 16, fontWeight: FontWeight.w600),
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20, top: 16, bottom: 16),
+      child: TextWidget(
+        text: context.l10n.termsAndConditions,
+        color: const Color(0xFF1C1C1C),
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }
@@ -111,9 +122,9 @@ class AgreementCheckbox extends StatelessWidget {
               isChecked
                   ? SvgPicture.asset(ImageAssets.cracalBlack, height: 24, width: 24)
                   : SvgPicture.asset(ImageAssets.cracalWhite, height: 24, width: 24),
-          label: const TextWidget(
-            text: 'Agree to the terms and conditions',
-            color: Color(0xFF414141),
+          label: TextWidget(
+            text: context.l10n.agreeToTerms,
+            color: const Color(0xFF414141),
             fontSize: 16,
             fontWeight: FontWeight.w400,
           ),
@@ -143,7 +154,12 @@ class DoneButton extends StatelessWidget {
             backgroundColor: const Color(0xFF262626),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
-          child: const TextWidget(text: 'Done', color: Color(0xFFFFFFFF), fontSize: 16, fontWeight: FontWeight.w400),
+          child: TextWidget(
+            text: context.l10n.confirmButton,
+            color: const Color(0xFFFFFFFF),
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ),
     );

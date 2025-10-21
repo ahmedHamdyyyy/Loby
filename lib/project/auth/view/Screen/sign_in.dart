@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../config/colors/colors.dart';
 import '../../../../../config/constants/constance.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../home/view/main_vandor_home.dart';
-import '../../../home/view/splash_screens.dart';
 import '../../logic/auth_cubit.dart';
 import '../Widget/all_widget_auth.dart';
 import 'sign_up.dart';
@@ -32,7 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final email = emailController.text.trim();
     final password = passwordController.text;
     if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يرجى ملء جميع الحقول')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.formFillRequired)));
       return;
     }
     context.read<AuthCubit>().signin(email: email, password: password);
@@ -57,16 +56,6 @@ class _SignInScreenState extends State<SignInScreen> {
     },
     child: Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.primaryIcon),
-          onPressed: () {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SplashScreens()));
-          },
-        ),
-      ),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
           return Stack(

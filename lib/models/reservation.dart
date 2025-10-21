@@ -5,7 +5,7 @@ import 'property.dart';
 
 enum ReservationType { activity, property }
 
-enum ReservationStatus { draft, completed, cancelled }
+enum ReservationStatus { draft, completed, cancelled, refunded }
 
 class ReservationModel extends Equatable {
   final String id, userId, userName, userImageUrl, checkInDate, checkOutDate;

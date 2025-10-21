@@ -38,5 +38,51 @@ class ReservationsCubit extends Cubit<ReservationsState> {
     }
   }
 
+  void setReservation(ReservationModel reservation) => emit(state.copyWith(reservation: reservation));
+
+  void acceptReservation() async {
+    emit(state.copyWith(updateStatus: Status.loading));
+    try {
+      await _repo.acceptReservation(state.reservation.id);
+      emit(
+        state.copyWith(
+          updateStatus: Status.success,
+          reservations: [
+            ...state.reservations.map((p) {
+              return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.completed) : p;
+            }),
+          ],
+          reservation: state.reservation.copyWith(status: ReservationStatus.completed),
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(updateStatus: Status.initial));
+    }
+  }
+
+  void refundReservation() async {
+    emit(state.copyWith(updateStatus: Status.loading));
+    try {
+      await _repo.refundReservation(state.reservation.id);
+      emit(
+        state.copyWith(
+          updateStatus: Status.success,
+          reservations: [
+            ...state.reservations.map((p) {
+              return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.refunded) : p;
+            }),
+          ],
+          reservation: state.reservation.copyWith(status: ReservationStatus.refunded),
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(updateStatus: Status.initial));
+    }
+  }
+
   void init() => emit(state.copyWith(updateStatus: Status.initial));
 }

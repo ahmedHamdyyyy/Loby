@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/images/image_assets.dart';
 import '../../../config/constants/constance.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../../core/utils/utile.dart';
 import '../../../locator.dart';
 import '../logic/cubit.dart';
@@ -24,7 +25,7 @@ class PropertiesListView extends StatelessWidget {
           break;
         case Status.success:
           Navigator.pop(context);
-          showToast(text: 'Property updated successfully', stute: ToustStute.success);
+          showToast(text: context.l10n.propertyUpdatedSuccessfully, stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
@@ -36,12 +37,13 @@ class PropertiesListView extends StatelessWidget {
     },
     builder: (context, state) {
       final properties = state.properties;
-      if (properties.isEmpty) return const Center(child: Text('No Added Items Here...'));
+      if (properties.isEmpty) return Center(child: Text(context.l10n.commonNoItems));
       return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: properties.length,
+        padding: const EdgeInsets.symmetric(vertical: 10),
         itemBuilder: (context, index) {
           final property = properties[index];
           return Column(
@@ -99,19 +101,22 @@ class PropertiesListView extends StatelessWidget {
                         builder:
                             (context) => AlertDialog(
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              title: Text('Delete Property', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-                              content: Text('Are you sure you want to delete this property?', style: GoogleFonts.poppins()),
+                              title: Text(
+                                context.l10n.deletePropertyTitle,
+                                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                              ),
+                              content: Text(context.l10n.deletePropertyContent, style: GoogleFonts.poppins()),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: Text('Cancel', style: GoogleFonts.poppins()),
+                                  child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins()),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     getIt<PropertiesCubit>().deleteProperty(properties[index].id);
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+                                  child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins(color: Colors.red)),
                                 ),
                               ],
                             ),

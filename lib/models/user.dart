@@ -7,6 +7,8 @@ import 'package:http_parser/http_parser.dart';
 
 import '../config/constants/constance.dart';
 
+enum UserStatus { approved, pending, rejected }
+
 class UserModel {
   final String firstName;
   final String lastName;
@@ -16,14 +18,13 @@ class UserModel {
   final String role;
   final String id;
   final String profilePicture;
-  // Vendor specific optional fields
   final String nationalId;
   final String iban;
   final String certificateNumber;
-  final String nationalIdDocument; // file path
-  final String ibanDocument; // file path
-  final String certificateNumberDocument; // file path
-  final bool isVerified;
+  final String nationalIdDocument;
+  final String ibanDocument;
+  final String certificateNumberDocument;
+  final UserStatus status;
 
   const UserModel({
     required this.id,
@@ -40,7 +41,7 @@ class UserModel {
     required this.nationalIdDocument,
     required this.ibanDocument,
     required this.certificateNumberDocument,
-    required this.isVerified,
+    required this.status,
   });
 
   static const non = UserModel(
@@ -58,7 +59,7 @@ class UserModel {
     nationalIdDocument: '',
     ibanDocument: '',
     certificateNumberDocument: '',
-    isVerified: false,
+    status: UserStatus.pending,
   );
 
   UserModel copyWith({
@@ -70,7 +71,7 @@ class UserModel {
     String? role,
     String? id,
     String? profilePicture,
-    bool? isVerified,
+    UserStatus? status,
     String? nationalId,
     String? iban,
     String? certificateNumber,
@@ -92,7 +93,7 @@ class UserModel {
     nationalIdDocument: nationalIdDocument ?? this.nationalIdDocument,
     ibanDocument: ibanDocument ?? this.ibanDocument,
     certificateNumberDocument: certificateNumberDocument ?? this.certificateNumberDocument,
-    isVerified: isVerified ?? this.isVerified,
+    status: status ?? this.status,
   );
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -110,47 +111,8 @@ class UserModel {
     nationalIdDocument: json[AppConst.nationalIdDocument] ?? '',
     ibanDocument: json[AppConst.ibanDocument] ?? '',
     certificateNumberDocument: json[AppConst.certificateNumberDocument] ?? '',
-    isVerified: json['verified'] ?? false,
+    status: UserStatus.values.firstWhere((e) => e.name == json['verified'], orElse: () => UserStatus.pending),
   );
-
-  // Future<FormData> signUp() async {
-  //   final map = <String, dynamic>{
-  //     AppConst.firstName: firstName,
-  //     AppConst.lastName: lastName,
-  //     AppConst.password: password,
-  //     AppConst.email: email,
-  //     AppConst.phone: phone,
-  //     AppConst.role: role,
-  //     if (nationalId.isNotEmpty) AppConst.nationalId: nationalId,
-  //     if (iban.isNotEmpty) AppConst.iban: iban,
-  //     if (certificateNumber.isNotEmpty) AppConst.certificateNumber: certificateNumber,
-  //     if (profilePicture.isNotEmpty)
-  //       AppConst.profilePicture: await MultipartFile.fromFile(
-  //         profilePicture,
-  //         filename: profilePicture.split('/').last,
-  //         contentType: MediaType('image', 'jpg'),
-  //       ),
-  //     if (nationalIdDocument.isNotEmpty)
-  //       AppConst.nationalIdDocument: await MultipartFile.fromFile(
-  //         nationalIdDocument,
-  //         filename: nationalIdDocument.split('/').last,
-  //         contentType: MediaType('application', 'pdf'),
-  //       ),
-  //     if (ibanDocument.isNotEmpty)
-  //       AppConst.ibanDocument: await MultipartFile.fromFile(
-  //         ibanDocument,
-  //         filename: ibanDocument.split('/').last,
-  //         contentType: MediaType('application', 'pdf'),
-  //       ),
-  //     if (certificateNumberDocument.isNotEmpty)
-  //       AppConst.certificateNumberDocument: await MultipartFile.fromFile(
-  //         certificateNumberDocument,
-  //         filename: certificateNumberDocument.split('/').last,
-  //         contentType: MediaType('application', 'pdf'),
-  //       ),
-  //   };
-  //   return FormData.fromMap(map);
-  // }
 
   Future<FormData> signUp() async {
     final formData = FormData();
@@ -241,7 +203,7 @@ class UserModel {
     AppConst.nationalIdDocument: nationalIdDocument,
     AppConst.ibanDocument: ibanDocument,
     AppConst.certificateNumberDocument: certificateNumberDocument,
-    'verified': isVerified,
+    'verified': status,
   });
 
   factory UserModel.fromCache(String user) => UserModel.fromJson(jsonDecode(user) as Map<String, dynamic>);

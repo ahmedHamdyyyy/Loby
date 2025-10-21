@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/widget/widgets.dart';
+import '../../../core/localization/l10n_ext.dart';
 import 'all_of_notifcation_widget.dart';
 
 class NotificationDetailScreenVendor extends StatelessWidget {
@@ -12,9 +13,10 @@ class NotificationDetailScreenVendor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: appBarPop(context, "Notification", AppColors.secondTextColor),
+      appBar: appBarPop(context, l10n.notificationTitle, AppColors.secondTextColor),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -22,12 +24,12 @@ class NotificationDetailScreenVendor extends StatelessWidget {
           children: [
             // عنوان الإشعار
             Text(
-              'Notification Name',
+              l10n.notificationName,
               style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primary),
             ),
             const SizedBox(height: 25),
             Text(
-              'Hello Ahmed Hamdy',
+              '${l10n.hello} Ahmed Hamdy',
               style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
             ),
             const SizedBox(height: 10),

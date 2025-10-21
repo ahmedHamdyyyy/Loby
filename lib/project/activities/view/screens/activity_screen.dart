@@ -10,6 +10,7 @@ import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../config/widget/widget.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../models/activity.dart';
 import '../../../../models/address.dart';
@@ -76,17 +77,17 @@ class _ActivityScreenState extends State<ActivityScreen> {
       await Navigator.push(context, MaterialPageRoute(builder: (context) => UsageAgreement(setAgreement: setAgreement)));
     }
     if (!_isAgreed) {
-      showToast(text: 'Please agree to the terms and conditions', stute: ToustStute.worning);
+      showToast(text: context.l10n.pleaseAgreeToTerms, stute: ToustStute.worning);
       return false;
     }
 
     if (_address.latitude == 0 || _address.longitude == 0) {
-      showToast(text: 'Please select a valid address from the Map', stute: ToustStute.worning);
+      showToast(text: context.l10n.pleaseSelectValidAddress, stute: ToustStute.worning);
       return false;
     }
 
     if (_medias.isEmpty || _tags.isEmpty || !_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.formFillRequired)));
       return false;
     }
 
@@ -143,7 +144,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث النشاط بنجاح')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.activityUpdatedSuccess)));
           break;
         case Status.error:
           Navigator.pop(context);
@@ -158,7 +159,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم تحديث النشاط بنجاح')));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.activityUpdatedSuccess)));
           break;
         case Status.error:
           Navigator.pop(context);
@@ -207,7 +208,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 20),
                         child: Text(
-                          'Please enter your activity information',
+                          context.l10n.enterActivityInfo,
                           style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -226,7 +227,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Name of activity',
+                          context.l10n.nameOfActivity,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: AppColors.grayTextColor,
@@ -234,7 +235,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           ),
                         ),
                         const SizedBox(height: 15),
-                        CustomTextField(controller: activityNameController, hintText: 'Enter your activity name'),
+                        CustomTextField(controller: activityNameController, hintText: context.l10n.enterActivityName),
                         const SizedBox(height: 20),
                         AddressField(_address, onAddressSelected: (address) => _address = address),
 
@@ -294,7 +295,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         TagsSection(selectedTags: _tags, onTagsSelected: (tags) => _tags = tags),
                         const SizedBox(height: 20),
                         Text(
-                          'Upload studio photos or video',
+                          context.l10n.uploadStudioPhotosOrVideo,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: AppColors.primaryTextColor,
@@ -309,7 +310,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         TimeField(controller: timeController),
                         const SizedBox(height: 20),
                         Text(
-                          'Activity time',
+                          context.l10n.activityTimeLabel,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: AppColors.primaryTextColor,
@@ -320,7 +321,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         TextFormField(
                           controller: activityTimeController,
                           decoration: InputDecoration(
-                            hintText: "2 hours",
+                            hintText: context.l10n.hoursHint('2'),
                             hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
                             prefixIconColor: AppColors.primaryColor,
                             border: OutlineInputBorder(
@@ -339,13 +340,13 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Please enter the Activity time";
+                            if (value == null || value.isEmpty) return context.l10n.pleaseEnterActivityTime;
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Maximum Guests',
+                          context.l10n.maximumGuests,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: AppColors.primaryTextColor,
@@ -356,7 +357,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         TextFormField(
                           controller: maximumGuestNumberController,
                           decoration: InputDecoration(
-                            hintText: "Enter Max Guests",
+                            hintText: context.l10n.enterMaxGuests,
                             hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
                             prefixIconColor: AppColors.primaryColor,
                             border: OutlineInputBorder(
@@ -375,13 +376,13 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Please enter the maximum guest number";
+                            if (value == null || value.isEmpty) return context.l10n.pleaseEnterMaxGuests;
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
                         Text(
-                          'Price',
+                          context.l10n.priceLabel,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: AppColors.primaryTextColor,
@@ -392,7 +393,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         TextFormField(
                           controller: priceController,
                           decoration: InputDecoration(
-                            hintText: "Enter Price",
+                            hintText: context.l10n.enterPrice,
                             hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
                             prefixIconColor: AppColors.primaryColor,
                             border: OutlineInputBorder(
@@ -411,7 +412,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           keyboardType: TextInputType.number,
                           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Please enter the Price";
+                            if (value == null || value.isEmpty) return context.l10n.pleaseEnterPrice;
                             return null;
                           },
                         ),
@@ -429,7 +430,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                 state.createStatus == Status.loading || state.updateStatus == Status.loading
                                     ? const CircularProgressIndicator()
                                     : Text(
-                                      widget.activityId.isEmpty ? 'Save' : 'Update',
+                                      widget.activityId.isEmpty ? context.l10n.save : context.l10n.update,
                                       style: GoogleFonts.poppins(
                                         fontSize: 16,
                                         color: const Color(0xFFFFFFFF),

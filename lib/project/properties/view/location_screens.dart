@@ -7,6 +7,7 @@ import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
 import '../../../../core/services/location_service.dart';
 import '../../../../models/address.dart';
+import '../../../core/localization/l10n_ext.dart';
 
 class LocationConfirmationScreen extends StatefulWidget {
   const LocationConfirmationScreen({super.key, required this.address});
@@ -201,7 +202,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Search location',
+                context.l10n.searchLocation,
                 style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 16, fontWeight: FontWeight.w400),
               ),
             ),
@@ -231,7 +232,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
               boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 8, offset: const Offset(0, 2))],
             ),
             child: Text(
-              'Drag to select location',
+              context.l10n.dragToSelectLocation,
               style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.grayTextColor),
             ),
           ),
@@ -267,7 +268,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Selected Location',
+                        context.l10n.selectedLocation,
                         style: GoogleFonts.poppins(
                           color: AppColors.grayTextColor,
                           fontWeight: FontWeight.w600,
@@ -288,7 +289,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Getting address...',
+                                context.l10n.gettingAddress,
                                 style: GoogleFonts.poppins(
                                   color: AppColors.grayTextColor,
                                   fontWeight: FontWeight.w400,
@@ -356,7 +357,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 child: Text(
-                  'Use Current Location',
+                  context.l10n.useCurrentLocation,
                   style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -376,7 +377,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 child: Text(
-                  'Update Address',
+                  context.l10n.updateAddress,
                   style: GoogleFonts.poppins(color: Colors.orange, fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
@@ -395,7 +396,7 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
                   elevation: 0,
                 ),
                 child: Text(
-                  'Confirm Location',
+                  context.l10n.confirmLocation,
                   style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),

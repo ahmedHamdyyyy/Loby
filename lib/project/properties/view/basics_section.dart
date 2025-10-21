@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 
 class PropertyBasicsSection extends StatelessWidget {
   final int guests;
@@ -33,14 +34,14 @@ class PropertyBasicsSection extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
-        "Share some basics about your place",
+        context.l10n.shareSomeBasics,
         style: GoogleFonts.poppins(color: AppColors.primaryColor, fontWeight: FontWeight.w600, fontSize: 16),
       ),
       const SizedBox(height: 15),
-      CounterItem(label: "Guests number", value: guests, onChanged: onGuestsChanged),
-      CounterItem(label: "Bedrooms", value: bedrooms, onChanged: onBedroomsChanged),
-      CounterItem(label: "Bed", value: beds, onChanged: onBedsChanged),
-      CounterItem(label: "Bathroom", value: bathrooms, onChanged: onBathroomsChanged),
+      CounterItem(label: context.l10n.guestNumber, value: guests, onChanged: onGuestsChanged),
+      CounterItem(label: context.l10n.bedrooms, value: bedrooms, onChanged: onBedroomsChanged),
+      CounterItem(label: context.l10n.beds, value: beds, onChanged: onBedsChanged),
+      CounterItem(label: context.l10n.bathrooms, value: bathrooms, onChanged: onBathroomsChanged),
     ],
   );
 }

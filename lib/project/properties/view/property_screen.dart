@@ -10,6 +10,7 @@ import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../config/images/assets.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../../core/utils/utile.dart';
 import '../../../locator.dart';
 import '../../../models/address.dart';
@@ -81,16 +82,16 @@ class _PropertyScreenState extends State<PropertyScreen> {
 
   bool _validateForm() {
     if (_contractPaths.isEmpty || _imagePaths.isEmpty || tags.isEmpty || !_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.formFillRequired)));
       return false;
     }
     if (address.latitude == 0 && address.longitude == 0) {
-      showToast(text: 'Please Select the Address on The Map', stute: ToustStute.worning);
+      showToast(text: context.l10n.pleaseSelectAddressOnMap, stute: ToustStute.worning);
       return false;
     }
 
     if (_imagePaths.isEmpty) {
-      showToast(text: 'Please upload at least one image', stute: ToustStute.worning);
+      showToast(text: context.l10n.pleaseUploadAtLeastOneImage, stute: ToustStute.worning);
       return false;
     }
 
@@ -158,7 +159,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          showToast(text: 'Property created successfully', stute: ToustStute.success);
+          showToast(text: context.l10n.propertyCreatedSuccessfully, stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
@@ -173,7 +174,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
-          showToast(text: 'Property updated successfully', stute: ToustStute.success);
+          showToast(text: context.l10n.propertyUpdatedSuccessfully, stute: ToustStute.success);
           break;
         case Status.error:
           Navigator.pop(context);
@@ -224,7 +225,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 30),
                     child: Text(
-                      'Please enter your ${propertyType.name} information',
+                      context.l10n.enterPropertyInfo,
                       style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 18),
                     ),
                   ),
@@ -279,7 +280,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Add Some details",
+                              context.l10n.addSomeDetailsLabel,
                               style: GoogleFonts.poppins(
                                 color: AppColors.primaryColor,
                                 fontWeight: FontWeight.w600,
@@ -295,7 +296,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           controller: detailsController,
                           maxLines: 4,
                           decoration: InputDecoration(
-                            hintText: "Add Details",
+                            hintText: context.l10n.addDetailsHint,
                             hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
                             prefixIconColor: AppColors.primaryColor,
                             border: OutlineInputBorder(
@@ -312,27 +313,29 @@ class _PropertyScreenState extends State<PropertyScreen> {
                             ),
                           ),
                           validator: (value) {
-                            if (value == null || value.isEmpty) return "Please enter your Details";
+                            if (value == null || value.isEmpty) return context.l10n.pleaseEnterYourDetails;
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
-                        Text(
-                          "Tell guests what your place has to offer",
-                          style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
+                        // Text(
+                        //   context.l10n.tellGuestsWhatPlaceOffers,
+                        //   style: GoogleFonts.poppins(
+                        //     fontWeight: FontWeight.w600,
+                        //     color: AppColors.primaryColor,
+                        //     fontSize: 16,
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 8),
                         TagsSection(selectedTags: tags, onTagsSelected: (selected) => tags = selected),
                         const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              !showAvailabilitySection ? "Upload studio photos or video" : "studio photos or video",
+                              !showAvailabilitySection
+                                  ? context.l10n.uploadStudioPhotosOrVideo
+                                  : context.l10n.uploadStudioPhotosOrVideoAlt,
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -353,8 +356,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
                             Flexible(
                               child: Text(
                                 !showAvailabilitySection
-                                    ? "Upload Lease or ownership contract"
-                                    : "Lease or ownership contract",
+                                    ? context.l10n.uploadLeaseOrOwnershipContract
+                                    : context.l10n.leaseOrOwnershipContract,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
@@ -369,7 +372,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                         ),
                         const SizedBox(height: 10),
                         DocumentUploader(
-                          label: "Upload Lease or ownership contract",
+                          label: context.l10n.uploadLeaseOrOwnershipContract,
                           paths: _contractPaths,
                           onPathesChanged: (paths) => _contractPaths = paths,
                         ),
@@ -384,8 +387,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
                                 Flexible(
                                   child: Text(
                                     !showAvailabilitySection
-                                        ? "Upload Tourist hospitality facility license"
-                                        : "Tourist hospitality facility license",
+                                        ? context.l10n.uploadTouristFacilityLicense
+                                        : context.l10n.touristFacilityLicense,
                                     style: GoogleFonts.poppins(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -404,7 +407,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                             ),
                             if (!showAvailabilitySection)
                               Text(
-                                "( optional )",
+                                context.l10n.optional,
                                 style: GoogleFonts.poppins(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -415,7 +418,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                         ),
                         const SizedBox(height: 10),
                         DocumentUploader(
-                          label: "Upload Tourist hospitality facility license",
+                          label: context.l10n.uploadTouristFacilityLicense,
                           paths: _licensePaths,
                           onPathesChanged: (paths) => _licensePaths = paths,
                         ),
@@ -424,7 +427,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Available date range",
+                              context.l10n.availableDateRange,
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.primaryColor,
@@ -446,7 +449,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  'Start Date:   ${startDate.substring(0, 10)}',
+                                  context.l10n.startDateLabel(startDate.substring(0, 10)),
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     color: AppColors.primaryColor,
@@ -485,7 +488,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  'End Date:   ${endDate.substring(0, 10)}',
+                                  context.l10n.endDateLabel(endDate.substring(0, 10)),
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     color: AppColors.primaryColor,
@@ -528,7 +531,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                             ),
                             child: Text(
-                              widget.propertyId.isEmpty ? "Add" : "Update",
+                              widget.propertyId.isEmpty ? context.l10n.add : context.l10n.update,
                               style: GoogleFonts.poppins(fontSize: 16, color: AppColors.whiteColor),
                             ),
                           ),

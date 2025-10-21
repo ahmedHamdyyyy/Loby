@@ -1,0 +1,409 @@
+{
+    "@@locale": "en",
+    "appTitle": "Luby",
+    "selectLanguageTitle": "Select your language",
+    "english": "English",
+    "arabic": "Arabic",
+    "commonCancel": "Cancel",
+    "commonOpenSettings": "Open Settings",
+    "commonErrorGeneric": "Something went wrong!",
+    "commonNoItems": "No Added Items Here...",
+    "commonSelectRole": "Select Your Role Now!",
+    "formFillRequired": "Please fill all required fields",
+    "messageSentSuccessfully": "Message sent successfully",
+    "redirectingToRegistration": "Redirecting to registration...",
+    "resetPasswordTitle": "Reset Password",
+    "resetPasswordButton": "Reset Password",
+    "verifyEmailTitle": "Verify Email",
+    "sendVerificationEmailButton": "Send Verification Email",
+    "confirmButton": "Confirm",
+    "permissionRequiredTitle": "{permission} permission required",
+    "@permissionRequiredTitle": {
+        "description": "Dialog title shown when a permission is required.",
+        "placeholders": {
+            "permission": {
+                "type": "String"
+            }
+        }
+    },
+    "permissionRequiredBody": "The app needs {permission} {purpose}. Please grant the permission in app settings.",
+    "@permissionRequiredBody": {
+        "description": "Dialog body explaining why permission is needed.",
+        "placeholders": {
+            "permission": {
+                "type": "String"
+            },
+            "purpose": {
+                "type": "String"
+            }
+        }
+    },
+    "mediaMaxReached": "Maximum medias allowed is {count}",
+    "@mediaMaxReached": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "imageSizeTooLarge": "Image is too large. Must be less than {size} MB",
+    "@imageSizeTooLarge": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "imagePickFailed": "Failed to pick image",
+    "mustPickImageBeforeVideo": "You must pick an image first before adding a video",
+    "onlyMp4Allowed": "Only MP4 video is allowed",
+    "videoPickFailed": "Failed to pick video",
+    "atLeastOneImageMustRemain": "At least one image must remain",
+    "cannotRemoveFirstImage": "Cannot remove the first image as it is the only one",
+    "filePickFailed": "Failed to pick file",
+    "fileTooLarge": "File is too large. Must be less than {size} MB",
+    "@fileTooLarge": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "errorPickingImage": "An error occurred while picking the image",
+    "someImagesIgnoredOver": "Some images over {size} MB were ignored",
+    "@someImagesIgnoredOver": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "errorPickingImages": "An error occurred while picking images",
+    "errorPickingFile": "An error occurred while picking the file",
+    "videoTooLarge": "Video is too large. Must be less than {size} MB",
+    "@videoTooLarge": {
+        "placeholders": {
+            "size": {
+                "type": "int"
+            }
+        }
+    },
+    "errorPickingVideo": "An error occurred while picking the video",
+    "activityUpdatedSuccess": "Activity updated successfully",
+    "cardDetailsAddedSuccessfully": "Card details added successfully",
+    "errorWithMessage": "Error: {message}",
+    "@errorWithMessage": {
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
+        }
+    },
+    "checkInLabel": "Check in - {date}",
+    "@checkInLabel": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "checkOutLabel": "Check out - {date}",
+    "@checkOutLabel": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "priceWithCurrency": "Price : {price} {currency}",
+    "@priceWithCurrency": {
+        "placeholders": {
+            "price": {
+                "type": "num"
+            },
+            "currency": {
+                "type": "String"
+            }
+        }
+    },
+    "currencySar": "SAR",
+    "pleaseAgreeToTerms": "Please agree to the terms and conditions",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "onlyJpgOrPngAllowed": "Please select JPG or PNG image only",
+    "conversationTitle": "Your Conversations",
+    "searchHint": "Search...",
+    "deleteConversationTitle": "Delete Conversation",
+    "deleteConversationContent": "Are you sure you want to delete the conversation with {name}?",
+    "@deleteConversationContent": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "conversationDeletedSuccessfully": "Conversation deleted successfully",
+    "conversationDeleteError": "An error occurred while deleting the conversation",
+    "commonDelete": "Delete",
+    "activityDeletedSuccessfully": "Activity Deleted Successfully",
+    "deletePropertyTitle": "Delete Property",
+    "deletePropertyContent": "Are you sure you want to delete this property?",
+    "guestUser": "Guest User",
+    "welcomeToOurApp": "Welcome to our App",
+    "start": "Start",
+    "yourProperties": "Your properties",
+    "yourActivities": "Your activities",
+    "beVendorNow": "Be a vendor now !",
+    "appCommission": "App Commission",
+    "commissionDetails": "The first party's commission for every reservation made by the second party is 14% of the rent (not including value added tax).",
+    "emailNotVerifiedMsg": "Your email is not verified please wait until it is verified then try again.",
+    "account": "Account",
+    "accountInfo": "Account info",
+    "save": "Save",
+    "deleteAccount": "Delete Account",
+    "areYouSureDeleteAccount": "Are you sure about deleting your account?",
+    "yes": "Yes",
+    "signUp": "Sign Up",
+    "createYourAccount": "Create your account to continue using the app ",
+    "agreeToTerms": "Agree to the terms and conditions",
+    "comingSoon": "Coming Soon...",
+    "rateApp": "Rate App",
+    "inviteFriends": "Invite Friends",
+    "noConversationsYet": "You don't have any conversation yet",
+    "toFunctionProperly": "to function properly",
+    "continueAsGuest": "Continue as Guest",
+    "welcomeBack": "Welcome Back!",
+    "loginIntro": "Please enter your email and password to sign in to your account.",
+    "emailHint": "Enter your email",
+    "passwordHint": "Enter your password",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "orContinueWith": "Or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
+    "yourName": "Your Name",
+    "language": "Language",
+    "yourAccount": "Your Account",
+    "wallet": "Wallet",
+    "hostWithUs": "Host With Us",
+    "aboutLoby": "About Loby",
+    "termsAndConditions": "Terms and Conditions",
+    "privacyPolicy": "Privacy Policy",
+    "contactUs": "Contact Us",
+    "pleaseSelectValidAddress": "Please select a valid address from the Map",
+    "enterActivityInfo": "Please enter your activity information",
+    "nameOfActivity": "Name of activity",
+    "enterActivityName": "Enter your activity name",
+    "uploadStudioPhotosOrVideo": "Upload studio photos or video",
+    "activityTimeLabel": "Activity time",
+    "enterActivityTime": "Enter Activity time",
+    "pleaseEnterActivityTime": "Please enter the Activity time",
+    "hoursHint": "{count} hours",
+    "@hoursHint": {
+        "placeholders": {
+            "count": {
+                "type": "String"
+            }
+        }
+    },
+    "maximumGuests": "Maximum Guests",
+    "enterMaxGuests": "Enter Max Guests",
+    "pleaseEnterMaxGuests": "Please enter the maximum guest number",
+    "priceLabel": "Price",
+    "enterPrice": "Enter Price",
+    "pleaseEnterPrice": "Please enter the Price",
+    "update": "Update",
+    "propertyUpdatedSuccessfully": "Property updated successfully",
+    "pleaseEnterValidEmail": "Please enter a valid email",
+    "email": "Email",
+    "pleaseCompleteInformation": "Please complete the following\ninformation",
+    "enterPropertyInfo": "Please enter your property information",
+    "pleaseSelectAddressOnMap": "Please select the address on the map",
+    "pleaseUploadAtLeastOneImage": "Please upload at least one image",
+    "propertyCreatedSuccessfully": "Property created successfully",
+    "addSomeDetails": "Add Some details",
+    "addDetails": "Add Details",
+    "pleaseEnterYourDetails": "Please enter your Details",
+    "tellGuestsWhatPlaceOffers": "Tell guests what your place has to offer",
+    "uploadStudioPhotosOrVideoAlt": "studio photos or video",
+    "uploadLeaseOrOwnershipContract": "Upload Lease or ownership contract",
+    "leaseOrOwnershipContract": "Lease or ownership contract",
+    "uploadTouristFacilityLicense": "Upload Tourist hospitality facility license",
+    "touristFacilityLicense": "Tourist hospitality facility license",
+    "optional": "( optional )",
+    "availableDateRange": "Available date range",
+    "startDateLabel": "Start Date:   {date}",
+    "@startDateLabel": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "endDateLabel": "End Date:   {date}",
+    "@endDateLabel": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "add": "Add",
+    "lobyPlatformUsageAgreement": "Loby Platform Usage Agreement",
+    "address": "Address",
+    "enterYourAddressOrTapMap": "Enter your address or tap map icon to select",
+    "pleaseEnterYourAddress": "Please enter your address",
+    "addSomeDetailsLabel": "Add Some details",
+    "addDetailsHint": "Add Details",
+    "pleaseEnterSomeDetails": "Please enter some details",
+    "tellGuestsOffers": "Tell guests what your place has to offer",
+    "dateLabel": "Date",
+    "timeLabel": "Time",
+    "yyyyMMdd": "yyyy-MM-dd",
+    "hhmm": "HH:MM",
+    "pricePerPersonHint": "Enter price per person",
+    "pricePerPerson": "Price per person",
+    "guestNumber": "Guest Number",
+    "enterMaxGuestNumber": "Enter Maximum Guest Number",
+    "pleaseEnterField": "Please enter {field}",
+    "@pleaseEnterField": {
+        "placeholders": {
+            "field": {
+                "type": "String"
+            }
+        }
+    },
+    "enterOtpSentTo": "Enter the OTP sent to {email}",
+    "@enterOtpSentTo": {
+        "placeholders": {
+            "email": {
+                "type": "String"
+            }
+        }
+    },
+    "otp": "OTP",
+    "pleaseEnterValidOtp": "Please enter a valid OTP",
+    "newPassword": "New Password",
+    "pleaseEnterNewPassword": "Please enter new password",
+    "passwordAtLeastSix": "Password must be at least 6 characters",
+    "confirmPassword": "Confirm Password",
+    "pleaseConfirmYourPassword": "Please confirm your password",
+    "vendorPleaseChoose": "Please choose",
+    "vendorPropertyOwner": "Property owner",
+    "vendorTouristActivity": "Tourist activity",
+    "navHome": "Home",
+    "navBookings": "Bookings",
+    "navMessages": "Messages",
+    "navProfile": "Profile",
+    "vendorIntroText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hendrerit tristique lorem ipsum dolor sit amet.\nDiam habitant.",
+    "availabilityQuestion": "Are your {type} available?",
+    "availableLabel": "Available",
+    "notAvailableLabel": "Not Available",
+    "enterPricePerNight": "Enter price per night",
+    "continueLabel": "Continue",
+    "searchLocation": "Search location",
+    "lobbyOffersTitle": "Lobby Offers",
+    "lobbyOffersDescription": "If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%",
+    "imageLabel": "Image",
+    "videoLabel": "Video",
+    "uploadAtLeastOneImageWithMax": "Upload at least one image (max {count} medias)",
+    "@availabilityQuestion": {
+        "placeholders": {
+            "type": {
+                "type": "String"
+            }
+        }
+    },
+    "@uploadAtLeastOneImageWithMax": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "selectedLocation": "Selected Location",
+    "gettingAddress": "Getting address...",
+    "dragToSelectLocation": "Drag to select location",
+    "useCurrentLocation": "Use Current Location",
+    "updateAddress": "Update Address",
+    "confirmLocation": "Confirm Location",
+    "shareSomeBasics": "Share some basics about your place",
+    "bedrooms": "Bedrooms",
+    "beds": "Beds",
+    "bathrooms": "Bathrooms",
+    "addNewTagTitle": "Add a new tag",
+    "enterTagNameHint": "Enter tag name",
+    "commonAdd": "Add",
+    "addOtherThings": "Add other things",
+    "reservationTitle": "Reservation",
+    "currentReservations": "Current Reservations",
+    "lastReservations": "Last Reservations",
+    "noReservationsFound": "No Reservations found",
+    "dateLabelInline": "Date",
+    "checkOutInline": "Check Out",
+    "viewReservationDetails": "View Reservation Details",
+    "clientName": "Client Name",
+    "reservationNumberLabel": "Reservation Number {number}",
+    "lastNumberLabel": "Last Number {number}",
+    "@reservationNumberLabel": {
+        "placeholders": {
+            "number": {
+                "type": "String"
+            }
+        }
+    },
+    "@lastNumberLabel": {
+        "placeholders": {
+            "number": {
+                "type": "String"
+            }
+        }
+    },
+    "freeCancellationBefore": "Free cancellation before {date}",
+    "@freeCancellationBefore": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "orderDetails": "Order details",
+    "summary": "Summary",
+    "commonAccept": "Accept",
+    "commonRefuse": "Refuse",
+    "noteClientPaidFees": "Note: The client has paid the fees",
+    "viewReservationSummary": "View reservation summary",
+    "personCount": "{count} person",
+    "@personCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "availableBalance": "Available balance",
+    "billCodeLabel": "Bill code : {code}",
+    "@billCodeLabel": {
+        "placeholders": {
+            "code": {
+                "type": "String"
+            }
+        }
+    },
+    "totalPriceLabel": "Total Price :",
+    "billDetails": "Bill Details",
+    "welcomeToLoby": "Welcome to LOBY",
+    "onboardingWelcomeDescription": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit tristique gravida felis, sociis in felis.",
+    "letsStart": "Let's Start",
+    "skipLabel": "Skip",
+    "noMessagesYet": "No messages yet",
+    "startConversation": "Start the conversation!",
+    "typeMessageHint": "Type a message...",
+    "messageCannotBeEmpty": "Message can't be empty",
+    "notificationsTitle": "Notifications",
+    "yourNotifications": "Your Notifications",
+    "noNotificationsYet": "You don't have any notifications right now",
+    "notificationTitle": "Notification",
+    "notificationName": "Notification Name",
+    "hello": "Hello",
+    "reservationCompletedMessage": "Your studio reservation has been successfully completed!"
+}

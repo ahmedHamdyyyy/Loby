@@ -8,6 +8,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../home/view/pick_image_widget.dart';
 
 class MediasSection extends StatefulWidget {
@@ -49,7 +50,7 @@ class _MediasSectionState extends State<MediasSection> {
 
   Future<void> _showPickTypeSheet() async {
     if (_medias.length >= maxMedias) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('الحد الأقصى للوسائط هو $maxMedias')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.mediaMaxReached(maxMedias))));
       return;
     }
     await showModalBottomSheet(
@@ -60,7 +61,7 @@ class _MediasSectionState extends State<MediasSection> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.photo),
-                  title: const Text('صورة'),
+                  title: Text(context.l10n.imageLabel),
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickImage();
@@ -68,13 +69,17 @@ class _MediasSectionState extends State<MediasSection> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.videocam),
-                  title: const Text('فيديو'),
+                  title: Text(context.l10n.videoLabel),
                   onTap: () {
                     Navigator.pop(ctx);
                     _pickVideo();
                   },
                 ),
-                ListTile(leading: const Icon(Icons.close), title: const Text('إلغاء'), onTap: () => Navigator.pop(ctx)),
+                ListTile(
+                  leading: const Icon(Icons.close),
+                  title: Text(context.l10n.commonCancel),
+                  onTap: () => Navigator.pop(ctx),
+                ),
               ],
             ),
           ),
@@ -90,7 +95,7 @@ class _MediasSectionState extends State<MediasSection> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('حجم الصورة كبير جداً. يجب أن يكون أقل من $maxImageSizeMB ميجابايت')));
+          ).showSnackBar(SnackBar(content: Text(context.l10n.imageSizeTooLarge(maxImageSizeMB))));
         }
         return;
       }
@@ -98,13 +103,13 @@ class _MediasSectionState extends State<MediasSection> {
       widget.onMediasChanged(_medias);
     } catch (e) {
       debugPrint('Error picking image: $e');
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل في اختيار الصورة')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.imagePickFailed)));
     }
   }
 
   Future<void> _pickVideo() async {
     if (_medias.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يجب اختيار صورة أولاً قبل إضافة فيديو')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.mustPickImageBeforeVideo)));
       return;
     }
     try {
@@ -113,20 +118,20 @@ class _MediasSectionState extends State<MediasSection> {
       final ext = file.path.split('.').last.toLowerCase();
       if (ext != 'mp4') {
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يُسمح فقط برفع فيديو MP4')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.onlyMp4Allowed)));
         return;
       }
       setState(() => _medias.add(file.path));
       widget.onMediasChanged(_medias);
     } catch (e) {
       debugPrint('Error picking video: $e');
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل في اختيار الفيديو')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.videoPickFailed)));
     }
   }
 
   void _onRemove(String path) {
     if (_medias.length == 1) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يجب أن تبقى صورة واحدة على الأقل')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.atLeastOneImageMustRemain)));
       return;
     }
     final isFirst = _medias.first == path;
@@ -134,9 +139,7 @@ class _MediasSectionState extends State<MediasSection> {
       // find another image to promote
       final idx = _medias.indexWhere((p) => p != path && _isImage(p));
       if (idx == -1) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('لا يمكن إزالة الصورة الأولى لأنها الوحيدة')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.cannotRemoveFirstImage)));
         return;
       }
       setState(() {
@@ -174,7 +177,7 @@ class _MediasSectionState extends State<MediasSection> {
                   SvgPicture.asset(ImageAssets.uploadIcon, width: 40, height: 40),
                   const SizedBox(height: 8),
                   Text(
-                    "Upload at least one image (max $maxMedias medias)",
+                    context.l10n.uploadAtLeastOneImageWithMax(maxMedias),
                     style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
                     textAlign: TextAlign.center,
                   ),

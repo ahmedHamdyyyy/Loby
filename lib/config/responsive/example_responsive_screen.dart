@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/localization/l10n_ext.dart';
 import '../colors/colors.dart';
 import 'responsive.dart';
 
@@ -10,7 +11,7 @@ class ExampleResponsiveScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Responsive Example')),
+      appBar: AppBar(title: Text(context.l10n.appTitle)),
       body: SafeArea(
         child: Responsive(
           // Define different layouts for different device sizes
@@ -80,11 +81,7 @@ class ExampleResponsiveScreen extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: Column(
-                  children: [
-                    _buildSummaryCard(context),
-                    SizedBox(height: context.componentSpacing),
-                    _buildButtons(context),
-                  ],
+                  children: [_buildSummaryCard(context), SizedBox(height: context.componentSpacing), _buildButtons(context)],
                 ),
               ),
             ],
@@ -264,13 +261,9 @@ class ExampleResponsiveScreen extends StatelessWidget {
           SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: ResponsiveTextField(hintText: 'Check-in', prefixIcon: Icon(Icons.calendar_today)),
-              ),
+              Expanded(child: ResponsiveTextField(hintText: 'Check-in', prefixIcon: Icon(Icons.calendar_today))),
               SizedBox(width: 12),
-              Expanded(
-                child: ResponsiveTextField(hintText: 'Check-out', prefixIcon: Icon(Icons.calendar_today)),
-              ),
+              Expanded(child: ResponsiveTextField(hintText: 'Check-out', prefixIcon: Icon(Icons.calendar_today))),
             ],
           ),
           SizedBox(height: 12),
@@ -384,46 +377,46 @@ class ExampleResponsiveScreen extends StatelessWidget {
 
     return isSmallDevice
         ? Column(
-            children: [
-              ResponsiveElevatedButton(
+          children: [
+            ResponsiveElevatedButton(
+              text: 'Search Properties',
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              isFullWidth: true,
+              onPressed: () {},
+            ),
+            SizedBox(height: context.itemSpacing),
+            ResponsiveOutlinedButton(
+              text: 'Clear Search',
+              foregroundColor: AppColors.primary,
+              borderColor: AppColors.primary,
+              isFullWidth: true,
+              onPressed: () {},
+            ),
+          ],
+        )
+        : Row(
+          children: [
+            Expanded(
+              child: ResponsiveElevatedButton(
                 text: 'Search Properties',
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 isFullWidth: true,
                 onPressed: () {},
               ),
-              SizedBox(height: context.itemSpacing),
-              ResponsiveOutlinedButton(
+            ),
+            SizedBox(width: context.itemSpacing),
+            Expanded(
+              child: ResponsiveOutlinedButton(
                 text: 'Clear Search',
                 foregroundColor: AppColors.primary,
                 borderColor: AppColors.primary,
                 isFullWidth: true,
                 onPressed: () {},
               ),
-            ],
-          )
-        : Row(
-            children: [
-              Expanded(
-                child: ResponsiveElevatedButton(
-                  text: 'Search Properties',
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  isFullWidth: true,
-                  onPressed: () {},
-                ),
-              ),
-              SizedBox(width: context.itemSpacing),
-              Expanded(
-                child: ResponsiveOutlinedButton(
-                  text: 'Clear Search',
-                  foregroundColor: AppColors.primary,
-                  borderColor: AppColors.primary,
-                  isFullWidth: true,
-                  onPressed: () {},
-                ),
-              ),
-            ],
-          );
+            ),
+          ],
+        );
   }
 }

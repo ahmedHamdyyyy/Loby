@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../home/view/pick_image_widget.dart';
 
 class DocumentUploader extends StatefulWidget {
@@ -33,7 +34,7 @@ class _DocumentUploaderState extends State<DocumentUploader> {
     } catch (e) {
       debugPrint('Error picking PDF file: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل في اختيار الملف')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.filePickFailed)));
       }
     }
   }

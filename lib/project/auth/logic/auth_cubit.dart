@@ -44,8 +44,9 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(signoutStatus: Status.success, msg: message, user: UserModel.non));
     } catch (e) {
       emit(state.copyWith(signoutStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(signoutStatus: Status.initial));
     }
-    emit(state.copyWith(signoutStatus: Status.initial));
   }
 
   void verifyEmail(String email) async {

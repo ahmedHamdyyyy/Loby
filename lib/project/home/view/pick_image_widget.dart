@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/localization/l10n_ext.dart';
+
 class ImagePickerWidget extends StatefulWidget {
   const ImagePickerWidget({super.key, required this.onImagesUploaded});
   final void Function(List<String>) onImagesUploaded;
@@ -25,7 +27,7 @@ class _ImagePickerScreenState extends State<ImagePickerWidget> {
     } catch (e) {
       debugPrint('Error picking image: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('فشل في اختيار الصورة')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.errorPickingImage)));
       }
     }
   }
@@ -109,16 +111,16 @@ class FilePickerWidget {
       context: context,
       builder:
           (context) => AlertDialog(
-            title: Text('إذن $permissionName مطلوب'),
-            content: Text('يحتاج التطبيق إلى إذن $permissionName $purpose. يرجى منح الإذن في إعدادات التطبيق.'),
+            title: Text(context.l10n.permissionRequiredTitle(permissionName)),
+            content: Text(context.l10n.permissionRequiredBody(permissionName, purpose)),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: const Text('إلغاء')),
+              TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
               TextButton(
                 onPressed: () {
                   openAppSettings();
                   Navigator.pop(context);
                 },
-                child: const Text('فتح الإعدادات'),
+                child: Text(context.l10n.commonOpenSettings),
               ),
             ],
           ),
@@ -136,9 +138,7 @@ class FilePickerWidget {
         final fileSize = await File(image.path).length();
         if (fileSize > 5 * 1024 * 1024) {
           if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('حجم الصورة كبير جداً. يجب أن يكون أقل من 5 ميجابايت')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.imageSizeTooLarge(5))));
           }
           return null;
         }
@@ -148,7 +148,7 @@ class FilePickerWidget {
     } catch (e) {
       debugPrint('Error picking image: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الصورة')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.errorPickingImage)));
       }
       return null;
     }
@@ -170,16 +170,14 @@ class FilePickerWidget {
       }
 
       if (validImages.length != images.length && context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('تم تجاهل بعض الصور التي يتجاوز حجمها 5 ميجابايت')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.someImagesIgnoredOver(5))));
       }
 
       return validImages;
     } catch (e) {
       debugPrint('Error picking multiple images: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الصور')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.errorPickingImages)));
       }
       return [];
     }
@@ -195,9 +193,7 @@ class FilePickerWidget {
         final fileSize = await File(file.path).length();
         if (fileSize > 10 * 1024 * 1024) {
           if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('حجم الملف كبير جداً. يجب أن يكون أقل من 10 ميجابايت')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.fileTooLarge(10))));
           }
           return null;
         }
@@ -207,7 +203,7 @@ class FilePickerWidget {
     } catch (e) {
       debugPrint('Error picking PDF file: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الملف')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.errorPickingFile)));
       }
       return null;
     }
@@ -225,16 +221,14 @@ class FilePickerWidget {
         final ext = video.path.split('.').last.toLowerCase();
         if (ext != 'mp4') {
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('يُسمح فقط برفع فيديو MP4')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.onlyMp4Allowed)));
           }
           return null;
         }
         final fileSize = await file.length();
         if (fileSize > maxSizeMB * 1024 * 1024) {
           if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('حجم الفيديو كبير جداً. يجب أن يكون أقل من $maxSizeMB ميجابايت')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.videoTooLarge(maxSizeMB))));
           }
           return null;
         }
@@ -244,7 +238,7 @@ class FilePickerWidget {
     } catch (e) {
       debugPrint('Error picking video: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('حدث خطأ أثناء اختيار الفيديو')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.errorPickingVideo)));
       }
       return null;
     }

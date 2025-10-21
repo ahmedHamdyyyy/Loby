@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../config/constants/constance.dart';
+import '../../../core/localization/l10n_ext.dart';
 import '../../activities/view/screens/activity_screen.dart';
 
 class VendorTypeDialog extends StatelessWidget {
@@ -20,7 +21,7 @@ class VendorTypeDialog extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Please choose",
+            context.l10n.vendorPleaseChoose,
             style: GoogleFonts.poppins(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w600),
           ),
           Container(margin: const EdgeInsets.symmetric(vertical: 8), height: 1.2, width: 120, color: AppColors.primaryColor),
@@ -39,7 +40,7 @@ class VendorTypeDialog extends StatelessWidget {
               minimumSize: const Size(double.infinity, 48),
             ),
             child: Text(
-              "Property owner",
+              context.l10n.vendorPropertyOwner,
               style: GoogleFonts.poppins(color: AppColors.primaryColor, fontWeight: FontWeight.w400, fontSize: 16),
             ),
           ),
@@ -55,7 +56,7 @@ class VendorTypeDialog extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             child: Text(
-              "Tourist activity",
+              context.l10n.vendorTouristActivity,
               style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16),
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../models/user.dart';
 import '../../../home/view/pick_image_widget.dart';
@@ -56,7 +57,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!agreeToTerms) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('يرجى الموافقة على الشروط والأحكام'), backgroundColor: Colors.red));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.pleaseAgreeToTerms), backgroundColor: Colors.red));
       return;
     }
     if (firstNameController.text.isEmpty ||
@@ -70,14 +71,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         certificateNumberController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('يرجى ملء جميع الحقول'), backgroundColor: Colors.red));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.formFillRequired), backgroundColor: Colors.red));
       return;
     }
 
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('كلمات المرور غير متطابقة'), backgroundColor: Colors.red));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.passwordsDoNotMatch), backgroundColor: Colors.red));
       return;
     }
 
@@ -161,7 +162,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               RegistrationTextField(hintText: "الرقم القومي", controller: nationalIdController),
               RegistrationTextField(hintText: "رقم الآيبان", controller: ibanController),
               RegistrationTextField(hintText: "رقم الشهادة", controller: certificateNumberController),
-              const SizedBox(height: 10),
               _DocumentPicker(
                 label: 'مستند الهوية',
                 file: nationalIdDocument,

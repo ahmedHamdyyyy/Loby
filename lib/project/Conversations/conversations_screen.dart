@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../core/services/firestore_service.dart';
 import '../../../../../locator.dart';
+import '../../core/localization/l10n_ext.dart';
 import '../../models/chat.dart';
 import '../profile/logic/cubit.dart';
 import 'chat_screen.dart';
@@ -40,20 +41,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(' Delete Conversation', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
-          content: Text(
-            'Are you sure you want to delete the conversation with ${chat.userName}?',
-            style: GoogleFonts.poppins(),
-          ),
+          title: Text(context.l10n.deleteConversationTitle, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+          content: Text(context.l10n.deleteConversationContent(chat.userName), style: GoogleFonts.poppins()),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel', style: GoogleFonts.poppins(color: AppColors.grayTextColor)),
+              child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins(color: AppColors.grayTextColor)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Delete', style: GoogleFonts.poppins(color: Colors.red)),
+              child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins(color: Colors.red)),
               onPressed: () async {
                 Navigator.of(context).pop();
                 try {
@@ -61,7 +59,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Conversation deleted successfully', style: GoogleFonts.poppins()),
+                        content: Text(context.l10n.conversationDeletedSuccessfully, style: GoogleFonts.poppins()),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -70,7 +68,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('An error occurred while deleting the conversation', style: GoogleFonts.poppins()),
+                        content: Text(context.l10n.conversationDeleteError, style: GoogleFonts.poppins()),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -95,7 +93,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         Padding(
           padding: const EdgeInsets.only(left: 20.0),
           child: Text(
-            'Your Conversations',
+            context.l10n.conversationTitle,
             style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
           ),
         ),
@@ -107,7 +105,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: "Search...",
+              hintText: context.l10n.searchHint,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -127,7 +125,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   return Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: Text(context.l10n.errorWithMessage('${snapshot.error}')));
                 }
                 final chats = snapshot.data ?? [];
 

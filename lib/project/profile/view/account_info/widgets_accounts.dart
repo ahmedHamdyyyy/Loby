@@ -8,16 +8,16 @@ import '../../../../../config/constants/constance.dart';
 import '../../../../../config/images/image_assets.dart';
 import '../../../../../config/widget/common_styles.dart';
 import '../../../../../config/widget/widgets.dart';
+import '../../../../../core/localization/l10n_ext.dart';
 import '../../../../../locator.dart';
+import '../../../../core/utils/utile.dart';
 import '../../../auth/logic/auth_cubit.dart';
 import '../../../auth/view/Screen/sign_in.dart';
 import '../about_loby/about_loby_view.dart';
 import '../contact_us/contact_us_view.dart';
-import '../host_us/host_with_us_view.dart';
 import '../language/language_view.dart';
 import '../privacy/privacy_view.dart';
 import '../terms_condition/terma_conditions_view.dart';
-import '../wallet/wallet_view.dart';
 import 'account_after_save.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -384,9 +384,9 @@ class TermsAgreementCheckbox extends StatelessWidget {
                   : SvgPicture.asset(ImageAssets.cracalWhite, width: 20, height: 20),
         ),
         const SizedBox(width: 10),
-        const Text(
-          "Agree to the terms and conditions",
-          style: TextStyle(
+        Text(
+          context.l10n.agreeToTerms,
+          style: const TextStyle(
             fontFamily: 'Poppins',
             fontSize: 16,
             color: AppColors.primaryTextColor,
@@ -414,9 +414,9 @@ class SaveButton extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
         onPressed: onPressed,
-        child: const Text(
-          "Save",
-          style: TextStyle(fontFamily: 'Poppins', fontSize: 16, color: Colors.white, fontWeight: FontWeight.w400),
+        child: Text(
+          context.l10n.save,
+          style: const TextStyle(fontFamily: 'Poppins', fontSize: 16, color: Colors.white, fontWeight: FontWeight.w400),
         ),
       ),
     );
@@ -431,19 +431,24 @@ class AccountHeader extends StatelessWidget {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Align(alignment: Alignment.centerLeft, child: Text("Account", style: TextStyles.subtitle())),
+        Align(alignment: Alignment.centerLeft, child: Text(context.l10n.account, style: TextStyles.subtitle())),
         BlocConsumer<AuthCubit, AuthState>(
           listener: (context, state) {
-            if (state.signoutStatus == Status.success) {
+            if (state.signoutStatus == Status.loading) {
+              Utils.loadingDialog(context);
+            } else if (state.signoutStatus == Status.success) {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const SignInScreen()),
                 (route) => false,
               );
+            } else if (state.signoutStatus == Status.error) {
+              Navigator.pop(context);
+              Utils.errorDialog(context, state.msg);
             }
           },
           builder: (context, state) {
-            return IconButton(onPressed: () => getIt<AuthCubit>().signout(), icon: const Icon(Icons.logout));
+            return IconButton(onPressed: getIt<AuthCubit>().signout, icon: const Icon(Icons.logout));
           },
         ),
       ],
@@ -525,27 +530,31 @@ class MenuItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        MenuItemWithArrow(icon: ImageAssets.userIcon, title: "Your Account", screen: AccountScreen()),
+        MenuItemWithArrow(icon: ImageAssets.userIcon, title: context.l10n.yourAccount, screen: const AccountScreen()),
         /*   MenuItemWithArrow(
           icon: ImageAssets.cardIcon,
           title: "Bank Cards",
           screen: const BankCardScreen(),
         ), */
-        MenuItemWithArrow(icon: ImageAssets.walletIcon, title: "Wallet", screen: WalletScreenVendor()),
-        MenuItemWithArrow(icon: ImageAssets.languageIcon, title: "Language", screen: LanguageViewVendor()),
-        MenuItemWithArrow(icon: ImageAssets.userIcon, title: "Host With Us", screen: HostWithUsViewVendor()),
-        MenuItemWithArrow(icon: ImageAssets.messageIcon, title: "About Loby", screen: AboutLobyViewVendor()),
+        // MenuItemWithArrow(icon: ImageAssets.walletIcon, title: context.l10n.wallet, screen: const WalletScreenVendor()),
+        MenuItemWithArrow(icon: ImageAssets.languageIcon, title: context.l10n.language, screen: const LanguageViewVendor()),
+        // MenuItemWithArrow(icon: ImageAssets.userIcon, title: context.l10n.hostWithUs, screen: const HostWithUsViewVendor()),
+        MenuItemWithArrow(icon: ImageAssets.messageIcon, title: context.l10n.aboutLoby, screen: const AboutLobyViewVendor()),
         MenuItemWithArrow(
           icon: ImageAssets.tarmsAndConditionsIcon,
-          title: "Terms and Conditions",
-          screen: TermaConditionsViewVendor(),
+          title: context.l10n.termsAndConditions,
+          screen: const TermaConditionsViewVendor(),
         ),
-        MenuItemWithArrow(icon: ImageAssets.securityIcon, title: "Privacy Policy", screen: PrivacyViewVendor()),
-        MenuItemWithArrow(icon: ImageAssets.chat2, title: "Contact Us", screen: ContactUsViewVendor()),
-        MenuItemSimple(icon: ImageAssets.rate, title: "Rate App", screen: RateLubycreen()),
-        MenuItemSimple(icon: ImageAssets.invite, title: "Invite Friends", screen: InviteFriendsScreen()),
+        MenuItemWithArrow(
+          icon: ImageAssets.securityIcon,
+          title: context.l10n.privacyPolicy,
+          screen: const PrivacyViewVendor(),
+        ),
+        MenuItemWithArrow(icon: ImageAssets.chat2, title: context.l10n.contactUs, screen: const ContactUsViewVendor()),
+        MenuItemSimple(icon: ImageAssets.rate, title: context.l10n.rateApp, screen: const RateLubycreen()),
+        MenuItemSimple(icon: ImageAssets.invite, title: context.l10n.inviteFriends, screen: const InviteFriendsScreen()),
         //MenuItemSimple(icon: ImageAssets.logout, title: "Log out", screen: SignInScreen()),
       ],
     );
@@ -600,7 +609,7 @@ class RateLubycreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceholderScreen(title: "Rate App");
+    return PlaceholderScreen(title: context.l10n.rateApp);
   }
 }
 
@@ -609,7 +618,7 @@ class InviteFriendsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceholderScreen(title: "Invite Friends");
+    return PlaceholderScreen(title: context.l10n.inviteFriends);
   }
 }
 
@@ -622,7 +631,7 @@ class PlaceholderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarPop(context, title, AppColors.grayTextColor),
-      body: Center(child: Text("Coming Soon...", style: TextStyles.body(size: 20, color: Colors.grey))),
+      body: Center(child: Text(context.l10n.comingSoon, style: TextStyles.body(size: 20, color: Colors.grey))),
     );
   }
 }
@@ -692,8 +701,8 @@ class AccountInfoHeader extends StatelessWidget {
             InkWell(onTap: () => Navigator.pop(context), child: Icon(Icons.arrow_back_ios, color: AppColors.grayColorIcon)),
             const SizedBox(width: 8),
             Text(
-              "Account info",
-              style: TextStyle(
+              context.l10n.accountInfo,
+              style: const TextStyle(
                 fontFamily: 'Poppins',
                 color: AppColors.grayTextColor,
                 fontWeight: FontWeight.w500,
@@ -703,9 +712,14 @@ class AccountInfoHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        const Text(
-          "Please complete the following\ninformation",
-          style: TextStyle(fontFamily: 'Poppins', color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w400),
+        Text(
+          context.l10n.pleaseCompleteInformation,
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+            color: AppColors.primaryColor,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ],
     );
@@ -719,15 +733,20 @@ class DeleteDialogHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          "Delete Account",
-          style: TextStyle(fontSize: 16, color: AppColors.primaryColor, fontWeight: FontWeight.w500, fontFamily: 'Poppins'),
+        Text(
+          "${context.l10n.deleteAccount}",
+          style: const TextStyle(
+            fontSize: 16,
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+          ),
         ),
         Container(margin: const EdgeInsets.symmetric(vertical: 8), height: 1.2, width: 120, color: AppColors.primaryColor),
-        const Text(
-          "Are you sure about deleting your account?",
+        Text(
+          context.l10n.areYouSureDeleteAccount,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
             color: AppColors.secondTextColor,
@@ -756,9 +775,9 @@ class DeleteDialogActions extends StatelessWidget {
               backgroundColor: AppColors.primaryColor,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text(
-              "Yes",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, fontFamily: 'Poppins'),
+            child: Text(
+              context.l10n.yes,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400, fontSize: 16, fontFamily: 'Poppins'),
             ),
           ),
         ),
@@ -770,9 +789,9 @@ class DeleteDialogActions extends StatelessWidget {
               side: const BorderSide(color: AppColors.primaryColor),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
-            child: const Text(
-              "Cancel",
-              style: TextStyle(
+            child: Text(
+              context.l10n.commonCancel,
+              style: const TextStyle(
                 color: AppColors.primaryTextColor,
                 fontWeight: FontWeight.w400,
                 fontSize: 16,

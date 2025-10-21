@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
+import '../../../core/localization/l10n_ext.dart';
 
 class AvailabilityToggleSection extends StatelessWidget {
   final String type;
@@ -24,18 +25,25 @@ class AvailabilityToggleSection extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("Are your $type", style: TextStyle(color: AppColors.secondTextColor, fontWeight: FontWeight.w400, fontSize: 16)),
+      Text(
+        context.l10n.availabilityQuestion(type),
+        style: TextStyle(color: AppColors.secondTextColor, fontWeight: FontWeight.w400, fontSize: 16),
+      ),
       const SizedBox(height: 10),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: _buildOptionContainer(label: "Available", isActive: !isSelected, onTap: () => onToggleAvailability(true)),
+            child: _buildOptionContainer(
+              label: context.l10n.availableLabel,
+              isActive: !isSelected,
+              onTap: () => onToggleAvailability(true),
+            ),
           ),
           const SizedBox(width: 30),
           Expanded(
             child: _buildOptionContainer(
-              label: "Not Available",
+              label: context.l10n.notAvailableLabel,
               isActive: isSelected,
               onTap: () => onToggleAvailability(false),
             ),
@@ -83,7 +91,10 @@ class PriceSectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("Price", style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: AppColors.primaryColor, fontSize: 16)),
+        Text(
+          context.l10n.priceLabel,
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: AppColors.primaryColor, fontSize: 16),
+        ),
         if (showEditIcon) SvgPicture.asset(ImageAssets.editIcon, color: AppColors.editIconColor, width: 20, height: 20),
       ],
     );
@@ -103,7 +114,7 @@ class PriceTextField extends StatelessWidget {
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
-        hintText: "Enter price per night",
+        hintText: context.l10n.enterPricePerNight,
         hintStyle: GoogleFonts.poppins(color: const Color(0xFF757575)),
         border: OutlineInputBorder(
           borderSide: const BorderSide(color: Color(0xFFCBCBCB)),
@@ -119,7 +130,7 @@ class PriceTextField extends StatelessWidget {
         ),
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) return "Please enter your Price";
+        if (value == null || value.isEmpty) return context.l10n.pleaseEnterPrice;
         return null;
       },
     );
@@ -133,7 +144,7 @@ class AgreementTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Loby Platform Usage Agreement',
+      context.l10n.lobyPlatformUsageAgreement,
       style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16, color: AppColors.primaryColor),
     );
   }
@@ -186,7 +197,7 @@ class AgreementCheckbox extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Text(
-            'I agree to all the terms and conditions',
+            context.l10n.agreeToTerms,
             style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
           ),
         ),
@@ -213,7 +224,10 @@ class ContinueButton extends StatelessWidget {
           disabledBackgroundColor: Colors.grey.shade300,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: Text('Continue', style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
+        child: Text(
+          context.l10n.continueLabel,
+          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+        ),
       ),
     );
   }
@@ -273,7 +287,7 @@ class SearchTextField extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           border: InputBorder.none,
-          hintText: 'Search location',
+          hintText: context.l10n.searchLocation,
           hintStyle: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 16, fontWeight: FontWeight.w400),
         ),
       ),
@@ -365,7 +379,10 @@ class ConfirmButton extends StatelessWidget {
           backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         ),
-        child: Text("Confirm", style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+        child: Text(
+          context.l10n.confirmButton,
+          style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

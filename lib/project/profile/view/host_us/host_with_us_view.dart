@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/localization/l10n_ext.dart';
 import 'widget_host_with.dart';
 
 class HostWithUsViewVendor extends StatelessWidget {
@@ -22,7 +23,7 @@ class HostWithUsViewVendor extends StatelessWidget {
             RegisterButton(
               onPressed: () {
                 // Handle registration logic
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Redirecting to registration...')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.redirectingToRegistration)));
               },
             ),
           ],

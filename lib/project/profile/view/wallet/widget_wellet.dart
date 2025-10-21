@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
 import '../../../../../config/widget/common_styles.dart';
+import '../../../../core/localization/l10n_ext.dart';
 
 class WalletBalanceCard extends StatelessWidget {
   const WalletBalanceCard({super.key});
@@ -33,7 +34,7 @@ class BalanceLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Available balance', style: TextStyles.body(color: AppColors.whiteColor, size: 16));
+    return Text(context.l10n.availableBalance, style: TextStyles.body(color: AppColors.whiteColor, size: 16));
   }
 }
 
@@ -90,7 +91,7 @@ class BillItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Bill code : $billCode',
+                  context.l10n.billCodeLabel(billCode),
                   style: TextStyles.body(color: AppColors.secondTextColor, size: 14, weight: FontWeight.w500),
                 ),
                 GestureDetector(
@@ -104,7 +105,7 @@ class BillItem extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                Text('Total Price : ', style: TextStyles.body(color: AppColors.secondTextColor, size: 14)),
+                Text('${context.l10n.totalPriceLabel} ', style: TextStyles.body(color: AppColors.secondTextColor, size: 14)),
                 Text(
                   totalPrice,
                   style: TextStyles.body(color: AppColors.secondTextColor, size: 14, weight: FontWeight.w500),
@@ -125,7 +126,7 @@ class BillItem extends StatelessWidget {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                 ),
                 child: Text(
-                  'Bill Details',
+                  context.l10n.billDetails,
                   style: TextStyles.body(color: AppColors.whiteColor, size: 14, weight: FontWeight.w500),
                 ),
               ),
@@ -144,7 +145,10 @@ class BillDetailsHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Text('Bill Details', style: TextStyles.body(color: AppColors.primaryColor, size: 16, weight: FontWeight.w400)),
+      child: Text(
+        context.l10n.billDetails,
+        style: TextStyles.body(color: AppColors.primaryColor, size: 16, weight: FontWeight.w400),
+      ),
     );
   }
 }
@@ -171,9 +175,9 @@ class BillDetailsCard extends StatelessWidget {
           SizedBox(height: 8),
           BillInfoItem(text: 'Riyadh - District Name'),
           SizedBox(height: 8),
-          BillInfoItem(text: 'Check in - 14\\10\\2024'),
+          BillInfoItem(text: 'Check in - 14/10/2024'),
           SizedBox(height: 8),
-          BillInfoItem(text: 'Check out - 19\\10\\2024'),
+          BillInfoItem(text: 'Check out - 19/10/2024'),
           SizedBox(height: 8),
           BillInfoItem(text: 'Price : 1230 SAR'),
           SizedBox(height: 8),
@@ -191,8 +195,8 @@ class BillCodeHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'Bill code : #122345',
+        Text(
+          context.l10n.billCodeLabel('#122345'),
           style: TextStyle(color: AppColors.secondGrayTextColor, fontSize: 16, fontWeight: FontWeight.w400),
         ),
         GestureDetector(
