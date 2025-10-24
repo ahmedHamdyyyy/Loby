@@ -14,7 +14,8 @@ class NotificationsRepository {
     } on DioException catch (e) {
       debugPrint('DioException: ${e.response?.data}');
       throw Exception(e.response?.data['error'].toString());
-    } catch (e) {
+    } catch (e, s) {
+      debugPrint('Unexpected error: $e, stackTrace: $s');
       throw Exception('Unexpected error');
     }
   }

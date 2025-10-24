@@ -99,21 +99,23 @@ class _ReservationScreenState extends State<ReservationScreen> {
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: FadeInImage.assetNetwork(
-                                      placeholder: 'assets/images/image7.png',
-                                      image:
-                                          isProperty
-                                              ? (reservation.item as PropertyModel).medias.first
-                                              : (reservation.item as ActivityModel).medias.first,
-                                      imageErrorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Image.asset('assets/images/image7.png', fit: BoxFit.cover),
-                                      fit: BoxFit.cover,
-                                      width: 100,
-                                      height: 125,
-                                      placeholderFit: BoxFit.cover,
+                                  SizedBox(
+                                    width: 100,
+                                    height: 125,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(8),
+                                      child: FadeInImage.assetNetwork(
+                                        placeholder: 'assets/images/image7.png',
+                                        image:
+                                            isProperty
+                                                ? (reservation.item as PropertyModel).medias.firstOrNull ?? ''
+                                                : (reservation.item as ActivityModel).medias.firstOrNull ?? '',
+                                        imageErrorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Image.asset('assets/images/image7.png', fit: BoxFit.cover),
+                                        fit: BoxFit.cover,
+                                        placeholderFit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -161,7 +163,10 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                                 ),
                                               ),
                                               TextSpan(
-                                                text: reservation.checkInDate.substring(0, 10),
+                                                text:
+                                                    reservation.checkInDate.length >= 10
+                                                        ? reservation.checkInDate.substring(0, 10)
+                                                        : reservation.checkInDate,
                                                 style: GoogleFonts.poppins(
                                                   fontSize: 14,
                                                   color: AppColors.grayTextColor,

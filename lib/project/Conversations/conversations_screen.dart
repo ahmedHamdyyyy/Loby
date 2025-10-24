@@ -138,6 +138,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   separatorBuilder: (_, __) => const Padding(padding: EdgeInsets.only(left: 12.0), child: Divider()),
                   itemBuilder: (context, index) {
                     final chat = chats[index];
+                    print(chat.userImageUrl);
                     return ListTile(
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChatScreen(chat: chat))),
                       onLongPress: () => _showDeleteDialog(chat),
@@ -149,6 +150,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                           imageErrorBuilder: (context, error, stackTrace) => Image.asset('assets/images/saudian_man.png'),
                           width: 50,
                           height: 50,
+                          fit: BoxFit.cover,
                         ),
                       ),
                       title: Text(

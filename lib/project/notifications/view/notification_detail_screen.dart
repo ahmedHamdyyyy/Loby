@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/widget/widgets.dart';
+import '../../../../models/notification.dart';
 import '../../../core/localization/l10n_ext.dart';
 import 'all_of_notifcation_widget.dart';
 
 class NotificationDetailScreenVendor extends StatelessWidget {
-  final Map<String, dynamic> notification;
+  final NotificationModel notification;
 
   const NotificationDetailScreenVendor({super.key, required this.notification});
+
+  String _formatDate(BuildContext context, String raw) {
+    if (raw.isEmpty) return '';
+    final DateTime? parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat.yMMMd(locale).format(parsed);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +44,7 @@ class NotificationDetailScreenVendor extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              '24/07/2024',
+              _formatDate(context, notification.createdAt),
               style: GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 14, color: AppColors.grayTextColor),
             ),
             const SizedBox(height: 25),

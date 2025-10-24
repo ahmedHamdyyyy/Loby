@@ -23,9 +23,9 @@ import 'document_section.dart';
 import 'medias_section.dart';
 
 class PropertyScreen extends StatefulWidget {
-  const PropertyScreen({super.key, this.propertyId = '', required this.type});
+  const PropertyScreen({super.key, this.propertyId = '', this.type});
   final String propertyId;
-  final PropertyType type;
+  final PropertyType? type;
   @override
   State<PropertyScreen> createState() => _PropertyScreenState();
 }
@@ -45,6 +45,10 @@ class _PropertyScreenState extends State<PropertyScreen> {
   @override
   void initState() {
     super.initState();
+    // If we're creating a new property and a type was provided, initialize the local state type
+    if (widget.propertyId.isEmpty && widget.type != null) {
+      propertyType = widget.type!;
+    }
     _setProperty();
   }
 
@@ -105,7 +109,8 @@ class _PropertyScreenState extends State<PropertyScreen> {
       startDate: startDate,
       endDate: endDate,
       facilityLicense: _licensePaths,
-      type: widget.type,
+      // If type isn't provided (e.g., opening by id), use the fetched propertyType
+      type: widget.type ?? propertyType,
       available: !isSelected,
       guestNumber: guests,
       bedrooms: bedrooms,

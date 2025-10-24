@@ -162,13 +162,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               RegistrationTextField(hintText: "الرقم القومي", controller: nationalIdController),
               RegistrationTextField(hintText: "رقم الآيبان", controller: ibanController),
               RegistrationTextField(hintText: "رقم الشهادة", controller: certificateNumberController),
-              _DocumentPicker(
+              DocumentPicker(
                 label: 'مستند الهوية',
                 file: nationalIdDocument,
                 onPick: (f) => setState(() => nationalIdDocument = f),
               ),
-              _DocumentPicker(label: 'مستند الآيبان', file: ibanDocument, onPick: (f) => setState(() => ibanDocument = f)),
-              _DocumentPicker(
+              DocumentPicker(label: 'مستند الآيبان', file: ibanDocument, onPick: (f) => setState(() => ibanDocument = f)),
+              DocumentPicker(
                 label: 'مستند الشهادة',
                 file: certificateNumberDocument,
                 onPick: (f) => setState(() => certificateNumberDocument = f),
@@ -210,8 +210,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   );
 }
 
-class _DocumentPicker extends StatelessWidget {
-  const _DocumentPicker({required this.label, required this.onPick, this.file});
+class DocumentPicker extends StatelessWidget {
+  const DocumentPicker({super.key, required this.label, required this.onPick, this.file});
   final String label;
   final void Function(File) onPick;
   final File? file;

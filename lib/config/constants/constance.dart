@@ -3,6 +3,7 @@ enum Status { initial, loading, success, error }
 enum VendorRole { non, property, activity }
 
 class AppConst {
+  static double serviceFees(double price) => price * 4 / 100;
   //variables
   static const id = '_id';
   static const email = 'email';

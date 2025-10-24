@@ -34,7 +34,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(state.copyWith(chooseVendorRole: Status.initial));
     }
   }
-    void updateUser({
+
+  void updateUser({
     required String firstName,
     required String lastName,
     required String phone,
@@ -42,11 +43,41 @@ class ProfileCubit extends Cubit<ProfileState> {
   }) async {
     emit(state.copyWith(updateUserStatus: Status.loading));
     try {
-      final user = await _userRepository.updateUser(firstName: firstName, lastName: lastName, phone: phone, imagePath: imagePath);
+      final user = await _userRepository.updateUser(
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        imagePath: imagePath,
+      );
       emit(state.copyWith(updateUserStatus: Status.success, user: user));
     } catch (e) {
       emit(state.copyWith(updateUserStatus: Status.error, callback: e.toString()));
     }
   }
-  
+
+  void uploadDocuments({
+    required String nationalId,
+    required String iban,
+    required String certificateNumber,
+    required String nationalIdFile,
+    required String ibanFile,
+    required String certificateFile,
+  }) async {
+    emit(state.copyWith(uploadDocumentsStatus: Status.loading));
+    try {
+      final user = await _userRepository.uploadDocuments(
+        nationalId: nationalId,
+        iban: iban,
+        certificateNumber: certificateNumber,
+        nationalIdFile: nationalIdFile,
+        ibanFile: ibanFile,
+        certificateFile: certificateFile,
+      );
+      emit(state.copyWith(uploadDocumentsStatus: Status.success, user: user));
+    } catch (e) {
+      emit(state.copyWith(uploadDocumentsStatus: Status.error, callback: e.toString()));
+    } finally {
+      emit(state.copyWith(uploadDocumentsStatus: Status.initial));
+    }
+  }
 }

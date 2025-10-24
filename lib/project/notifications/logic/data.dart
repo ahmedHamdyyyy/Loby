@@ -15,9 +15,11 @@ class NotificationsData {
   }
 
   Future<List<NotificationModel>> fetchNotifications() async {
+    print('response.data ' * 5);
     final response = await _apiService.dio.get(ApiConstance.notifications);
     _check(response);
-    final list = (response.data['data'] as List?) ?? [];
+    print(response.data);
+    final list = (response.data['data']['data'] as List?) ?? [];
     return list.map((e) => NotificationModel.fromMap(e)).toList();
   }
 

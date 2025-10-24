@@ -90,7 +90,10 @@ abstract class AppLocalizations {
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('ar'), Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en')
+  ];
 
   /// No description provided for @appTitle.
   ///
@@ -467,7 +470,7 @@ abstract class AppLocalizations {
   /// No description provided for @commissionDetails.
   ///
   /// In en, this message translates to:
-  /// **'The first party\'s commission for every reservation made by the second party is 14% of the rent (not including value added tax).'**
+  /// **'The first party\'s commission for every reservation made by the second party is 15% of the rent (not including value added tax).'**
   String get commissionDetails;
 
   /// No description provided for @emailNotVerifiedMsg.
@@ -1358,11 +1361,65 @@ abstract class AppLocalizations {
   /// **'{count} person'**
   String personCount(int count);
 
+  /// No description provided for @reservationStatusMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservation status: {status}'**
+  String reservationStatusMessage(String status);
+
+  /// No description provided for @statusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get statusCompleted;
+
+  /// No description provided for @statusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get statusConfirmed;
+
+  /// No description provided for @statusRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get statusRefund;
+
   /// No description provided for @availableBalance.
   ///
   /// In en, this message translates to:
   /// **'Available balance'**
   String get availableBalance;
+
+  /// No description provided for @updatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated Successfully'**
+  String get updatedSuccessfully;
+
+  /// No description provided for @nightCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} night'**
+  String nightCount(int count);
+
+  /// No description provided for @perNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Per night'**
+  String get perNight;
+
+  /// No description provided for @fees.
+  ///
+  /// In en, this message translates to:
+  /// **'Fees'**
+  String get fees;
+
+  /// No description provided for @totalPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Price'**
+  String get totalPrice;
 
   /// No description provided for @billCodeLabel.
   ///
@@ -1445,7 +1502,7 @@ abstract class AppLocalizations {
   /// No description provided for @noNotificationsYet.
   ///
   /// In en, this message translates to:
-  /// **"You don't have any notifications right now"**
+  /// **'You don\'t have any notifications right now'**
   String get noNotificationsYet;
 
   /// No description provided for @notificationTitle.
@@ -1489,18 +1546,18 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar':
-      return AppLocalizationsAr();
-    case 'en':
-      return AppLocalizationsEn();
+    case 'ar': return AppLocalizationsAr();
+    case 'en': return AppLocalizationsEn();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

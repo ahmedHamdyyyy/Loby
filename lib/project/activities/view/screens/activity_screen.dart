@@ -61,7 +61,12 @@ class _ActivityScreenState extends State<ActivityScreen> {
     _address = activity.address;
     detailsController.text = activity.details;
     priceController.text = activity.price > 0 ? activity.price.toString() : '';
-    dateController.text = activity.date;
+    final date = DateTime.tryParse(activity.date);
+    if (date != null) {
+      dateController.text = '${date.year}/${date.month}/${date.day}';
+    } else {
+      dateController.text = '';
+    }
     timeController.text = activity.time;
     activityTimeController.text = activity.activityTime.toString();
     maximumGuestNumberController.text = activity.maximumGuestNumber.toString();

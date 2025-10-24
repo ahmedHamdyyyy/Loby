@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:firebase_core/firebase_core.dart';
@@ -16,11 +17,15 @@ import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
 import 'locator.dart';
 import 'project/activities/logic/cubit.dart';
+import 'project/activities/view/screens/activity_screen.dart';
 import 'project/auth/logic/auth_cubit.dart';
 import 'project/home/view/luby_screen_splash.dart';
+import 'project/notifications/logic/cubit.dart';
 import 'project/profile/logic/cubit.dart';
 import 'project/properties/logic/cubit.dart';
+import 'project/properties/view/property_screen.dart';
 import 'project/reservation/logic/cubit.dart';
+import 'project/reservation/view/reservation_details_screen.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -56,7 +61,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      payload: message.data.isNotEmpty ? message.data.toString() : null,
+      // Pass JSON payload so we can parse it on tap
+      payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
     );
   }
 }
@@ -74,11 +80,75 @@ const AndroidNotificationChannel _defaultAndroidChannel = AndroidNotificationCha
 Future<void> _initLocalNotifications() async {
   const androidInit = AndroidInitializationSettings('@mipmap/launcher_icon');
   const iosInit = DarwinInitializationSettings();
-  const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
-  await _flutterLocalNotificationsPlugin.initialize(initSettings);
+  final initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
+  await _flutterLocalNotificationsPlugin.initialize(
+    initSettings,
+    onDidReceiveNotificationResponse: (response) {
+      final payload = response.payload;
+      if (payload == null || payload.isEmpty) return;
+      try {
+        final data = Map<String, dynamic>.from(jsonDecode(payload));
+        _handleNotificationNavigation(data);
+      } catch (e) {
+        developer.log('Failed to parse notification payload: $e', name: 'FCM');
+      }
+    },
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+  );
   final android =
       _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
   await android?.createNotificationChannel(_defaultAndroidChannel);
+}
+
+@pragma('vm:entry-point')
+void notificationTapBackground(NotificationResponse response) {
+  try {
+    final payload = response.payload;
+    if (payload == null || payload.isEmpty) return;
+    final data = Map<String, dynamic>.from(jsonDecode(payload));
+    // We can't navigate here (background isolate), store for initial handling on app resume if needed.
+    // For simplicity, rely on onMessageOpenedApp for FCM and foreground onTap for local notifications.
+    developer.log('Background notification tap payload: $data', name: 'FCM');
+  } catch (e) {
+    developer.log('Error in background notification tap: $e', name: 'FCM');
+  }
+}
+
+final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+
+void _handleNotificationNavigation(Map<String, dynamic> data) {
+  // Expected data includes: type (snake_case), and one of: activityId, propertyId, registrationId
+  final type = (data['type'] ?? data['notificationType'] ?? '').toString();
+  String? entityId = data['registrationId']?.toString();
+  if (entityId == null || entityId.isEmpty) {
+    entityId = data['activityId']?.toString();
+  }
+  if (entityId == null || entityId.isEmpty) {
+    entityId = data['propertyId']?.toString();
+  }
+  if (entityId == null || entityId.isEmpty) {
+    developer.log('No entityId found in notification data: $data', name: 'FCM');
+    return;
+  }
+
+  final nav = _rootNavigatorKey.currentState;
+  if (nav == null) return;
+
+  // Normalize type variations to lower_snake
+  final t = type.toLowerCase();
+  if (t.contains('new_registration') || t.contains('confirm_payment') || t.contains('refund')) {
+    nav.push(MaterialPageRoute(builder: (_) => ReservationDetailsScreen(reservationId: entityId!)));
+    return;
+  }
+  if (t.contains('new_activity') || t.contains('activity_verification')) {
+    nav.push(MaterialPageRoute(builder: (_) => ActivityScreen(activityId: entityId!)));
+    return;
+  }
+  if (t.contains('new_property') || t.contains('property_verification')) {
+    nav.push(MaterialPageRoute(builder: (_) => PropertyScreen(propertyId: entityId!)));
+    return;
+  }
+  developer.log('Unhandled notification type: $type', name: 'FCM');
 }
 
 void main() async {
@@ -132,21 +202,29 @@ void main() async {
           ),
           iOS: const DarwinNotificationDetails(),
         ),
-        payload: message.data.isNotEmpty ? message.data.toString() : null,
+        payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
       );
+    }
+    // Also navigate immediately when app is in foreground if entityId exists
+    if (message.data.isNotEmpty) {
+      _handleNotificationNavigation(message.data);
     }
   });
 
   // Notification tapped while app in background
   FirebaseMessaging.onMessageOpenedApp.listen((message) {
     developer.log('Notification clicked. Data: ${message.data}', name: 'FCM');
-    // navigate based on message.data
+    if (message.data.isNotEmpty) _handleNotificationNavigation(message.data);
   });
 
   // App launched from terminated by tapping notification
   final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
   if (initialMessage != null) {
     developer.log('Opened from terminated via notification: ${initialMessage.data}', name: 'FCM');
+    if (initialMessage.data.isNotEmpty) {
+      // Delay navigation until after runApp
+      WidgetsBinding.instance.addPostFrameCallback((_) => _handleNotificationNavigation(initialMessage.data));
+    }
   }
   setup();
   await getIt<CacheService>().init();
@@ -178,6 +256,7 @@ class MyApp extends StatelessWidget {
       BlocProvider(create: (context) => getIt<ActivitiesCubit>()),
       BlocProvider(create: (context) => getIt<PropertiesCubit>()),
       BlocProvider(create: (context) => getIt<ReservationsCubit>()),
+      BlocProvider(create: (context) => getIt<NotificationsCubit>()),
       BlocProvider(create: (context) => getIt<LocalizationCubit>()..loadSaved()),
     ],
     child: ScreenUtilInit(
@@ -190,6 +269,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), useMaterial3: true),
+              navigatorKey: _rootNavigatorKey,
               home: const LubyScreenSplash(),
               onGenerateTitle: (context) => AppLocalizations.of(context)?.appTitle ?? 'Luby',
               locale: locale,

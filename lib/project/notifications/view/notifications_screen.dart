@@ -4,14 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/widget/widgets.dart';
 import '../../../../config/constants/constance.dart';
 import '../../../../locator.dart';
+import '../../../../models/notification.dart';
 import '../../../core/localization/l10n_ext.dart';
+import '../../../core/utils/utile.dart';
+import '../../activities/view/screens/activity_screen.dart';
+import '../../properties/view/property_screen.dart';
+import '../../reservation/view/reservation_details_screen.dart';
 import '../logic/cubit.dart';
-import 'notification_detail_screen.dart';
 
 class NotificationsScreenVendor extends StatefulWidget {
   const NotificationsScreenVendor({super.key});
@@ -24,40 +29,46 @@ class _NotificationsScreenVendorState extends State<NotificationsScreenVendor> {
   bool hasNotifications = true;
   // int _currentIndex = 0;
 
-  final List<Map<String, dynamic>> notifications = [
-    {
-      'id': 1,
-      'type': 'notification',
-      'title': 'Notification Name',
-      'subtitle': 'Lorem ipsum dolor sit amet',
-      'date': '4/10/2024',
-      'image': 'assets/svg/loby.svg',
-    },
-    {
-      'id': 2,
-      'type': 'notification',
-      'title': 'Notification Name',
-      'subtitle': 'Lorem ipsum dolor sit amet',
-      'date': '4/10/2024',
-      'image': 'assets/svg/loby.svg',
-    },
-    {
-      'id': 3,
-      'type': 'notification',
-      'title': 'Notification Name',
-      'subtitle': 'Lorem ipsum dolor sit amet',
-      'date': '4/10/2024',
-      'image': 'assets/svg/loby.svg',
-    },
-    {
-      'id': 4,
-      'type': 'notification',
-      'title': 'Notification Name',
-      'subtitle': 'Lorem ipsum dolor sit amet',
-      'date': '4/10/2024',
-      'image': 'assets/svg/loby.svg',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    getIt<NotificationsCubit>().loadNotifications();
+  }
+
+  // final List<Map<String, dynamic>> notifications = [
+  //   {
+  //     'id': 1,
+  //     'type': 'notification',
+  //     'title': 'Notification Name',
+  //     'subtitle': 'Lorem ipsum dolor sit amet',
+  //     'date': '4/10/2024',
+  //     'image': 'assets/svg/loby.svg',
+  //   },
+  //   {
+  //     'id': 2,
+  //     'type': 'notification',
+  //     'title': 'Notification Name',
+  //     'subtitle': 'Lorem ipsum dolor sit amet',
+  //     'date': '4/10/2024',
+  //     'image': 'assets/svg/loby.svg',
+  //   },
+  //   {
+  //     'id': 3,
+  //     'type': 'notification',
+  //     'title': 'Notification Name',
+  //     'subtitle': 'Lorem ipsum dolor sit amet',
+  //     'date': '4/10/2024',
+  //     'image': 'assets/svg/loby.svg',
+  //   },
+  //   {
+  //     'id': 4,
+  //     'type': 'notification',
+  //     'title': 'Notification Name',
+  //     'subtitle': 'Lorem ipsum dolor sit amet',
+  //     'date': '4/10/2024',
+  //     'image': 'assets/svg/loby.svg',
+  //   },
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -65,9 +76,21 @@ class _NotificationsScreenVendorState extends State<NotificationsScreenVendor> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBarPop(context, l10n.notificationsTitle, AppColors.primary),
-      body: BlocProvider(
-        create: (_) => getIt<NotificationsCubit>()..loadNotifications(),
-        child: BlocBuilder<NotificationsCubit, NotificationsState>(
+      body: RefreshIndicator(
+        onRefresh: () async => getIt<NotificationsCubit>().loadNotifications(),
+        child: BlocConsumer<NotificationsCubit, NotificationsState>(
+          listener: (context, state) {
+            if (state.loadStatus == Status.error) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+            } else if (state.readStatus == Status.error) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+            } else if (state.readStatus == Status.success) {
+              Navigator.pop(context);
+            } else if (state.readStatus == Status.loading) {
+              Utils.loadingDialog(context);
+            }
+          },
           builder: (context, state) {
             return SingleChildScrollView(
               child: Column(
@@ -98,16 +121,7 @@ class _NotificationsScreenVendorState extends State<NotificationsScreenVendor> {
                         final notification = state.notifications[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
-                          child: NotificationItem(
-                            notification: {
-                              'id': notification.id,
-                              'type': 'notification',
-                              'title': notification.title,
-                              'subtitle': notification.body,
-                              'date': notification.timestamp,
-                              'image': 'assets/svg/loby.svg',
-                            },
-                          ),
+                          child: NotificationItem(notification: notification),
                         );
                       },
                     ),
@@ -146,9 +160,17 @@ class EmptyNotificationsState extends StatelessWidget {
 }
 
 class NotificationItem extends StatelessWidget {
-  final Map<String, dynamic> notification;
+  final NotificationModel notification;
 
   const NotificationItem({super.key, required this.notification});
+
+  String _formatDate(BuildContext context, String raw) {
+    if (raw.isEmpty) return '';
+    final DateTime? parsed = DateTime.tryParse(raw);
+    if (parsed == null) return raw;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat.yMMMd(locale).format(parsed);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,17 +178,59 @@ class NotificationItem extends StatelessWidget {
       padding: const EdgeInsets.only(left: 5, right: 5),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => NotificationDetailScreenVendor(notification: notification)),
-          );
+          if (!notification.isRead) {
+            context.read<NotificationsCubit>().readNotification(notification.id);
+          }
+          // Navigate based on notification type and entity id when available
+          switch (notification.type) {
+            case NotificationTypes.newRegistration:
+            case NotificationTypes.confirmPayment:
+            case NotificationTypes.refund:
+              if (notification.entityId.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ReservationDetailsScreen(reservationId: notification.entityId)),
+                );
+              }
+              break;
+            case NotificationTypes.newActivity:
+            case NotificationTypes.activityVerification:
+              if (notification.entityId.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ActivityScreen(activityId: notification.entityId)),
+                );
+              }
+              break;
+            case NotificationTypes.newProperty:
+            case NotificationTypes.propertyVerification:
+              if (notification.entityId.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => PropertyScreen(propertyId: notification.entityId)),
+                );
+              }
+              break;
+            default:
+              break;
+          }
         },
         child: Container(
-          height: 101,
           width: double.infinity,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: AppColors.primary)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.primary),
+            color: notification.isRead ? AppColors.primary.withOpacity(0.1) : Colors.white,
+          ),
           child: Row(
-            children: [NotificationIcon(imagePath: notification['image']), NotificationContent(notification: notification)],
+            children: [
+              const NotificationIcon(imagePath: 'assets/svg/loby.svg'),
+              NotificationContent(
+                title: notification.title,
+                subtitle: notification.body,
+                date: _formatDate(context, notification.createdAt),
+              ),
+            ],
           ),
         ),
       ),
@@ -190,9 +254,11 @@ class NotificationIcon extends StatelessWidget {
 }
 
 class NotificationContent extends StatelessWidget {
-  final Map<String, dynamic> notification;
+  final String title;
+  final String subtitle;
+  final String date;
 
-  const NotificationContent({super.key, required this.notification});
+  const NotificationContent({super.key, required this.title, required this.subtitle, required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -204,17 +270,17 @@ class NotificationContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              notification['title'],
+              title,
               style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primaryTextColor),
             ),
             const SizedBox(height: 4),
             Text(
-              notification['subtitle'],
+              subtitle,
               style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
             ),
             const SizedBox(height: 4),
             Text(
-              notification['date'],
+              date,
               style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
             ),
           ],

@@ -49,5 +49,30 @@ class ProfileRepository {
     } catch (e) {
       throw Exception('حدث خطأ غير متوقع');
     }
-  } 
+  }
+
+  Future<UserModel> uploadDocuments({
+    required String nationalId,
+    required String iban,
+    required String certificateNumber,
+    required String nationalIdFile,
+    required String ibanFile,
+    required String certificateFile,
+  }) async {
+    try {
+      return await _userData.uploadDocuments(
+        nationalId: nationalId,
+        iban: iban,
+        certificateNumber: certificateNumber,
+        nationalIdFile: nationalIdFile,
+        ibanFile: ibanFile,
+        certificateFile: certificateFile,
+      );
+    } on DioException catch (e) {
+      debugPrint('DioException: ${e.response?.data}');
+      throw Exception(e.response?.data['error'].toString());
+    } catch (e) {
+      throw Exception('حدث خطأ غير متوقع');
+    }
+  }
 }

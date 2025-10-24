@@ -131,6 +131,7 @@ class UserInfoHeaderWidget extends StatelessWidget {
               height: 35,
               placeholderCacheHeight: 35,
               placeholderCacheWidth: 35,
+              fit: BoxFit.cover,
               imageErrorBuilder: (context, error, stackTrace) {
                 return Image.asset('assets/images/saudian_man.png', width: 50, height: 50);
               },

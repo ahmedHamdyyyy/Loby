@@ -28,7 +28,9 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     emit(state.copyWith(readStatus: Status.loading));
     try {
       await _repo.readNotification(id);
-      emit(state.copyWith(readStatus: Status.success, notifications: state.notifications.where((n) => n.id != id).toList()));
+      // Mark notification as read locally instead of removing it
+      final updated = state.notifications.map((n) => n.id == id ? n.copyWith(isRead: true) : n).toList();
+      emit(state.copyWith(readStatus: Status.success, notifications: updated));
     } catch (e) {
       emit(state.copyWith(readStatus: Status.error, msg: e.toString()));
     } finally {

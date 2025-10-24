@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -220,8 +219,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appCommission => 'App Commission';
 
   @override
-  String get commissionDetails =>
-      'The first party\'s commission for every reservation made by the second party is 14% of the rent (not including value added tax).';
+  String get commissionDetails => 'The first party\'s commission for every reservation made by the second party is 15% of the rent (not including value added tax).';
 
   @override
   String get emailNotVerifiedMsg => 'Your email is not verified please wait until it is verified then try again.';
@@ -546,8 +544,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get vendorIntroText =>
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hendrerit tristique lorem ipsum dolor sit amet.\nDiam habitant.';
+  String get vendorIntroText => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hendrerit tristique lorem ipsum dolor sit amet.\nDiam habitant.';
 
   @override
   String availabilityQuestion(String type) {
@@ -573,8 +570,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lobbyOffersTitle => 'Lobby Offers';
 
   @override
-  String get lobbyOffersDescription =>
-      'If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%';
+  String get lobbyOffersDescription => 'If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%';
 
   @override
   String get imageLabel => 'Image';
@@ -692,7 +688,38 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String reservationStatusMessage(String status) {
+    return 'Reservation status: $status';
+  }
+
+  @override
+  String get statusCompleted => 'Completed';
+
+  @override
+  String get statusConfirmed => 'Confirmed';
+
+  @override
+  String get statusRefund => 'Refunded';
+
+  @override
   String get availableBalance => 'Available balance';
+
+  @override
+  String get updatedSuccessfully => 'Updated Successfully';
+
+  @override
+  String nightCount(int count) {
+    return '$count night';
+  }
+
+  @override
+  String get perNight => 'Per night';
+
+  @override
+  String get fees => 'Fees';
+
+  @override
+  String get totalPrice => 'Total Price';
 
   @override
   String billCodeLabel(String code) {
@@ -709,8 +736,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeToLoby => 'Welcome to LOBY';
 
   @override
-  String get onboardingWelcomeDescription =>
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit tristique gravida felis, sociis in felis.';
+  String get onboardingWelcomeDescription => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit tristique gravida felis, sociis in felis.';
 
   @override
   String get letsStart => 'Let\'s Start';

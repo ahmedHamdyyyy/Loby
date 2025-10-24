@@ -1,11 +1,14 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 
 import '../../../../config/constants/api_constance.dart';
 import '../../../../core/services/api_services.dart';
 import '../../../config/constants/constance.dart';
 import '../../../models/user.dart';
-import 'package:dio/dio.dart';
-
 
 class ProfileData {
   const ProfileData(this._apiServices);
@@ -27,8 +30,7 @@ class ProfileData {
     }
   }
 
-
-    Future<UserModel> updateUser({
+  Future<UserModel> updateUser({
     required String firstName,
     required String lastName,
     required String phone,
@@ -52,8 +54,71 @@ class ProfileData {
     return UserModel.fromJson(response.data['data']);
   }
 
+  Future<UserModel> uploadDocuments({
+    required String nationalId,
+    required String iban,
+    required String certificateNumber,
+    required String nationalIdFile,
+    required String ibanFile,
+    required String certificateFile,
+  }) async {
+    final formData = FormData();
+    formData.fields.addAll([
+      MapEntry(AppConst.nationalId, nationalId),
+      MapEntry(AppConst.iban, iban),
+      MapEntry(AppConst.certificateNumber, certificateNumber),
+    ]);
+    try {
+      if (nationalIdFile.isNotEmpty && !nationalIdFile.startsWith('http')) {
+        final extension = nationalIdFile.split('.').last.toLowerCase();
+        if ('pdf' == extension && await File(nationalIdFile).exists()) {
+          final contentType = MediaType('application', 'pdf');
+          final filename = nationalIdFile.split(Platform.pathSeparator).last;
+          formData.files.add(
+            MapEntry(
+              AppConst.nationalIdDocument,
+              await MultipartFile.fromFile(nationalIdFile, filename: filename, contentType: contentType),
+            ),
+          );
+        }
+      }
+      if (ibanFile.isNotEmpty && !ibanFile.startsWith('http')) {
+        final extension = ibanFile.split('.').last.toLowerCase();
+        if ('pdf' == extension && await File(ibanFile).exists()) {
+          final contentType = MediaType('application', 'pdf');
+          final filename = ibanFile.split(Platform.pathSeparator).last;
+          formData.files.add(
+            MapEntry(
+              AppConst.ibanDocument,
+              await MultipartFile.fromFile(ibanFile, filename: filename, contentType: contentType),
+            ),
+          );
+        }
+      }
+      if (certificateFile.isNotEmpty && !certificateFile.startsWith('http')) {
+        final extension = certificateFile.split('.').last.toLowerCase();
+        if ('pdf' == extension && await File(certificateFile).exists()) {
+          final contentType = MediaType('application', 'pdf');
+          final filename = certificateFile.split(Platform.pathSeparator).last;
+          formData.files.add(
+            MapEntry(
+              AppConst.certificateNumberDocument,
+              await MultipartFile.fromFile(certificateFile, filename: filename, contentType: contentType),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error preparing files: $e');
+      rethrow;
+    }
+    final response = await _apiServices.dio.post(ApiConstance.updateVendorDocuments, data: formData);
+    _checkIfSuccess(response);
+    log(response.data.toString());
+    return UserModel.fromJson(response.data['data']['user']);
+  }
 
-    void _checkIfSuccess(Response<dynamic> response) {
+  void _checkIfSuccess(Response<dynamic> response) {
     if (!(response.data['success'] ?? false)) {
       throw DioException(requestOptions: response.requestOptions, response: response, error: response.data['error']);
     }

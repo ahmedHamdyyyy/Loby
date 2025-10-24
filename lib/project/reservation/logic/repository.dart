@@ -96,4 +96,26 @@ class ReservationsRepository {
       throw Exception('An unexpected error occurred');
     }
   }
+
+  Future<ReservationModel> getReservationById(String id) async {
+    try {
+      return await _data.getReservationById(id);
+    } on DioException catch (e) {
+      debugPrint('DioException: ${e.response?.data}');
+      if (e.response?.data['error'] != null) {
+        final errorMessage = e.response?.data['error'];
+        if (errorMessage is List) {
+          throw Exception(errorMessage.join(', '));
+        } else {
+          throw Exception(errorMessage.toString());
+        }
+      } else if (e.response?.statusCode != null) {
+        throw Exception('Server error with status code: ${e.response?.statusCode}');
+      }
+      throw Exception('Failed to get reservation: ${e.message}');
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      throw Exception('An unexpected error occurred');
+    }
+  }
 }

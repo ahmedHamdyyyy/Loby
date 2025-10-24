@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import '../../../../config/constants/api_constance.dart';
@@ -17,8 +19,9 @@ class ReservationsData {
   Future<List<ReservationModel>> getReservations(bool isCurrentReservations) async {
     final response = await _apiService.dio.get(
       ApiConstance.getReservations,
-      queryParameters: {'is_current': isCurrentReservations},
+      queryParameters: {'status': isCurrentReservations ? 'current' : 'last'},
     );
+    log(response.data.toString());
     if (!(response.data['success'] ?? false) || response.data['data']['data'] == null) throw _dioError(response);
     return (response.data['data']['data'] as List).map((e) => ReservationModel.fromMap(e)).toList();
   }
@@ -31,6 +34,12 @@ class ReservationsData {
   Future<void> refundReservation(String id) async {
     final response = await _apiService.dio.post(ApiConstance.refundReservation, data: {'registrationId': id});
     if (!(response.data['success'] ?? false)) throw _dioError(response);
+  }
+
+  Future<ReservationModel> getReservationById(String id) async {
+    final response = await _apiService.dio.get(ApiConstance.getReservation(id));
+    if (!(response.data['success'] ?? false) || response.data['data'] == null) throw _dioError(response);
+    return ReservationModel.fromMap(response.data['data']);
   }
 
   DioException _dioError(Response<dynamic> response) {

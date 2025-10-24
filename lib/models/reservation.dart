@@ -5,14 +5,14 @@ import 'property.dart';
 
 enum ReservationType { activity, property }
 
-enum ReservationStatus { draft, completed, cancelled, refunded }
+enum ReservationStatus { completed, confirmed, refund }
 
 class ReservationModel extends Equatable {
   final String id, userId, userName, userImageUrl, checkInDate, checkOutDate;
   final ReservationType type;
   final ReservationStatus status;
   final int guestNumber, registrationNumber;
-  final double totalPrice;
+  final double totalPrice, totalPriceAfterFees;
   final Object item;
 
   const ReservationModel({
@@ -27,6 +27,7 @@ class ReservationModel extends Equatable {
     required this.guestNumber,
     required this.registrationNumber,
     required this.totalPrice,
+    required this.totalPriceAfterFees,
     required this.item,
   });
 
@@ -38,11 +39,12 @@ class ReservationModel extends Equatable {
     checkInDate: '',
     checkOutDate: '',
     type: ReservationType.property,
-    status: ReservationStatus.draft,
+    status: ReservationStatus.completed,
     guestNumber: 1,
     registrationNumber: 0,
     totalPrice: 0.0,
     item: PropertyModel.initial,
+    totalPriceAfterFees: 0.0,
   );
 
   ReservationModel copyWith({
@@ -58,6 +60,7 @@ class ReservationModel extends Equatable {
     int? registrationNumber,
     double? totalPrice,
     Object? item,
+    double? totalPriceAfterFees,
   }) => ReservationModel(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -71,6 +74,7 @@ class ReservationModel extends Equatable {
     guestNumber: guestNumber ?? this.guestNumber,
     totalPrice: totalPrice ?? this.totalPrice,
     item: item ?? this.item,
+    totalPriceAfterFees: totalPriceAfterFees ?? this.totalPriceAfterFees,
   );
 
   Map<String, dynamic> toMap() => {
@@ -90,20 +94,21 @@ class ReservationModel extends Equatable {
     final type = ReservationType.values.firstWhere((e) => e.name == map['type'], orElse: () => ReservationType.property);
     return ReservationModel(
       id: map['_id'] ?? '',
-      userId: map['user']['id'] ?? '',
-      userName: '${map['user']['firstName'] ?? ''} ${map['user']['lastName'] ?? ''}',
-      userImageUrl: map['user']['imageUrl'] ?? '',
+      userId: map['userId']?['_id'] ?? '',
+      userName: '${map['userId']?['firstName'] ?? ''} ${map['userId']?['lastName'] ?? ''}',
+      userImageUrl: map['userId']?['profilePicture'] ?? '',
       type: type,
-      checkInDate: type == ReservationType.activity ? map['activity']['date'] ?? '' : map['checkInDate'] ?? '',
-      checkOutDate: type == ReservationType.activity ? map['activity']['date'] ?? '' : map['checkOutDate'] ?? '',
-      status: ReservationStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => ReservationStatus.draft),
+      checkInDate: type == ReservationType.activity ? (map['activityId']?['date'] ?? '') : map['checkInDate'] ?? '',
+      checkOutDate: type == ReservationType.activity ? (map['activityId']?['date'] ?? '') : map['checkOutDate'] ?? '',
+      status: ReservationStatus.values.firstWhere((e) => e.name == map['status'], orElse: () => ReservationStatus.completed),
       guestNumber: map['guestNumber'] ?? 1,
       registrationNumber: map['registrationNumber'] ?? 0,
       totalPrice: (map['totalPrice'] as num?)?.toDouble() ?? 0.0,
+      totalPriceAfterFees: (map['totalPriceAfterFees'] as num?)?.toDouble() ?? 0.0,
       item:
           type == ReservationType.property
-              ? PropertyModel.fromJson(map['property'] ?? {})
-              : ActivityModel.fromJson(map['activity'] ?? {}),
+              ? PropertyModel.fromJson(map['propertyId'] ?? {})
+              : ActivityModel.fromJson(map['activityId'] ?? {}),
     );
   }
 
@@ -119,5 +124,6 @@ class ReservationModel extends Equatable {
     registrationNumber,
     totalPrice,
     item,
+    totalPriceAfterFees,
   ];
 }

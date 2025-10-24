@@ -22,13 +22,14 @@ import '../../profile/logic/cubit.dart';
 import '../logic/cubit.dart';
 
 class ReservationDetailsScreen extends StatefulWidget {
-  const ReservationDetailsScreen({super.key});
+  const ReservationDetailsScreen({super.key, this.reservationId = ''});
+  final String reservationId;
   @override
   State<ReservationDetailsScreen> createState() => _ReservationDetailsScreenState();
 }
 
 class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
-  bool isRefused = false;
+  // bool isRefused = false;
   int nights(String checkIn, String checkOut) {
     final checkInDate = DateTime.parse(checkIn);
     final checkOutDate = DateTime.parse(checkOut);
@@ -37,6 +38,15 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
   }
 
   final vendor = getIt<ProfileCubit>().state.user;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.reservationId.isNotEmpty) {
+      // Load reservation details by id
+      getIt<ReservationsCubit>().getReservationById(widget.reservationId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +59,14 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
           Utils.errorDialog(context, state.msg);
         } else if (state.updateStatus == Status.success) {
           Navigator.pop(context);
-          showToast(text: 'Updated Successfully', stute: ToustStute.success);
+          showToast(text: context.l10n.updatedSuccessfully, stute: ToustStute.success);
         }
       },
       builder: (context, state) {
+        if (widget.reservationId.isNotEmpty && state.reservation.id.isEmpty) {
+          // Waiting for fetch
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
         final reservation = state.reservation;
         final price =
             reservation.type == ReservationType.property
@@ -60,13 +74,9 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 : (reservation.item as ActivityModel).price;
         final nightsNumber =
             reservation.type == ReservationType.property ? nights(reservation.checkInDate, reservation.checkOutDate) : 1;
-        isRefused = reservation.status == ReservationStatus.refunded;
+        // isRefused = reservation.status == ReservationStatus.refund;
         return Scaffold(
-          appBar: appBarPop(
-            context,
-            isRefused ? context.l10n.lastReservations : context.l10n.currentReservations,
-            AppColors.primaryColor,
-          ),
+          appBar: appBarPop(context, context.l10n.reservationTitle, AppColors.primaryColor),
           backgroundColor: Colors.white,
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -75,12 +85,75 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
               children: [
                 const SizedBox(height: 10),
                 Text(
-                  isRefused
-                      ? context.l10n.reservationNumberLabel(reservation.registrationNumber.toString())
-                      : context.l10n.lastNumberLabel(reservation.registrationNumber.toString()),
+                  context.l10n.reservationNumberLabel(reservation.registrationNumber.toString()),
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                 ),
                 const SizedBox(height: 22),
+
+                // buildItemCard(
+                //   imagePath: 'assets/images/image6.png',
+                //   title: "Studio - 5 Night",
+                //   location: "Riyadh - District Name",
+                //   price: "4000 SAR",
+                // ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 125,
+                      height: 125,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/images/image7.png',
+                          image:
+                              reservation.type == ReservationType.property
+                                  ? (reservation.item as PropertyModel).medias.firstOrNull ?? ''
+                                  : (reservation.item as ActivityModel).medias.firstOrNull ?? '',
+                          imageErrorBuilder:
+                              (context, error, stackTrace) => Image.asset('assets/images/image7.png', fit: BoxFit.cover),
+                          fit: BoxFit.cover,
+                          placeholderFit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              (reservation.type == ReservationType.property
+                                      ? (reservation.item as PropertyModel).type.name
+                                      : (reservation.item as ActivityModel).name)
+                                  .toUpperCase(),
+                              style: GoogleFonts.poppins(fontSize: 16, color: AppColors.secondTextColor),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                            const SizedBox(height: 8),
+                            if (reservation.type == ReservationType.property) ...[
+                              Text(
+                                (reservation.item as PropertyModel).address.formattedAddress,
+                                style: GoogleFonts.poppins(fontSize: 14),
+                              ),
+                              const SizedBox(height: 4),
+                            ],
+                            buildOrderDetailText(context.l10n.nightCount(nightsNumber)),
+                            const SizedBox(height: 4),
+                            buildOrderDetailText(
+                              reservation.type == ReservationType.property
+                                  ? (reservation.item as PropertyModel).address.formattedAddress
+                                  : (reservation.item as ActivityModel).address.formattedAddress,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     ClipRRect(
@@ -147,55 +220,19 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                // buildItemCard(
-                //   imagePath: 'assets/images/image6.png',
-                //   title: "Studio - 5 Night",
-                //   location: "Riyadh - District Name",
-                //   price: "4000 SAR",
-                // ),
-                Row(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: FadeInImage.assetNetwork(
-                        width: 125,
-                        height: 125,
-                        fit: BoxFit.cover,
-                        placeholder: 'assets/images/image6.png',
-                        image:
-                            reservation.type == ReservationType.property
-                                ? (reservation.item as PropertyModel).medias.first
-                                : (reservation.item as ActivityModel).medias.first,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              reservation.type == ReservationType.property
-                                  ? (reservation.item as PropertyModel).type.name
-                                  : (reservation.item as ActivityModel).name,
-                              style: GoogleFonts.poppins(fontSize: 14, color: AppColors.secondTextColor),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              reservation.type == ReservationType.property
-                                  ? (reservation.item as PropertyModel).address.formattedAddress
-                                  : (reservation.item as ActivityModel).address.formattedAddress,
-                              style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 14),
-                            ),
-                            const SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                Text(
+                  context.l10n.orderDetails,
+                  style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 8),
+                buildOrderDetailText(context.l10n.checkInLabel(reservation.checkInDate.substring(0, 10))),
+                if (reservation.type == ReservationType.property) ...[
+                  const SizedBox(height: 8),
+                  buildOrderDetailText(context.l10n.checkOutLabel(reservation.checkOutDate.substring(0, 10))),
+                ],
+                const SizedBox(height: 8),
+                buildOrderDetailText(
+                  context.l10n.priceWithCurrency(reservation.totalPriceAfterFees, context.l10n.currencySar),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -210,33 +247,6 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.l10n.orderDetails,
-                      style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 8),
-                    buildOrderDetailText(
-                      '${reservation.type == ReservationType.property ? (reservation.item as PropertyModel).type.name : (reservation.item as ActivityModel).name} - $nightsNumber Night',
-                    ),
-                    const SizedBox(height: 8),
-                    buildOrderDetailText(
-                      reservation.type == ReservationType.property
-                          ? (reservation.item as PropertyModel).address.formattedAddress
-                          : (reservation.item as ActivityModel).address.formattedAddress,
-                    ),
-                    const SizedBox(height: 8),
-                    buildOrderDetailText(context.l10n.checkInLabel(reservation.checkInDate.substring(0, 10))),
-                    if (reservation.type == ReservationType.property) ...[
-                      const SizedBox(height: 8),
-                      buildOrderDetailText(context.l10n.checkOutLabel(reservation.checkOutDate.substring(0, 10))),
-                    ],
-                    const SizedBox(height: 8),
-                    buildOrderDetailText(context.l10n.priceWithCurrency(reservation.totalPrice, context.l10n.currencySar)),
-                  ],
-                ),
                 const Divider(height: 32, thickness: 1, color: AppColors.editIconColor),
                 Text(
                   context.l10n.summary,
@@ -245,15 +255,29 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 const SizedBox(height: 8),
                 SummaryRow(
                   title:
-                      '$nightsNumber Night${nightsNumber > 1 ? 's' : ''} × ${reservation.guestNumber} Person${reservation.guestNumber > 1 ? 's' : ''} × $price Per Night',
-                  price: '${nightsNumber * reservation.guestNumber * price} SAR',
+                      '${context.l10n.nightCount(nightsNumber)} × ${context.l10n.personCount(reservation.guestNumber)} × $price ${context.l10n.perNight}',
+                  price: '${reservation.totalPrice} ${context.l10n.currencySar}',
                 ),
-                // SummaryRow(title: '$price', price: '${reservation.guestNumber * price} SAR'),
+                SummaryRow(
+                  title: context.l10n.fees,
+                  price: '${(reservation.totalPriceAfterFees - reservation.totalPrice).abs()} ${context.l10n.currencySar}',
+                ),
+                SummaryRow(
+                  title: context.l10n.totalPrice,
+                  price: '${reservation.totalPriceAfterFees} ${context.l10n.currencySar}',
+                ),
                 // SummaryRow(title: 'Vat', price: '0 SAR'),
-                // SummaryRow(title: 'Discount', price: '-200 SAR'),
                 // if (!isRefused) buildNoteSection(),
-                if (!isRefused) const SizedBox(height: 54),
-                if (!isRefused) buildActionButtons(context),
+                if (reservation.status == ReservationStatus.completed) ...[
+                  const SizedBox(height: 32),
+                  buildActionButtons(context),
+                ] else ...[
+                  const SizedBox(height: 24),
+                  Text(
+                    context.l10n.reservationStatusMessage(_localizedStatus(context, reservation.status)),
+                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
+                  ),
+                ],
                 const Divider(height: 32, thickness: 1, color: AppColors.editIconColor),
                 const ViewReservationSummary(),
                 const SizedBox(height: 24),
@@ -307,30 +331,41 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
           ),
         ),
         const SizedBox(width: 10),
-        if (!isRefused)
-          Expanded(
-            child: GestureDetector(
-              onTap: getIt<ReservationsCubit>().refundReservation,
-              child: Container(
-                width: double.infinity,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: AppColors.editIconColor),
-                ),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    context.l10n.commonRefuse,
-                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.primaryColor),
-                  ),
+        // if (!isRefused)
+        Expanded(
+          child: GestureDetector(
+            onTap: getIt<ReservationsCubit>().refundReservation,
+            child: Container(
+              width: double.infinity,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: AppColors.editIconColor),
+              ),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(
+                  context.l10n.commonRefuse,
+                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.primaryColor),
                 ),
               ),
             ),
           ),
+        ),
       ],
     );
+  }
+}
+
+String _localizedStatus(BuildContext context, ReservationStatus status) {
+  switch (status) {
+    case ReservationStatus.completed:
+      return context.l10n.statusCompleted;
+    case ReservationStatus.confirmed:
+      return context.l10n.statusConfirmed;
+    case ReservationStatus.refund:
+      return context.l10n.statusRefund;
   }
 }
 

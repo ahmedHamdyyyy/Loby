@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -220,8 +219,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appCommission => 'عمولة التطبيق';
 
   @override
-  String get commissionDetails =>
-      'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 14% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
+  String get commissionDetails => 'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
 
   @override
   String get emailNotVerifiedMsg => 'لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.';
@@ -572,8 +570,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lobbyOffersTitle => 'عروض لوبي';
 
   @override
-  String get lobbyOffersDescription =>
-      'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
+  String get lobbyOffersDescription => 'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
 
   @override
   String get imageLabel => 'صورة';
@@ -691,7 +688,38 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String reservationStatusMessage(String status) {
+    return 'حالة الحجز: $status';
+  }
+
+  @override
+  String get statusCompleted => 'مكتمل';
+
+  @override
+  String get statusConfirmed => 'مؤكد';
+
+  @override
+  String get statusRefund => 'مسترد';
+
+  @override
   String get availableBalance => 'الرصيد المتاح';
+
+  @override
+  String get updatedSuccessfully => 'تم التحديث بنجاح';
+
+  @override
+  String nightCount(int count) {
+    return '$count ليلة';
+  }
+
+  @override
+  String get perNight => 'لكل ليلة';
+
+  @override
+  String get fees => 'الرسوم';
+
+  @override
+  String get totalPrice => 'إجمالي السعر';
 
   @override
   String billCodeLabel(String code) {
@@ -708,8 +736,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeToLoby => 'مرحبًا بك في LOBY';
 
   @override
-  String get onboardingWelcomeDescription =>
-      'نص تجريبي: لوريم إيبسوم دولار سيت أميت، كونسيكتيتور أديبيسيسينغ إليت. يتم وضع نص تجريبي هنا.';
+  String get onboardingWelcomeDescription => 'نص تجريبي: لوريم إيبسوم دولار سيت أميت، كونسيكتيتور أديبيسيسينغ إليت. يتم وضع نص تجريبي هنا.';
 
   @override
   String get letsStart => 'لنبدأ';

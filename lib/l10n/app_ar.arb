@@ -62,7 +62,7 @@
     "yourActivities": "أنشطتك",
     "beVendorNow": "كن بائعًا الآن!",
     "appCommission": "عمولة التطبيق",
-    "commissionDetails": "عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 14% من الإيجار (لا تشمل ضريبة القيمة المضافة).",
+    "commissionDetails": "عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).",
     "emailNotVerifiedMsg": "لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.",
     "account": "الحساب",
     "accountInfo": "معلومات الحساب",
@@ -167,7 +167,7 @@
     "navBookings": "الحجوزات",
     "navMessages": "الرسائل",
     "navProfile": "الملف الشخصي",
-    "vendorIntroText": "نص تجريبي: لوريم إيبسوم دولار سيت أميت، كونسيكتيتور أديبيسيسينغ إليت.\nديام هابيتانت.",
+    "vendorIntroText": "انضم إلى لوبي كبائع وابدأ في إدراج عقاراتك أو أنشطتك للوصول إلى جمهور أوسع وتنمية عملك.",
     "availabilityQuestion": "هل {type} متاح؟",
     "availableLabel": "متاح",
     "notAvailableLabel": "غير متاح",
@@ -212,6 +212,29 @@
     "viewReservationSummary": "عرض ملخص الحجز",
     "personCount": "{count} شخص",
     "availableBalance": "الرصيد المتاح",
+    "reservationStatusMessage": "حالة الحجز: {status}",
+    "@reservationStatusMessage": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "statusCompleted": "مكتمل",
+    "statusConfirmed": "مؤكد",
+    "statusRefund": "مسترد",
+    "updatedSuccessfully": "تم التحديث بنجاح",
+    "nightCount": "{count} ليلة",
+    "@nightCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "perNight": "لكل ليلة",
+    "fees": "الرسوم",
+    "totalPrice": "إجمالي السعر",
     "billCodeLabel": "رمز الفاتورة : {code}",
     "totalPriceLabel": "إجمالي السعر :",
     "billDetails": "تفاصيل الفاتورة",

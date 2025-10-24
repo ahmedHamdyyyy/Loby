@@ -154,7 +154,7 @@
     "yourActivities": "Your activities",
     "beVendorNow": "Be a vendor now !",
     "appCommission": "App Commission",
-    "commissionDetails": "The first party's commission for every reservation made by the second party is 14% of the rent (not including value added tax).",
+    "commissionDetails": "The first party's commission for every reservation made by the second party is 15% of the rent (not including value added tax).",
     "emailNotVerifiedMsg": "Your email is not verified please wait until it is verified then try again.",
     "account": "Account",
     "accountInfo": "Account info",
@@ -294,7 +294,7 @@
     "navBookings": "Bookings",
     "navMessages": "Messages",
     "navProfile": "Profile",
-    "vendorIntroText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hendrerit tristique lorem ipsum dolor sit amet.\nDiam habitant.",
+    "vendorIntroText": "Join Loby as a vendor and start listing your properties or activities to reach a wider audience and grow your business.",
     "availabilityQuestion": "Are your {type} available?",
     "availableLabel": "Available",
     "notAvailableLabel": "Not Available",
@@ -380,7 +380,30 @@
             }
         }
     },
+    "reservationStatusMessage": "Reservation status: {status}",
+    "@reservationStatusMessage": {
+        "placeholders": {
+            "status": {
+                "type": "String"
+            }
+        }
+    },
+    "statusCompleted": "Completed",
+    "statusConfirmed": "Confirmed",
+    "statusRefund": "Refunded",
     "availableBalance": "Available balance",
+    "updatedSuccessfully": "Updated Successfully",
+    "nightCount": "{count} night",
+    "@nightCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "perNight": "Per night",
+    "fees": "Fees",
+    "totalPrice": "Total Price",
     "billCodeLabel": "Bill code : {code}",
     "@billCodeLabel": {
         "placeholders": {
