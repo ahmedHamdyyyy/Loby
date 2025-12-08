@@ -331,23 +331,23 @@ class _ModernErrorDialog extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Error title
-              Text(
-                title,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
-                ),
-                textAlign: TextAlign.center,
-              ),
+              // // Error title
+              // Text(
+              //   title,
+              //   style: theme.textTheme.titleLarge?.copyWith(
+              //     color: theme.colorScheme.onSurface,
+              //     fontWeight: FontWeight.w600,
+              //     letterSpacing: 0.2,
+              //   ),
+              //   textAlign: TextAlign.center,
+              // ),
 
-              const SizedBox(height: 16),
+              // const SizedBox(height: 16),
 
               // Error message
               Text(
                 error,
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
+                style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface.withAlpha(181), height: 1.4),
                 textAlign: TextAlign.center,
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,

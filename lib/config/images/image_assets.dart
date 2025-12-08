@@ -46,7 +46,7 @@ class ImageAssets {
   static const String conectus = 'assets/svg/conectus.svg';
   static const String massage = 'assets/svg/massages.svg';
   static const String edit2 = 'assets/svg/edit2.svg';
-  static const String eyeIcon = 'assets/svg/🦆 icon _eye fill_.svg';
+  // static const String eyeIcon = 'assets/svg/🦆 icon _eye fill_.svg';
   static const String card2 = 'assets/svg/card2.svg';
   static const String notificationsIcon = 'assets/svg/notification-bing.svg';
   static const String closeIcon = 'assets/svg/close-square.svg';
@@ -66,14 +66,12 @@ class ImageAssets {
   static const String image6 = 'assets/images/home.png';
   static const String arrowDown2 = 'assets/svg/arrow-down2.svg';
   static const String billIcon = 'assets/svg/bile.svg';
- 
 
   static const String backIcon = 'assets/svg/arrow-left.svg';
   static const String addIcon = 'assets/svg/remove.svg';
   static const String removeIcon = 'assets/svg/add.svg';
   static const String locationIcon = 'assets/svg/location.svg';
-  static const String uploadIcon =
-      'assets/svg/material-symbols_add-photo-alternate-outline.svg';
+  static const String uploadIcon = 'assets/svg/material-symbols_add-photo-alternate-outline.svg';
   static const String pdfIcon = 'assets/svg/pdf2.jpeg';
   static const String searchIcon = 'assets/svg/search-normal.svg';
   static const String mapIcon = 'assets/svg/location.svg';

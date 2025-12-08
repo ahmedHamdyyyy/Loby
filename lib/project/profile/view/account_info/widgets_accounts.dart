@@ -294,18 +294,18 @@ class AccountFormFields extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const FormTextField(hintText: "First Name", isError: false),
-        const FormTextField(hintText: "Last Name"),
-        const FormTextField(hintText: "0123456789", isNumber: true),
-        const FormTextField(hintText: "E-Mail"),
+        FormTextField(hintText: context.l10n.firstNameHint, isError: false),
+        FormTextField(hintText: context.l10n.lastNameHint),
+        FormTextField(hintText: context.l10n.phoneNumberHint, isNumber: true),
+        FormTextField(hintText: context.l10n.emailHint),
         FormTextField(
-          hintText: "Password",
+          hintText: context.l10n.passwordLabel,
           isPassword: true,
           isVisible: isPasswordVisible,
           onToggleVisibility: onTogglePasswordVisibility,
         ),
         FormTextField(
-          hintText: "Confirm Password",
+          hintText: context.l10n.confirmPasswordLabel,
           isPassword: true,
           isVisible: isConfirmPasswordVisible,
           onToggleVisibility: onToggleConfirmPasswordVisibility,
@@ -545,14 +545,14 @@ class MenuItems extends StatelessWidget {
         MenuItemWithArrow(
           icon: ImageAssets.tarmsAndConditionsIcon,
           title: context.l10n.termsAndConditions,
-          screen: const TermaConditionsViewVendor(),
+          screen: const TermsConditionsView(),
         ),
         MenuItemWithArrow(
           icon: ImageAssets.securityIcon,
           title: context.l10n.privacyPolicy,
           screen: const PrivacyViewVendor(),
         ),
-        MenuItemWithArrow(icon: ImageAssets.chat2, title: context.l10n.contactUs, screen: const ContactUsViewVendor()),
+        MenuItemWithArrow(icon: ImageAssets.chat2, title: context.l10n.contactUs, screen: const ContactUsView()),
         MenuItemSimple(icon: ImageAssets.rate, title: context.l10n.rateApp, screen: const RateLubycreen()),
         MenuItemSimple(icon: ImageAssets.invite, title: context.l10n.inviteFriends, screen: const InviteFriendsScreen()),
         //MenuItemSimple(icon: ImageAssets.logout, title: "Log out", screen: SignInScreen()),

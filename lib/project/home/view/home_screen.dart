@@ -27,16 +27,14 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-VendorRole _vendorRole = VendorRole.non;
-bool _isVerified = false;
+// VendorRole vendorRole = VendorRole.non;
+// bool isVerified = false;
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _updateVendorRole(String role, bool verified) {
-    _vendorRole = VendorRole.values.firstWhere((e) => e.name == role, orElse: () => VendorRole.non);
-    _isVerified = verified;
-    if (_vendorRole == VendorRole.property) {
+  void _updateVendorRole(VendorRole role, bool verified) {
+    if (role == VendorRole.property) {
       getIt<PropertiesCubit>().getProperties();
-    } else if (_vendorRole == VendorRole.activity) {
+    } else if (role == VendorRole.activity) {
       getIt<ActivitiesCubit>().getActivities();
     }
     setState(() {});
@@ -46,171 +44,166 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: () async => getIt<PropertiesCubit>().getProperties(),
-      child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
+      child: BlocConsumer<ProfileCubit, ProfileState>(
+        listener: (context, state) {
+          final vendorRole = VendorRole.values.firstWhere((e) => e.name == state.user.role, orElse: () => VendorRole.non);
+          final isVerified = state.user.status == UserStatus.approved;
+          if (state.chooseVendorRole == Status.loading) {
+            Utils.loadingDialog(context);
+          } else if (state.chooseVendorRole == Status.error) {
+            Navigator.pop(context);
+            Utils.errorDialog(context, state.callback);
+          } else if (state.chooseVendorRole == Status.success) {
+            Navigator.pop(context);
+            _updateVendorRole(vendorRole, isVerified);
+            if (vendorRole == VendorRole.property) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const PropertyTypesScreen()));
+            } else if (vendorRole == VendorRole.activity) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const ActivityScreen(activityId: '')));
+            }
+          }
+          if (state.fetchUserStatus == Status.success) {
+            _updateVendorRole(vendorRole, isVerified);
+          }
+        },
+        builder: (context, state) {
+          final vendorRole = VendorRole.values.firstWhere((e) => e.name == state.user.role, orElse: () => VendorRole.non);
+          final isVerified = state.user.status == UserStatus.approved;
+          return Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Material(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      height: 250,
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(image: AssetImage(ImageAssets.backgroundProfile), fit: BoxFit.cover),
+                  Stack(
+                    children: [
+                      Material(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20)),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Container(
+                          height: 250,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(image: AssetImage(ImageAssets.backgroundProfile), fit: BoxFit.cover),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 40,
-                    left: 20,
-                    right: 20,
-                    child: Row(
-                      children: [
-                        BlocConsumer<ProfileCubit, ProfileState>(
-                          listener: (context, state) {
-                            if (state.fetchUserStatus == Status.success) {
-                              _updateVendorRole(state.user.role, state.user.status == UserStatus.approved);
-                            }
-                          },
-                          builder: (context, state) {
-                            if (state.fetchUserStatus == Status.loading) {
-                              return const CircleAvatar(
-                                radius: 28,
-                                backgroundColor: Colors.white24,
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
-                              },
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.all(Radius.circular(40)),
-                                child:
-                                    state.user.profilePicture.isEmpty
-                                        ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
-                                        : Image.network(
-                                          state.user.profilePicture,
-                                          width: 56,
-                                          height: 56,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, _, _) {
-                                            return Image.asset(
-                                              ImageAssets.profileImage,
+                      Positioned(
+                        top: 40,
+                        left: 20,
+                        right: 20,
+                        child: Row(
+                          children: [
+                            state.fetchUserStatus == Status.loading
+                                ? const CircleAvatar(
+                                  radius: 28,
+                                  backgroundColor: Colors.white24,
+                                  child: CircularProgressIndicator(),
+                                )
+                                : GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(Radius.circular(40)),
+                                    child:
+                                        state.user.profilePicture.isEmpty
+                                            ? Image.asset(ImageAssets.profileImage, width: 56, height: 56, fit: BoxFit.cover)
+                                            : Image.network(
+                                              state.user.profilePicture,
                                               width: 56,
                                               height: 56,
                                               fit: BoxFit.cover,
-                                            );
-                                          },
-                                          loadingBuilder: (context, child, loadingProgress) {
-                                            if (loadingProgress == null) return child;
-                                            return Container(
-                                              width: 56,
-                                              height: 56,
-                                              color: Colors.grey[300],
-                                              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                                            );
-                                          },
+                                              errorBuilder: (_, _, _) {
+                                                return Image.asset(
+                                                  ImageAssets.profileImage,
+                                                  width: 56,
+                                                  height: 56,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              },
+                                              loadingBuilder: (context, child, loadingProgress) {
+                                                if (loadingProgress == null) return child;
+                                                return Container(
+                                                  width: 56,
+                                                  height: 56,
+                                                  color: Colors.grey[300],
+                                                  child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                                                );
+                                              },
+                                            ),
+                                  ),
+                                ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: BlocBuilder<ProfileCubit, ProfileState>(
+                                builder: (context, state) {
+                                  final String fullName = "${state.user.firstName} ${state.user.lastName}".trim();
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        fullName.isEmpty ? context.l10n.guestUser : fullName,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        context.l10n.welcomeToOurApp,
+                                        style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w400),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
-                            );
-                          },
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()),
+                                );
+                              },
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.rectangle,
+                                ),
+                                child: SvgPicture.asset(ImageAssets.notificationsIcon, width: 30, height: 30),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: BlocBuilder<ProfileCubit, ProfileState>(
-                            builder: (context, state) {
-                              final String fullName = "${state.user.firstName} ${state.user.lastName}".trim();
-                              return Column(
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 112),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(15),
+                                boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, spreadRadius: 2)],
+                              ),
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    fullName.isEmpty ? context.l10n.guestUser : fullName,
-                                    style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    context.l10n.welcomeToOurApp,
-                                    style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w400),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const NotificationsScreenVendor()),
-                            );
-                          },
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: AppColors.primaryColor,
-                              shape: BoxShape.rectangle,
-                            ),
-                            child: SvgPicture.asset(ImageAssets.notificationsIcon, width: 30, height: 30),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 112),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, spreadRadius: 2)],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              textVendorNow(context),
-                              const SizedBox(height: 16),
-                              BlocConsumer<ProfileCubit, ProfileState>(
-                                listener: (context, state) {
-                                  if (state.chooseVendorRole == Status.loading) {
-                                    Utils.loadingDialog(context);
-                                  } else if (state.chooseVendorRole == Status.error) {
-                                    Navigator.pop(context);
-                                    Utils.errorDialog(context, state.callback);
-                                  } else if (state.chooseVendorRole == Status.success) {
-                                    Navigator.pop(context);
-                                    _updateVendorRole(state.user.role, state.user.status == UserStatus.approved);
-                                    if (_vendorRole == VendorRole.property) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const PropertyTypesScreen()),
-                                      );
-                                    } else if (_vendorRole == VendorRole.activity) {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const ActivityScreen(activityId: '')),
-                                      );
-                                    }
-                                  }
-                                },
-                                builder: (context, state) {
-                                  return ElevatedButton(
+                                  textVendorNow(context),
+                                  const SizedBox(height: 16),
+                                  ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                       backgroundColor: AppColors.primaryColor,
@@ -230,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         );
                                         return;
                                       }
-                                      switch (_vendorRole) {
+                                      switch (vendorRole) {
                                         case VendorRole.non:
                                           final vendorRole = await showDialog<VendorRole?>(
                                             context: context,
@@ -265,91 +258,98 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
-                                  );
-                                },
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  if (vendorRole == VendorRole.property)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.l10n.yourProperties,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const PropertiesListView(),
+                        ],
+                      ),
+                    )
+                  else if (vendorRole == VendorRole.activity)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.l10n.yourActivities,
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primaryColor,
+                            ),
+                          ),
+                          const ActivitiesListView(),
+                        ],
+                      ),
+                    )
+                  else
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (!isVerified)
+                              IconButton(onPressed: getIt<ProfileCubit>().fetchUser, icon: Icon(Icons.refresh)),
+                            Text(context.l10n.commonSelectRole),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
-              if (_vendorRole == VendorRole.property)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        context.l10n.yourProperties,
-                        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
-                      ),
-                      const PropertiesListView(),
-                    ],
-                  ),
-                )
-              else if (_vendorRole == VendorRole.activity)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        context.l10n.yourActivities,
-                        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
-                      ),
-                      const ActivitiesListView(),
-                    ],
-                  ),
-                )
-              else
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (!_isVerified) IconButton(onPressed: getIt<ProfileCubit>().fetchUser, icon: Icon(Icons.refresh)),
-                        Text(context.l10n.commonSelectRole),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-Column textVendorNow(BuildContext context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        context.l10n.beVendorNow,
-        style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
-      ),
-      const SizedBox(height: 20),
-      Text(
-        context.l10n.vendorIntroText,
-        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
-      ),
-      const SizedBox(height: 20),
-      Text(
-        context.l10n.appCommission,
-        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
-      ),
-      const SizedBox(height: 10),
-      Text(
-        context.l10n.commissionDetails,
-        style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
-      ),
-    ],
-  );
-}
+Column textVendorNow(BuildContext context) => Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Text(
+      context.l10n.beVendorNow,
+      style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
+    ),
+    const SizedBox(height: 20),
+    Text(
+      context.l10n.vendorIntroText,
+      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
+    ),
+    const SizedBox(height: 20),
+    Text(
+      context.l10n.appCommission,
+      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
+    ),
+    const SizedBox(height: 10),
+    Text(
+      context.l10n.commissionDetails,
+      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.grayTextColor),
+    ),
+  ],
+);

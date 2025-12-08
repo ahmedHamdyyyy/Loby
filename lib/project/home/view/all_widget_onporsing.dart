@@ -114,9 +114,7 @@ class LanguageSelectionScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SizedBox(height: 210.h),
-        Center(child: Image.asset('assets/images/logo1.png', width: 150.w)),
-        const Spacer(),
+        Expanded(child: Center(child: Image.asset('assets/images/logo1.png', width: 150.w))),
         LanguageSelectionContainer(onSelectEnglish: onSelectEnglish, onSelectArabic: onSelectArabic),
       ],
     );
@@ -134,13 +132,12 @@ class LanguageSelectionContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 372.h,
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
       ),
       child: Padding(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 56.h),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -148,14 +145,7 @@ class LanguageSelectionContainer extends StatelessWidget {
               text: context.l10n.selectLanguageTitle,
               color: AppColors.secondTextColor,
               fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-            SizedBox(height: 8.h),
-            TextWidget(
-              text: context.l10n.selectLanguageTitle,
-              color: AppColors.secondTextColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
             SizedBox(height: 32.h),
             LanguageButton(language: context.l10n.english, isPrimary: true, onPressed: onSelectEnglish),

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../config/colors/colors.dart';
 import '../../../../config/constants/constance.dart';
+import '../../../../core/localization/l10n_ext.dart';
 import '../../../../core/utils/utile.dart';
 import '../../../../locator.dart';
 import '../../../../models/user.dart';
@@ -54,7 +55,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   void _uploadDocuments() {
     if (nationalIdDocument == null || ibanDocument == null || certificateNumberDocument == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select all required documents.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.pleaseSelectAllRequiredDocuments)));
       return;
     }
 
@@ -83,15 +84,13 @@ class _AccountScreenState extends State<AccountScreen> {
             isEditing: isEditing,
             onEditPressed: () {
               if (state.user.status == UserStatus.pending) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Your account is under review and cannot be edited at this time.')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(context.l10n.accountUnderReviewCannotEdit)));
               } else if (state.user.status == UserStatus.rejected) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Your account has been rejected. Please contact support for more information.'),
-                  ),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(context.l10n.accountRejectedContactSupport)));
               } else {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => UpdateAccountScreen(user: state.user)));
               }
@@ -117,27 +116,30 @@ class _AccountScreenState extends State<AccountScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      'Your account has been rejected. Please contact support for more information.',
-                      style: TextStyle(color: Colors.red, fontSize: 14),
+                      context.l10n.accountRejectedContactSupport,
+                      style: const TextStyle(color: Colors.red, fontSize: 14),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  RegistrationTextField(hintText: "الرقم القومي", controller: nationalIdController),
-                  RegistrationTextField(hintText: "رقم الآيبان", controller: ibanController),
-                  RegistrationTextField(hintText: "رقم الشهادة", controller: certificateNumberController),
+                  RegistrationTextField(hintText: context.l10n.nationalIdLabel, controller: nationalIdController),
+                  RegistrationTextField(hintText: context.l10n.ibanLabel, controller: ibanController),
+                  RegistrationTextField(
+                    hintText: context.l10n.certificateNumberLabel,
+                    controller: certificateNumberController,
+                  ),
                   DocumentPicker(
-                    label: 'مستند الهوية',
+                    label: context.l10n.nationalIdDocumentLabel,
                     file: nationalIdDocument,
                     onPick: (f) => setState(() => nationalIdDocument = f),
                   ),
                   DocumentPicker(
-                    label: 'مستند الآيبان',
+                    label: context.l10n.ibanDocumentLabel,
                     file: ibanDocument,
                     onPick: (f) => setState(() => ibanDocument = f),
                   ),
                   DocumentPicker(
-                    label: 'مستند الشهادة',
+                    label: context.l10n.certificateDocumentLabel,
                     file: certificateNumberDocument,
                     onPick: (f) => setState(() => certificateNumberDocument = f),
                   ),
@@ -146,21 +148,23 @@ class _AccountScreenState extends State<AccountScreen> {
                     listener: (context, state) {
                       if (state.uploadDocumentsStatus == Status.loading) {
                         Utils.loadingDialog(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Uploading documents...')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.uploadingDocuments)));
                       } else if (state.uploadDocumentsStatus == Status.success) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(
                           context,
-                        ).showSnackBar(const SnackBar(content: Text('Documents uploaded successfully')));
+                        ).showSnackBar(SnackBar(content: Text(context.l10n.documentsUploadedSuccessfully)));
                       } else if (state.uploadDocumentsStatus == Status.error) {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${state.callback}')));
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(context.l10n.errorWithMessage(state.callback))));
                       }
                     },
                     child: ElevatedButton(
                       onPressed: _uploadDocuments,
                       style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-                      child: const Text('Upload Documents'),
+                      child: Text(context.l10n.uploadDocuments),
                     ),
                   ),
                   const SizedBox(height: 10),

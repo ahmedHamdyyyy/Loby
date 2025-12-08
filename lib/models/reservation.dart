@@ -94,9 +94,12 @@ class ReservationModel extends Equatable {
     final type = ReservationType.values.firstWhere((e) => e.name == map['type'], orElse: () => ReservationType.property);
     return ReservationModel(
       id: map['_id'] ?? '',
-      userId: map['userId']?['_id'] ?? '',
-      userName: '${map['userId']?['firstName'] ?? ''} ${map['userId']?['lastName'] ?? ''}',
-      userImageUrl: map['userId']?['profilePicture'] ?? '',
+      userId: map['userId'] is Map ? (map['userId']?['_id'] ?? '') : (map['userId'] ?? ''),
+      userName:
+          map['userId'] is Map
+              ? '${map['userId']?['firstName'] ?? ''} ${map['userId']?['lastName'] ?? ''}'
+              : (map['userName'] ?? ''),
+      userImageUrl: map['userId'] is Map ? (map['userId']?['profilePicture'] ?? '') : (map['userImageUrl'] ?? ''),
       type: type,
       checkInDate: type == ReservationType.activity ? (map['activityId']?['date'] ?? '') : map['checkInDate'] ?? '',
       checkOutDate: type == ReservationType.activity ? (map['activityId']?['date'] ?? '') : map['checkOutDate'] ?? '',

@@ -4,7 +4,7 @@ class ReservationsState extends Equatable {
   final String msg;
   final ReservationModel reservation;
   final List<ReservationModel> reservations;
-  final Status updateStatus, getStatus;
+  final Status updateStatus, getStatus, getReservationStatus;
 
   const ReservationsState({
     this.msg = '',
@@ -12,6 +12,7 @@ class ReservationsState extends Equatable {
     this.getStatus = Status.initial,
     this.reservations = const [],
     this.reservation = ReservationModel.initial,
+    this.getReservationStatus = Status.initial,
   });
 
   ReservationsState copyWith({
@@ -20,14 +21,16 @@ class ReservationsState extends Equatable {
     Status? getStatus,
     List<ReservationModel>? reservations,
     ReservationModel? reservation,
+    Status? getReservationStatus,
   }) => ReservationsState(
     msg: msg ?? this.msg,
     updateStatus: updateStatus ?? this.updateStatus,
     getStatus: getStatus ?? this.getStatus,
     reservations: reservations ?? this.reservations,
     reservation: reservation ?? this.reservation,
+    getReservationStatus: getReservationStatus ?? this.getReservationStatus,
   );
 
   @override
-  List<Object> get props => [msg, updateStatus, getStatus, reservations, reservation];
+  List<Object> get props => [msg, updateStatus, getStatus, reservations, reservation, getReservationStatus];
 }

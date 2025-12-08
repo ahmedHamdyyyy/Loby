@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../../config/constants/constance.dart';
 import '../../../../../../config/widget/widget.dart';
+import '../../../../../../core/localization/l10n_ext.dart';
 import '../../../../../../core/utils/utile.dart';
 import '../../../../../../locator.dart';
 import '../../../../models/user.dart';
@@ -69,10 +70,10 @@ class _UpdateAccountScreenState extends State<UpdateAccountScreen> {
                     } else if (state.updateUserStatus == Status.success) {
                       Navigator.pop(context);
                       Navigator.pop(context);
-                      showToast(text: "Profile updated successfully", stute: ToustStute.success);
+                      // showToast(text: context.l10n.profileUpdated, stute: ToustStute.success);
                     } else if (state.updateUserStatus == Status.error) {
                       Navigator.pop(context);
-                      showToast(text: "Failed to update profile", stute: ToustStute.error);
+                      showToast(text: context.l10n.profileUpdateFailed, stute: ToustStute.error);
                     }
                   },
                   child: SaveButton(

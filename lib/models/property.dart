@@ -11,7 +11,7 @@ import '../config/constants/api_constance.dart';
 import 'address.dart';
 
 // ignore: constant_identifier_names
-enum PropertyType { apartment, house, cabin, guest_house, studio, yacht, cruise }
+enum PropertyType { apartment, house, studio }
 
 class CustomPropertyModel extends Equatable {
   final String id, image, vendorId;
@@ -61,12 +61,9 @@ class CustomPropertyModel extends Equatable {
   factory CustomPropertyModel.fromProperty(PropertyModel property) => CustomPropertyModel(
     id: property.id,
     type: property.type,
-    image:
-        property.medias.isNotEmpty
-            ? (property.medias.first.startsWith('http')
-                ? property.medias.first
-                : ApiConstance.baseUrl + property.medias.first)
-            : '',
+    image: property.medias.isNotEmpty
+        ? (property.medias.first.startsWith('http') ? property.medias.first : ApiConstance.baseUrl + property.medias.first)
+        : '',
     available: property.available,
     vendorId: property.id,
   );

@@ -53,49 +53,49 @@ class ReservationsRepository {
     }
   }
 
-  Future<void> acceptReservation(String id) async {
-    try {
-      await _data.acceptReservation(id);
-    } on DioException catch (e) {
-      debugPrint('DioException: ${e.response?.data}');
-      if (e.response?.data['error'] != null) {
-        final errorMessage = e.response?.data['error'];
-        if (errorMessage is List) {
-          throw Exception(errorMessage.join(', '));
-        } else {
-          throw Exception(errorMessage.toString());
-        }
-      } else if (e.response?.statusCode != null) {
-        throw Exception('Server error with status code: ${e.response?.statusCode}');
-      }
-      throw Exception('Failed to accept reservation: ${e.message}');
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
-      throw Exception('An unexpected error occurred');
-    }
-  }
+  // Future<void> acceptReservation(String id) async {
+  //   try {
+  //     await _data.acceptReservation(id);
+  //   } on DioException catch (e) {
+  //     debugPrint('DioException: ${e.response?.data}');
+  //     if (e.response?.data['error'] != null) {
+  //       final errorMessage = e.response?.data['error'];
+  //       if (errorMessage is List) {
+  //         throw Exception(errorMessage.join(', '));
+  //       } else {
+  //         throw Exception(errorMessage.toString());
+  //       }
+  //     } else if (e.response?.statusCode != null) {
+  //       throw Exception('Server error with status code: ${e.response?.statusCode}');
+  //     }
+  //     throw Exception('Failed to accept reservation: ${e.message}');
+  //   } catch (e) {
+  //     debugPrint('Unexpected error: $e');
+  //     throw Exception('An unexpected error occurred');
+  //   }
+  // }
 
-  Future<void> refundReservation(String id) async {
-    try {
-      await _data.refundReservation(id);
-    } on DioException catch (e) {
-      debugPrint('DioException: ${e.response?.data}');
-      if (e.response?.data['error'] != null) {
-        final errorMessage = e.response?.data['error'];
-        if (errorMessage is List) {
-          throw Exception(errorMessage.join(', '));
-        } else {
-          throw Exception(errorMessage.toString());
-        }
-      } else if (e.response?.statusCode != null) {
-        throw Exception('Server error with status code: ${e.response?.statusCode}');
-      }
-      throw Exception('Failed to refund reservation: ${e.message}');
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
-      throw Exception('An unexpected error occurred');
-    }
-  }
+  // Future<void> refundReservation(String id) async {
+  //   try {
+  //     await _data.refundReservation(id);
+  //   } on DioException catch (e) {
+  //     debugPrint('DioException: ${e.response?.data}');
+  //     if (e.response?.data['error'] != null) {
+  //       final errorMessage = e.response?.data['error'];
+  //       if (errorMessage is List) {
+  //         throw Exception(errorMessage.join(', '));
+  //       } else {
+  //         throw Exception(errorMessage.toString());
+  //       }
+  //     } else if (e.response?.statusCode != null) {
+  //       throw Exception('Server error with status code: ${e.response?.statusCode}');
+  //     }
+  //     throw Exception('Failed to refund reservation: ${e.message}');
+  //   } catch (e) {
+  //     debugPrint('Unexpected error: $e');
+  //     throw Exception('An unexpected error occurred');
+  //   }
+  // }
 
   Future<ReservationModel> getReservationById(String id) async {
     try {
@@ -113,8 +113,8 @@ class ReservationsRepository {
         throw Exception('Server error with status code: ${e.response?.statusCode}');
       }
       throw Exception('Failed to get reservation: ${e.message}');
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
+    } catch (e, s) {
+      debugPrint('Unexpected error: $e, stack trace: $s');
       throw Exception('An unexpected error occurred');
     }
   }

@@ -78,11 +78,7 @@ class _PropertyTypesScreenState extends State<PropertyTypesScreen> {
                               [
                                 ImageAssets.houseCategories,
                                 ImageAssets.apartmentCategories,
-                                ImageAssets.conbinCategories,
-                                ImageAssets.guesthouseCategories,
                                 ImageAssets.studioCategories,
-                                ImageAssets.yachtCategories,
-                                ImageAssets.cruiseCategories,
                               ][index],
                               width: 40,
                               height: 40,

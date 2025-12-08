@@ -6,11 +6,10 @@ class AssetsData {
   static const loby = 'assets/images/loby.jpg';
 
   static const host2 = 'assets/images/host_2.jpg';
-   static const  house = 'assets/images/home.png';
-   static const  yacht = 'assets/images/luxurious-yachts-port-evening.jpg';
-   static const  cruise = 'assets/images/ai-generated-boat-picture (1).jpg';
-   static const  studio = 'assets/images/Studio.png';
-
+  static const house = 'assets/images/home.png';
+  static const yacht = 'assets/images/luxurious-yachts-port-evening.jpg';
+  // static const cruise = 'assets/images/ai-generated-boat-picture (1).jpg';
+  static const studio = 'assets/images/Studio.png';
 
   static const property1 = 'assets/images/property_1.jpg';
 
@@ -22,12 +21,7 @@ class AssetsData {
 
   static const property4 = 'assets/images/property_4.jpg';
 
-  static const List<String> propertyImages = [
-    property1,
-    property2,
-    property3,
-    property4,
-  ];
+  static const List<String> propertyImages = [property1, property2, property3, property4];
 
   static const String logo = 'assets/images/logo1.png';
 
@@ -39,7 +33,7 @@ class AssetsData {
 
   static const String profileImage = 'assets/images/saudian_man.png';
 
-//svg
+  //svg
   static const String userIcon = 'assets/svg/user.svg';
   static const String messages = 'assets/svg/messages.svg';
   static const String messages2 = 'assets/svg/message-2.svg';
@@ -72,7 +66,7 @@ class AssetsData {
   static const String conectus = 'assets/svg/conectus.svg';
   static const String massage = 'assets/svg/massages.svg';
   static const String edit2 = 'assets/svg/edit2.svg';
-  static const String eyeIcon = 'assets/svg/🦆 icon _eye fill_.svg';
+  // static const String eyeIcon = 'assets/svg/🦆 icon _eye fill_.svg';
   static const String card2 = 'assets/svg/card2.svg';
   static const String notificationsIcon = 'assets/svg/notification-bing.svg';
   static const String closeIcon = 'assets/svg/close-square.svg';

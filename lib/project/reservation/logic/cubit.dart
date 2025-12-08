@@ -18,6 +18,8 @@ class ReservationsCubit extends Cubit<ReservationsState> {
       emit(state.copyWith(getStatus: Status.success, reservations: reservations));
     } catch (e) {
       emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
+    } finally {
+      emit(state.copyWith(getStatus: Status.initial));
     }
   }
 
@@ -38,63 +40,61 @@ class ReservationsCubit extends Cubit<ReservationsState> {
     }
   }
 
-  void setReservation(ReservationModel reservation) => emit(state.copyWith(reservation: reservation));
+  // void acceptReservation() async {
+  //   emit(state.copyWith(updateStatus: Status.loading));
+  //   try {
+  //     await _repo.acceptReservation(state.reservation.id);
+  //     emit(
+  //       state.copyWith(
+  //         updateStatus: Status.success,
+  //         reservations: [
+  //           ...state.reservations.map((p) {
+  //             return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.confirmed) : p;
+  //           }),
+  //         ],
+  //         reservation: state.reservation.copyWith(status: ReservationStatus.confirmed),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+  //   } finally {
+  //     emit(state.copyWith(updateStatus: Status.initial));
+  //   }
+  // }
 
-  void acceptReservation() async {
-    emit(state.copyWith(updateStatus: Status.loading));
-    try {
-      await _repo.acceptReservation(state.reservation.id);
-      emit(
-        state.copyWith(
-          updateStatus: Status.success,
-          reservations: [
-            ...state.reservations.map((p) {
-              return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.confirmed) : p;
-            }),
-          ],
-          reservation: state.reservation.copyWith(status: ReservationStatus.confirmed),
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
-    } finally {
-      emit(state.copyWith(updateStatus: Status.initial));
-    }
-  }
-
-  void refundReservation() async {
-    emit(state.copyWith(updateStatus: Status.loading));
-    try {
-      await _repo.refundReservation(state.reservation.id);
-      emit(
-        state.copyWith(
-          updateStatus: Status.success,
-          reservations: [
-            ...state.reservations.map((p) {
-              return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.refund) : p;
-            }),
-          ],
-          reservation: state.reservation.copyWith(status: ReservationStatus.refund),
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
-    } finally {
-      emit(state.copyWith(updateStatus: Status.initial));
-    }
-  }
+  // void refundReservation() async {
+  //   emit(state.copyWith(updateStatus: Status.loading));
+  //   try {
+  //     await _repo.refundReservation(state.reservation.id);
+  //     emit(
+  //       state.copyWith(
+  //         updateStatus: Status.success,
+  //         reservations: [
+  //           ...state.reservations.map((p) {
+  //             return p.id == state.reservation.id ? state.reservation.copyWith(status: ReservationStatus.refund) : p;
+  //           }),
+  //         ],
+  //         reservation: state.reservation.copyWith(status: ReservationStatus.refund),
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+  //   } finally {
+  //     emit(state.copyWith(updateStatus: Status.initial));
+  //   }
+  // }
 
   void init() => emit(state.copyWith(updateStatus: Status.initial));
 
   void getReservationById(String id) async {
-    emit(state.copyWith(getStatus: Status.loading));
+    emit(state.copyWith(getReservationStatus: Status.loading));
     try {
       final reservation = await _repo.getReservationById(id);
-      emit(state.copyWith(getStatus: Status.success, reservation: reservation));
+      emit(state.copyWith(getReservationStatus: Status.success, reservation: reservation));
     } catch (e) {
-      emit(state.copyWith(getStatus: Status.error, msg: e.toString(), reservation: ReservationModel.initial));
+      emit(state.copyWith(getReservationStatus: Status.error, msg: e.toString(), reservation: ReservationModel.initial));
     } finally {
-      emit(state.copyWith(getStatus: Status.initial));
+      emit(state.copyWith(getReservationStatus: Status.initial));
     }
   }
 }

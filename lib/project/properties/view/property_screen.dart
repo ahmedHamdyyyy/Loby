@@ -195,46 +195,106 @@ class _PropertyScreenState extends State<PropertyScreen> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  SizedBox(
-                    height: 195,
-                    width: double.infinity,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10),
-                      ),
-                      child: Image.asset(switch (propertyType) {
-                        PropertyType.studio => AssetsData.studio,
-                        PropertyType.yacht => AssetsData.yacht,
-                        PropertyType.cruise => AssetsData.cruise,
-                        _ => AssetsData.house,
-                      }, fit: BoxFit.cover),
-                    ),
-                  ),
-                  Positioned(
-                    top: 50,
-                    left: 16,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: SvgPicture.asset(
-                        ImageAssets.backIcon,
-                        width: 24,
-                        height: 24,
-                        colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+              SizedBox(
+                height: 195,
+                width: double.infinity,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    SizedBox(
+                      height: 195,
+                      width: double.infinity,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                        child: Image.asset(switch (propertyType) {
+                          PropertyType.studio => AssetsData.studio,
+                          _ => AssetsData.house,
+                        }, fit: BoxFit.cover),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 30),
-                    child: Text(
-                      context.l10n.enterPropertyInfo,
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 18),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: SvgPicture.asset(
+                                  ImageAssets.backIcon,
+                                  width: 24,
+                                  height: 24,
+                                  colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                                ),
+                              ),
+                              BlocListener<PropertiesCubit, PropertiesState>(
+                                listener: (context, state) {
+                                  if (state.deleteStatus == Status.loading) {
+                                    Utils.loadingDialog(context);
+                                  } else if (state.deleteStatus == Status.success) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  } else if (state.deleteStatus == Status.error) {
+                                    Navigator.pop(context);
+                                    showToast(text: state.msg, stute: ToustStute.error);
+                                  }
+                                },
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                          title: Text(
+                                            context.l10n.deletePropertyTitle,
+                                            style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                                          ),
+                                          content: Text(context.l10n.deletePropertyContent, style: GoogleFonts.poppins()),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context),
+                                              child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins()),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                getIt<PropertiesCubit>().deleteProperty(widget.propertyId);
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text(
+                                                context.l10n.commonDelete,
+                                                style: GoogleFonts.poppins(color: Colors.red),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: SvgPicture.asset(
+                                    ImageAssets.deleteIcon,
+                                    height: 20,
+                                    width: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Spacer(),
+                          Text(
+                            context.l10n.enterPropertyInfo,
+                            style: const TextStyle(fontWeight: FontWeight.w600, color: Colors.white, fontSize: 18),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               if (state.getPropertyStatus == Status.loading)
                 const Padding(padding: EdgeInsets.all(20), child: Center(child: CircularProgressIndicator()))
@@ -263,21 +323,6 @@ class _PropertyScreenState extends State<PropertyScreen> {
                           onBedsChanged: (value) => beds = value,
                           onBathroomsChanged: (value) => bathrooms = value,
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //     Text(
-                        //       "Address",
-                        //       style: GoogleFonts.poppins(
-                        //         color: AppColors.primaryColor,
-                        //         fontWeight: FontWeight.w600,
-                        //         fontSize: 16,
-                        //       ),
-                        //     ),
-                        //     if (showAvailabilitySection)
-                        //       SvgPicture.asset(ImageAssets.editIcon, color: AppColors.editIconColor, width: 20, height: 20),
-                        //   ],
-                        // ),
                         const SizedBox(height: 10),
                         AddressField(address, onAddressSelected: (address) => this.address = address),
                         const SizedBox(height: 20),

@@ -26,19 +26,21 @@ class ReservationsData {
     return (response.data['data']['data'] as List).map((e) => ReservationModel.fromMap(e)).toList();
   }
 
-  Future<void> acceptReservation(String id) async {
-    final response = await _apiService.dio.post(ApiConstance.acceptReservation(id));
-    if (!(response.data['success'] ?? false)) throw _dioError(response);
-  }
+  // Future<void> acceptReservation(String id) async {
+  //   final response = await _apiService.dio.post(ApiConstance.acceptReservation(id));
+  //   if (!(response.data['success'] ?? false)) throw _dioError(response);
+  // }
 
-  Future<void> refundReservation(String id) async {
-    final response = await _apiService.dio.post(ApiConstance.refundReservation, data: {'registrationId': id});
-    if (!(response.data['success'] ?? false)) throw _dioError(response);
-  }
+  // Future<void> refundReservation(String id) async {
+  //   final response = await _apiService.dio.post(ApiConstance.refundReservation, data: {'registrationId': id});
+  //   if (!(response.data['success'] ?? false)) throw _dioError(response);
+  // }
 
   Future<ReservationModel> getReservationById(String id) async {
     final response = await _apiService.dio.get(ApiConstance.getReservation(id));
+    log(response.data.toString());
     if (!(response.data['success'] ?? false) || response.data['data'] == null) throw _dioError(response);
+    log(response.data.toString());
     return ReservationModel.fromMap(response.data['data']);
   }
 

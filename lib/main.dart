@@ -12,6 +12,7 @@ import 'config/constants/api_constance.dart';
 import 'config/constants/constance.dart';
 import 'core/localization/localization_cubit.dart';
 import 'core/services/api_services.dart';
+import 'core/services/app_links_service.dart';
 import 'core/services/cach_services.dart';
 import 'firebase_options.dart';
 import 'l10n/app_localizations.dart';
@@ -115,6 +116,10 @@ void notificationTapBackground(NotificationResponse response) {
 }
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+AppLinksService? _appLinksService;
+
+DateTime? _lastNavAt;
+String? _lastNavKey;
 
 void _handleNotificationNavigation(Map<String, dynamic> data) {
   // Expected data includes: type (snake_case), and one of: activityId, propertyId, registrationId
@@ -131,20 +136,33 @@ void _handleNotificationNavigation(Map<String, dynamic> data) {
     return;
   }
 
+  // Deduplicate rapid duplicate events (e.g., local tap + onMessageOpenedApp)
+  final navKey = '${type.toLowerCase()}|$entityId';
+  final now = DateTime.now();
+  if (_lastNavKey == navKey && _lastNavAt != null && now.difference(_lastNavAt!).inMilliseconds < 1500) {
+    return;
+  }
+
   final nav = _rootNavigatorKey.currentState;
   if (nav == null) return;
 
   // Normalize type variations to lower_snake
   final t = type.toLowerCase();
   if (t.contains('new_registration') || t.contains('confirm_payment') || t.contains('refund')) {
+    _lastNavKey = navKey;
+    _lastNavAt = DateTime.now();
     nav.push(MaterialPageRoute(builder: (_) => ReservationDetailsScreen(reservationId: entityId!)));
     return;
   }
   if (t.contains('new_activity') || t.contains('activity_verification')) {
+    _lastNavKey = navKey;
+    _lastNavAt = DateTime.now();
     nav.push(MaterialPageRoute(builder: (_) => ActivityScreen(activityId: entityId!)));
     return;
   }
   if (t.contains('new_property') || t.contains('property_verification')) {
+    _lastNavKey = navKey;
+    _lastNavAt = DateTime.now();
     nav.push(MaterialPageRoute(builder: (_) => PropertyScreen(propertyId: entityId!)));
     return;
   }
@@ -169,18 +187,25 @@ void main() async {
   await messaging.requestPermission(alert: true, badge: true, sound: true);
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
 
-  // Get and log FCM token
-  final fcmToken = await messaging.getToken();
-  developer.log('FCM Token: $fcmToken', name: 'FCM');
-  // ignore: avoid_print
-  print('FCM Token: $fcmToken');
+  // Ensure auto-init is enabled (default, but explicit for clarity)
+  await messaging.setAutoInitEnabled(true);
+
+  // Get and log FCM token with safe retry; do not crash on failures
+  final fcmToken = await _getFcmTokenWithRetry(messaging);
+  if (fcmToken != null && fcmToken.isNotEmpty) {
+    developer.log('FCM Token: $fcmToken', name: 'FCM');
+    // ignore: avoid_print
+    print('FCM Token: $fcmToken');
+  } else {
+    developer.log('FCM Token not available at startup (will rely on onTokenRefresh).', name: 'FCM');
+  }
 
   FirebaseMessaging.instance.onTokenRefresh.listen((t) async {
     developer.log('FCM Token refreshed: $t', name: 'FCM');
     await _updateFcmTokenIfLoggedIn(t);
   });
 
-  // Foreground messages
+  // Foreground messages: show local notification only; do not auto-navigate
   FirebaseMessaging.onMessage.listen((message) async {
     final notification = message.notification;
     final android = notification?.android;
@@ -205,10 +230,7 @@ void main() async {
         payload: message.data.isNotEmpty ? jsonEncode(message.data) : null,
       );
     }
-    // Also navigate immediately when app is in foreground if entityId exists
-    if (message.data.isNotEmpty) {
-      _handleNotificationNavigation(message.data);
-    }
+    // Navigation occurs on user tap (onMessageOpenedApp or local notification callback)
   });
 
   // Notification tapped while app in background
@@ -232,7 +254,36 @@ void main() async {
   if (fcmToken != null && fcmToken.isNotEmpty) {
     await _updateFcmTokenIfLoggedIn(fcmToken);
   }
+  // Initialize deep links after first frame so Navigator is available
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _appLinksService = AppLinksService(
+      navigatorKey: _rootNavigatorKey,
+      onRouteData: _handleNotificationNavigation,
+      acceptedSchemes: const ['loby'],
+    );
+    _appLinksService!.init();
+  });
   runApp(const MyApp());
+}
+
+Future<String?> _getFcmTokenWithRetry(FirebaseMessaging messaging, {int maxAttempts = 3}) async {
+  int attempt = 0;
+  Duration delay = const Duration(seconds: 2);
+  while (attempt < maxAttempts) {
+    try {
+      final token = await messaging.getToken();
+      return token;
+    } catch (e) {
+      // Commonly java.io.IOException: SERVICE_NOT_AVAILABLE on some devices/conditions
+      developer.log('Failed to get FCM token (attempt ${attempt + 1}/$maxAttempts): $e', name: 'FCM');
+      attempt++;
+      if (attempt >= maxAttempts) break;
+      await Future.delayed(delay);
+      // Exponential backoff up to ~16s
+      delay = Duration(seconds: delay.inSeconds * 2);
+    }
+  }
+  return null;
 }
 
 Future<void> _updateFcmTokenIfLoggedIn(String token) async {

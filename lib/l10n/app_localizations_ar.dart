@@ -83,7 +83,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get imagePickFailed => 'فشل في اختيار الصورة';
 
   @override
-  String get mustPickImageBeforeVideo => 'يجب اختيار صورة أولاً قبل إضافة فيديو';
+  String get mustPickImageBeforeVideo =>
+      'يجب اختيار صورة أولاً قبل إضافة فيديو';
 
   @override
   String get onlyMp4Allowed => 'يُسمح فقط برفع فيديو MP4';
@@ -95,7 +96,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get atLeastOneImageMustRemain => 'يجب أن تبقى صورة واحدة على الأقل';
 
   @override
-  String get cannotRemoveFirstImage => 'لا يمكن إزالة الصورة الأولى لأنها الوحيدة';
+  String get cannotRemoveFirstImage =>
+      'لا يمكن إزالة الصورة الأولى لأنها الوحيدة';
 
   @override
   String get filePickFailed => 'فشل في اختيار الملف';
@@ -128,7 +130,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorPickingVideo => 'حدث خطأ أثناء اختيار الفيديو';
 
   @override
-  String get activityUpdatedSuccess => 'تم تحديث النشاط بنجاح';
+  String get activityUpdatedSuccess => 'تم تحديث الخدمة بنجاح';
 
   @override
   String get cardDetailsAddedSuccessfully => 'تمت إضافة تفاصيل البطاقة بنجاح';
@@ -189,7 +191,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonDelete => 'حذف';
 
   @override
-  String get activityDeletedSuccessfully => 'تم حذف النشاط بنجاح';
+  String get activityDeletedSuccessfully => 'تم حذف الخدمة بنجاح';
 
   @override
   String get deletePropertyTitle => 'حذف العقار';
@@ -210,7 +212,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get yourProperties => 'عقاراتك';
 
   @override
-  String get yourActivities => 'أنشطتك';
+  String get yourActivities => 'خدماتك';
 
   @override
   String get beVendorNow => 'كن بائعًا الآن!';
@@ -219,10 +221,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appCommission => 'عمولة التطبيق';
 
   @override
-  String get commissionDetails => 'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
+  String get commissionDetails =>
+      'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
 
   @override
-  String get emailNotVerifiedMsg => 'لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.';
+  String get emailNotVerifiedMsg =>
+      'لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.';
 
   @override
   String get account => 'الحساب';
@@ -273,7 +277,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeBack => 'مرحبًا بعودتك!';
 
   @override
-  String get loginIntro => 'يرجى إدخال البريد الإلكتروني وكلمة المرور لتسجيل الدخول إلى حسابك.';
+  String get loginIntro =>
+      'يرجى إدخال البريد الإلكتروني وكلمة المرور لتسجيل الدخول إلى حسابك.';
 
   @override
   String get emailHint => 'أدخل بريدك الإلكتروني';
@@ -327,25 +332,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pleaseSelectValidAddress => 'يرجى اختيار عنوان صالح من الخريطة';
 
   @override
-  String get enterActivityInfo => 'يرجى إدخال معلومات النشاط';
+  String get enterActivityInfo => 'يرجى إدخال معلومات الخدمة';
 
   @override
-  String get nameOfActivity => 'اسم النشاط';
+  String get nameOfActivity => 'اسم الخدمة';
 
   @override
-  String get enterActivityName => 'أدخل اسم النشاط';
+  String get enterActivityName => 'أدخل اسم الخدمة';
 
   @override
   String get uploadStudioPhotosOrVideo => 'تحميل صور أو فيديو الاستوديو';
 
   @override
-  String get activityTimeLabel => 'وقت النشاط';
+  String get activityTimeLabel => 'وقت الخدمة';
 
   @override
-  String get enterActivityTime => 'أدخل وقت النشاط';
+  String get enterActivityTime => 'أدخل وقت الخدمة';
 
   @override
-  String get pleaseEnterActivityTime => 'يرجى إدخال وقت النشاط';
+  String get pleaseEnterActivityTime => 'يرجى إدخال وقت الخدمة';
 
   @override
   String hoursHint(String count) {
@@ -450,7 +455,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get address => 'العنوان';
 
   @override
-  String get enterYourAddressOrTapMap => 'أدخل عنوانك أو اضغط على أيقونة الخريطة للاختيار';
+  String get enterYourAddressOrTapMap =>
+      'أدخل عنوانك أو اضغط على أيقونة الخريطة للاختيار';
 
   @override
   String get pleaseEnterYourAddress => 'يرجى إدخال عنوانك';
@@ -529,7 +535,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vendorPropertyOwner => 'مالك عقار';
 
   @override
-  String get vendorTouristActivity => 'نشاط سياحي';
+  String get vendorTouristActivity => 'خدمة خاصة';
 
   @override
   String get navHome => 'الرئيسية';
@@ -544,7 +550,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navProfile => 'الملف الشخصي';
 
   @override
-  String get vendorIntroText => 'نص تجريبي: لوريم إيبسوم دولار سيت أميت، كونسيكتيتور أديبيسيسينغ إليت.\nديام هابيتانت.';
+  String get vendorIntroText =>
+      'انضم إلى لوبي كبائع وابدأ في إدراج عقاراتك أو أنشطتك للوصول إلى جمهور أوسع وتنمية عملك.';
 
   @override
   String availabilityQuestion(String type) {
@@ -570,7 +577,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lobbyOffersTitle => 'عروض لوبي';
 
   @override
-  String get lobbyOffersDescription => 'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
+  String get lobbyOffersDescription =>
+      'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
 
   @override
   String get imageLabel => 'صورة';
@@ -733,10 +741,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get billDetails => 'تفاصيل الفاتورة';
 
   @override
-  String get welcomeToLoby => 'مرحبًا بك في LOBY';
+  String get welcomeToLoby => 'مرحبًا بك في لوبي';
 
   @override
-  String get onboardingWelcomeDescription => 'نص تجريبي: لوريم إيبسوم دولار سيت أميت، كونسيكتيتور أديبيسيسينغ إليت. يتم وضع نص تجريبي هنا.';
+  String get onboardingWelcomeDescription =>
+      'اكتشف واحجز أفضل الاستوديوهات والأنشطة السياحية بسهولة. عش لحظات لا تُنسى مع لوبي. لنبدأ!';
 
   @override
   String get letsStart => 'لنبدأ';
@@ -775,5 +784,138 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hello => 'مرحبًا';
 
   @override
-  String get reservationCompletedMessage => 'تم إكمال حجز الاستوديو الخاص بك بنجاح!';
+  String get reservationCompletedMessage =>
+      'تم إكمال حجز الاستوديو الخاص بك بنجاح!';
+
+  @override
+  String get pleaseSelectAllRequiredDocuments =>
+      'يرجى اختيار جميع المستندات المطلوبة.';
+
+  @override
+  String get accountUnderReviewCannotEdit =>
+      'حسابك قيد المراجعة ولا يمكن تعديله في هذا الوقت.';
+
+  @override
+  String get accountRejectedContactSupport =>
+      'تم رفض حسابك. يرجى التواصل مع الدعم لمزيد من المعلومات.';
+
+  @override
+  String get uploadingDocuments => 'جارٍ رفع المستندات...';
+
+  @override
+  String get documentsUploadedSuccessfully => 'تم رفع المستندات بنجاح';
+
+  @override
+  String get uploadDocuments => 'رفع المستندات';
+
+  @override
+  String get roomTypeSingle => 'مفرد';
+
+  @override
+  String get roomTypeDouble => 'مزدوج';
+
+  @override
+  String get roomTypeSuite => 'جناح';
+
+  @override
+  String get roomTypeFamily => 'عائلي';
+
+  @override
+  String get includeBreakfast => 'تشمل الإفطار';
+
+  @override
+  String get petFriendly => 'صديقة للحيوانات الأليفة';
+
+  @override
+  String get searchForAccommodations => 'ابحث عن أماكن الإقامة';
+
+  @override
+  String get searchLocationHint => 'الموقع (مدينة، منطقة، أو اسم العقار)';
+
+  @override
+  String get checkInInline => 'تسجيل الوصول';
+
+  @override
+  String get guests => 'ضيوف';
+
+  @override
+  String get roomTypeLabel => 'نوع الغرفة';
+
+  @override
+  String get yourSearch => 'بحثك';
+
+  @override
+  String get locationLabel => 'الموقع';
+
+  @override
+  String get totalLabel => 'الإجمالي';
+
+  @override
+  String get searchProperties => 'بحث عن عقارات';
+
+  @override
+  String get clearSearch => 'مسح البحث';
+
+  @override
+  String get nationalIdLabel => 'الرقم القومي';
+
+  @override
+  String get ibanLabel => 'رقم الآيبان';
+
+  @override
+  String get certificateNumberLabel => 'رقم الشهادة';
+
+  @override
+  String get nationalIdDocumentLabel => 'مستند الهوية';
+
+  @override
+  String get ibanDocumentLabel => 'مستند الآيبان';
+
+  @override
+  String get certificateDocumentLabel => 'مستند الشهادة';
+
+  @override
+  String get firstNameHint => 'الاسم الأول';
+
+  @override
+  String get lastNameHint => 'اسم العائلة';
+
+  @override
+  String get phoneNumberHint => 'رقم الهاتف';
+
+  @override
+  String get alreadyHaveAccountQuestion => 'لديك حساب بالفعل؟';
+
+  @override
+  String get agreeToTermsAndConditions => 'أوافق على الشروط والأحكام';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get bankCardsTitle => 'البطاقات البنكية';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get passwordLabel => 'كلمة المرور';
+
+  @override
+  String get confirmPasswordLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get profileUpdateFailed => 'فشل في تحديث الملف الشخصي';
+
+  @override
+  String get contactUsTitle => 'اتصل بنا';
+
+  @override
+  String get howCanWeHelp => 'كيف يمكننا مساعدتك؟';
+
+  @override
+  String get messageInputHint => 'يمكنك إضافة رسالتك هنا';
+
+  @override
+  String get commonSend => 'إرسال';
 }

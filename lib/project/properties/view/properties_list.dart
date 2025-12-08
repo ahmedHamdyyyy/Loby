@@ -1,10 +1,8 @@
 import 'package:Luby/config/widget/widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../config/images/image_assets.dart';
 import '../../../config/constants/constance.dart';
 import '../../../core/localization/l10n_ext.dart';
 import '../../../core/utils/utile.dart';
@@ -78,54 +76,7 @@ class PropertiesListView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 15),
-              Row(
-                children: [
-                  Text(property.type.name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PropertyScreen(propertyId: properties[index].id, type: property.type),
-                        ),
-                      );
-                    },
-                    child: SvgPicture.asset(ImageAssets.editIcon, height: 20, width: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                              title: Text(
-                                context.l10n.deletePropertyTitle,
-                                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-                              ),
-                              content: Text(context.l10n.deletePropertyContent, style: GoogleFonts.poppins()),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(context.l10n.commonCancel, style: GoogleFonts.poppins()),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    getIt<PropertiesCubit>().deleteProperty(properties[index].id);
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(context.l10n.commonDelete, style: GoogleFonts.poppins(color: Colors.red)),
-                                ),
-                              ],
-                            ),
-                      );
-                    },
-                    child: SvgPicture.asset(ImageAssets.deleteIcon, height: 20, width: 20),
-                  ),
-                ],
-              ),
+              Text(property.type.name, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
             ],
           );

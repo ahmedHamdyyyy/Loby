@@ -46,6 +46,19 @@
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 
+		<!-- URL Schemes for deep links (loby://app/...) -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLName</key>
+				<string>com.loby.app</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>loby</string>
+				</array>
+			</dict>
+		</array>
+
 		<!-- Enable background fetch and remote notifications -->
 		<key>UIBackgroundModes</key>
 		<array>

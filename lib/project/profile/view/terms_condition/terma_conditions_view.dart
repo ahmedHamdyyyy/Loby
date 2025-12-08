@@ -1,42 +1,22 @@
+import 'package:Luby/core/localization/l10n_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-import 'widget_term.dart';
-
-class TermaConditionsViewVendor extends StatefulWidget {
-  const TermaConditionsViewVendor({super.key});
-
+class TermsConditionsView extends StatelessWidget {
+  const TermsConditionsView({super.key});
   @override
-  State<TermaConditionsViewVendor> createState() => _TermaConditionsViewVendor();
-}
-
-class _TermaConditionsViewVendor extends State<TermaConditionsViewVendor> {
-  bool _isChecked = false;
-
-  void _toggleCheckbox() {
-    setState(() {
-      _isChecked = !_isChecked;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 22),
-            const NavigationHeader(),
-            const SizedBox(height: 14),
-            const TermsTitle(),
-            const TermsContentSection(),
-            AgreementCheckbox(isChecked: _isChecked, onToggle: _toggleCheckbox),
-            const SizedBox(height: 14),
-            const DoneButton(),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: const Color(0xFFFFFFFF),
+    appBar: AppBar(backgroundColor: const Color(0xFFFFFFFF), elevation: 0, title: Text(context.l10n.termsAndConditions)),
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: SingleChildScrollView(
+        child: Text(
+          textAlign: TextAlign.start,
+          context.l10n.termsAndConditions,
+          style: GoogleFonts.poppins(color: const Color(0xFF757575), fontSize: 16, height: 1.5, fontWeight: FontWeight.w400),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

@@ -46,8 +46,10 @@ class AuthRepo {
     try {
       await _authData.verifyEmail(email: email);
     } on DioException catch (e, s) {
-      debugPrintStack(stackTrace: s);
-      throw Exception(e.response?.data?['error'] ?? 'An unexpected error occurred');
+      debugPrintStack(label: e.message, stackTrace: s);
+      debugPrint(e.response?.data.toString());
+      debugPrint(e.response?.statusMessage.toString());
+      throw Exception(e.response?.data?['message'] ?? 'An unexpected error occurred');
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');

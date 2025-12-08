@@ -14,6 +14,7 @@ import '../../../../models/notification.dart';
 import '../../../core/localization/l10n_ext.dart';
 import '../../../core/utils/utile.dart';
 import '../../activities/view/screens/activity_screen.dart';
+import '../../profile/view/account_info/account_after_save.dart';
 import '../../properties/view/property_screen.dart';
 import '../../reservation/view/reservation_details_screen.dart';
 import '../logic/cubit.dart';
@@ -35,104 +36,62 @@ class _NotificationsScreenVendorState extends State<NotificationsScreenVendor> {
     getIt<NotificationsCubit>().loadNotifications();
   }
 
-  // final List<Map<String, dynamic>> notifications = [
-  //   {
-  //     'id': 1,
-  //     'type': 'notification',
-  //     'title': 'Notification Name',
-  //     'subtitle': 'Lorem ipsum dolor sit amet',
-  //     'date': '4/10/2024',
-  //     'image': 'assets/svg/loby.svg',
-  //   },
-  //   {
-  //     'id': 2,
-  //     'type': 'notification',
-  //     'title': 'Notification Name',
-  //     'subtitle': 'Lorem ipsum dolor sit amet',
-  //     'date': '4/10/2024',
-  //     'image': 'assets/svg/loby.svg',
-  //   },
-  //   {
-  //     'id': 3,
-  //     'type': 'notification',
-  //     'title': 'Notification Name',
-  //     'subtitle': 'Lorem ipsum dolor sit amet',
-  //     'date': '4/10/2024',
-  //     'image': 'assets/svg/loby.svg',
-  //   },
-  //   {
-  //     'id': 4,
-  //     'type': 'notification',
-  //     'title': 'Notification Name',
-  //     'subtitle': 'Lorem ipsum dolor sit amet',
-  //     'date': '4/10/2024',
-  //     'image': 'assets/svg/loby.svg',
-  //   },
-  // ];
-
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBarPop(context, l10n.notificationsTitle, AppColors.primary),
-      body: RefreshIndicator(
-        onRefresh: () async => getIt<NotificationsCubit>().loadNotifications(),
-        child: BlocConsumer<NotificationsCubit, NotificationsState>(
-          listener: (context, state) {
-            if (state.loadStatus == Status.error) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
-            } else if (state.readStatus == Status.error) {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
-            } else if (state.readStatus == Status.success) {
-              Navigator.pop(context);
-            } else if (state.readStatus == Status.loading) {
-              Utils.loadingDialog(context);
-            }
-          },
-          builder: (context, state) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
-                    child: Text(
-                      l10n.yourNotifications,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryTextColor,
-                      ),
-                    ),
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: Colors.white,
+    appBar: appBarPop(context, context.l10n.notificationsTitle, AppColors.primary),
+    body: RefreshIndicator(
+      onRefresh: () async => getIt<NotificationsCubit>().loadNotifications(),
+      child: BlocConsumer<NotificationsCubit, NotificationsState>(
+        listener: (context, state) {
+          if (state.loadStatus == Status.error) {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+          } else if (state.readStatus == Status.error) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.msg)));
+          } else if (state.readStatus == Status.success) {
+            Navigator.pop(context);
+          } else if (state.readStatus == Status.loading) {
+            Utils.loadingDialog(context);
+          }
+        },
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, top: 10, bottom: 10),
+                  child: Text(
+                    context.l10n.yourNotifications,
+                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryTextColor),
                   ),
-                  if (state.loadStatus == Status.loading)
-                    const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
-                  else if (state.notifications.isEmpty)
-                    const EmptyNotificationsState()
-                  else
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(16),
-                      itemCount: state.notifications.length,
-                      itemBuilder: (context, index) {
-                        final notification = state.notifications[index];
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: NotificationItem(notification: notification),
-                        );
-                      },
-                    ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+                if (state.loadStatus == Status.loading)
+                  const Center(child: Padding(padding: EdgeInsets.all(24), child: CircularProgressIndicator()))
+                else if (state.notifications.isEmpty)
+                  const EmptyNotificationsState()
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16),
+                    itemCount: state.notifications.length,
+                    itemBuilder: (context, index) {
+                      final notification = state.notifications[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: NotificationItem(notification: notification),
+                      );
+                    },
+                  ),
+              ],
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
 }
 
 class EmptyNotificationsState extends StatelessWidget {
@@ -178,38 +137,31 @@ class NotificationItem extends StatelessWidget {
       padding: const EdgeInsets.only(left: 5, right: 5),
       child: GestureDetector(
         onTap: () {
-          if (!notification.isRead) {
-            context.read<NotificationsCubit>().readNotification(notification.id);
-          }
+          print('Notification tapped: ${notification.type.name}');
+          if (!notification.isRead) context.read<NotificationsCubit>().readNotification(notification.id);
           // Navigate based on notification type and entity id when available
           switch (notification.type) {
             case NotificationTypes.newRegistration:
             case NotificationTypes.confirmPayment:
             case NotificationTypes.refund:
-              if (notification.entityId.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ReservationDetailsScreen(reservationId: notification.entityId)),
-                );
-              }
+              if (notification.entityId.isEmpty) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ReservationDetailsScreen(reservationId: notification.entityId)),
+              );
               break;
             case NotificationTypes.newActivity:
             case NotificationTypes.activityVerification:
-              if (notification.entityId.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => ActivityScreen(activityId: notification.entityId)),
-                );
-              }
+              if (notification.entityId.isEmpty) return;
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ActivityScreen(activityId: notification.entityId)));
               break;
             case NotificationTypes.newProperty:
             case NotificationTypes.propertyVerification:
-              if (notification.entityId.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => PropertyScreen(propertyId: notification.entityId)),
-                );
-              }
+              if (notification.entityId.isEmpty) return;
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PropertyScreen(propertyId: notification.entityId)));
+              break;
+            case NotificationTypes.vendorVerification:
+              Navigator.push(context, MaterialPageRoute(builder: (_) => AccountScreen()));
               break;
             default:
               break;

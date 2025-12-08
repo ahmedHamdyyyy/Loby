@@ -118,7 +118,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: 18),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,10 +210,11 @@ class _ReservationScreenState extends State<ReservationScreen> {
                                 padding: const EdgeInsets.only(right: 16),
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    getIt<ReservationsCubit>().setReservation(reservation);
                                     Navigator.push(
                                       context,
-                                      MaterialPageRoute(builder: (context) => ReservationDetailsScreen()),
+                                      MaterialPageRoute(
+                                        builder: (context) => ReservationDetailsScreen(reservationId: reservation.id),
+                                      ),
                                     );
                                   },
                                   style: ElevatedButton.styleFrom(

@@ -22,7 +22,7 @@ import '../../profile/logic/cubit.dart';
 import '../logic/cubit.dart';
 
 class ReservationDetailsScreen extends StatefulWidget {
-  const ReservationDetailsScreen({super.key, this.reservationId = ''});
+  const ReservationDetailsScreen({super.key, required this.reservationId});
   final String reservationId;
   @override
   State<ReservationDetailsScreen> createState() => _ReservationDetailsScreenState();
@@ -42,10 +42,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.reservationId.isNotEmpty) {
-      // Load reservation details by id
-      getIt<ReservationsCubit>().getReservationById(widget.reservationId);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => getIt<ReservationsCubit>().getReservationById(widget.reservationId));
   }
 
   @override
@@ -61,9 +58,18 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
           Navigator.pop(context);
           showToast(text: context.l10n.updatedSuccessfully, stute: ToustStute.success);
         }
+        if (state.getReservationStatus == Status.loading) {
+          Utils.loadingDialog(context);
+        } else if (state.getReservationStatus == Status.error) {
+          Navigator.pop(context);
+          Utils.errorDialog(context, state.msg);
+        } else if (state.getReservationStatus == Status.success) {
+          Navigator.pop(context);
+          showToast(text: context.l10n.updatedSuccessfully, stute: ToustStute.success);
+        }
       },
       builder: (context, state) {
-        if (widget.reservationId.isNotEmpty && state.reservation.id.isEmpty) {
+        if (state.reservation.id.isEmpty) {
           // Waiting for fetch
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
@@ -89,7 +95,6 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                   style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.primaryColor),
                 ),
                 const SizedBox(height: 22),
-
                 // buildItemCard(
                 //   imagePath: 'assets/images/image6.png',
                 //   title: "Studio - 5 Night",
@@ -116,6 +121,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Expanded(
                       flex: 5,
                       child: Padding(
@@ -256,28 +262,29 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 SummaryRow(
                   title:
                       '${context.l10n.nightCount(nightsNumber)} × ${context.l10n.personCount(reservation.guestNumber)} × $price ${context.l10n.perNight}',
-                  price: '${reservation.totalPrice} ${context.l10n.currencySar}',
+                  price: '${reservation.totalPrice.toStringAsFixed(2)} ${context.l10n.currencySar}',
                 ),
                 SummaryRow(
                   title: context.l10n.fees,
-                  price: '${(reservation.totalPriceAfterFees - reservation.totalPrice).abs()} ${context.l10n.currencySar}',
+                  price:
+                      '${(reservation.totalPriceAfterFees - reservation.totalPrice).toStringAsFixed(2)} ${context.l10n.currencySar}',
                 ),
                 SummaryRow(
                   title: context.l10n.totalPrice,
-                  price: '${reservation.totalPriceAfterFees} ${context.l10n.currencySar}',
+                  price: '${reservation.totalPriceAfterFees.toStringAsFixed(2)} ${context.l10n.currencySar}',
                 ),
                 // SummaryRow(title: 'Vat', price: '0 SAR'),
                 // if (!isRefused) buildNoteSection(),
-                if (reservation.status == ReservationStatus.completed) ...[
-                  const SizedBox(height: 32),
-                  buildActionButtons(context),
-                ] else ...[
-                  const SizedBox(height: 24),
-                  Text(
-                    context.l10n.reservationStatusMessage(_localizedStatus(context, reservation.status)),
-                    style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
-                  ),
-                ],
+                // if (reservation.status == ReservationStatus.completed) ...[
+                //   const SizedBox(height: 32),
+                //   buildActionButtons(context),
+                // ] else ...[
+                const SizedBox(height: 24),
+                Text(
+                  context.l10n.reservationStatusMessage(_localizedStatus(context, reservation.status)),
+                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
+                ),
+                // ],
                 const Divider(height: 32, thickness: 1, color: AppColors.editIconColor),
                 const ViewReservationSummary(),
                 const SizedBox(height: 24),
@@ -307,55 +314,55 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
     );
   }
 
-  Widget buildActionButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: getIt<ReservationsCubit>().acceptReservation,
-            child: Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(color: AppColors.primaryColor, borderRadius: BorderRadius.circular(5)),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  context.l10n.commonAccept,
-                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-        // if (!isRefused)
-        Expanded(
-          child: GestureDetector(
-            onTap: getIt<ReservationsCubit>().refundReservation,
-            child: Container(
-              width: double.infinity,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: AppColors.editIconColor),
-              ),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  context.l10n.commonRefuse,
-                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.primaryColor),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget buildActionButtons(BuildContext context) {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     crossAxisAlignment: CrossAxisAlignment.center,
+  //     mainAxisSize: MainAxisSize.min,
+  //     children: [
+  //       Expanded(
+  //         child: GestureDetector(
+  //           onTap: getIt<ReservationsCubit>().acceptReservation,
+  //           child: Container(
+  //             width: double.infinity,
+  //             height: 40,
+  //             decoration: BoxDecoration(color: AppColors.primaryColor, borderRadius: BorderRadius.circular(5)),
+  //             child: Align(
+  //               alignment: Alignment.center,
+  //               child: Text(
+  //                 context.l10n.commonAccept,
+  //                 style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: Colors.white),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //       const SizedBox(width: 10),
+  //       // if (!isRefused)
+  //       Expanded(
+  //         child: GestureDetector(
+  //           onTap: getIt<ReservationsCubit>().refundReservation,
+  //           child: Container(
+  //             width: double.infinity,
+  //             height: 40,
+  //             decoration: BoxDecoration(
+  //               color: Colors.white,
+  //               borderRadius: BorderRadius.circular(5),
+  //               border: Border.all(color: AppColors.editIconColor),
+  //             ),
+  //             child: Align(
+  //               alignment: Alignment.center,
+  //               child: Text(
+  //                 context.l10n.commonRefuse,
+  //                 style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.primaryColor),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 String _localizedStatus(BuildContext context, ReservationStatus status) {

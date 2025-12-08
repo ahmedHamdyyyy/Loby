@@ -11,18 +11,15 @@ class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return Row(
-      children: [
-        const SizedBox(width: 20),
-        Text(
-          l10n.notificationsTitle,
-          style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontWeight: FontWeight.w500, fontSize: 14),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Row(
+    children: [
+      const SizedBox(width: 20),
+      Text(
+        context.l10n.notificationsTitle,
+        style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontWeight: FontWeight.w500, fontSize: 14),
+      ),
+    ],
+  );
 }
 
 class NotificationsHeaderWithNavigation extends StatelessWidget {

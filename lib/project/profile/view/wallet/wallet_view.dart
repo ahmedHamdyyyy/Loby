@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
 import '../../../../../config/widget/common_styles.dart';
+import '../../../../../core/localization/l10n_ext.dart';
 import 'bill_details.dart';
 import 'widget_wellet.dart';
 
@@ -23,9 +24,9 @@ class WalletScreenVendor extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 22),
-            CommonWidgets.headerWithBack(context: context, title: 'Wallet'),
+            CommonWidgets.headerWithBack(context: context, title: context.l10n.wallet),
             const SizedBox(height: 14),
-            CommonWidgets.pageTitle(title: 'Wallet'),
+            CommonWidgets.pageTitle(title: context.l10n.wallet),
             const WalletBalanceCard(),
             const SizedBox(height: 14),
             Padding(
@@ -35,7 +36,7 @@ class WalletScreenVendor extends StatelessWidget {
                   SvgPicture.asset(ImageAssets.billIcon, height: 24, width: 24, color: AppColors.secondTextColor),
                   const SizedBox(width: 10),
                   Text(
-                    'Bill Details',
+                    context.l10n.billDetails,
                     style: TextStyles.body(color: AppColors.secondTextColor, size: 16, weight: FontWeight.w400),
                   ),
                 ],

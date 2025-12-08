@@ -1,22 +1,22 @@
 class ApiConstance {
   // static const baseUrl = "https://Luby-rafiks-projects-827f7443.vercel.app/api/v1/";
-  static const baseUrl = "https://luby-one.vercel.app/api/v1/";
+  static const baseUrl = "https://dashboard.lubyksa.com/api/v1/";
 
-  static const signin = "auth/signin";
-  static const signup = "auth/signup";
+  static const signin = "auth/vendor/signin";
+  static const signup = "auth/vendor/signup";
   // Vendor specific signup route
   static const vendorSignup = "auth/vendor/signup";
   static const logout = "auth/logout";
   static const refreshToken = "auth/refresh-token";
   static const resetpassword = "auth/reset-password";
-  static const confirmOtpSignUp = "auth/signup/verify";
-  static const confirmOtpResetPassword = "auth/confirm-otp-reset-password";
-  static const forgetPasswordReset = "auth/forget-password/reset";
-  static const verifyEmail = "auth/signup/initiate";
+  static const confirmOtpSignUp = "auth/vendor/signup/verify";
+  static const confirmOtpResetPassword = "auth/vendor/confirm-otp-reset-password";
+  static const forgetPasswordReset = "auth/vendor/forget-password/reset";
+  static const verifyEmail = "auth/vendor/signup/initiate";
   static const userProfile = "users/me";
   static const setVendorRole = "users/choose-vendor-role";
-  static const updateFcmToken = "auth/update-fcm-token";
-  static const updateVendorDocuments = "auth/vendor/update-documents";
+  static const updateFcmToken = "auth/vendor/update-fcm-token";
+  static const updateVendorDocuments = "auth/vendor/vendor/update-documents";
 
   static const createActivity = "activities";
   static const getActivities = 'activities/me';

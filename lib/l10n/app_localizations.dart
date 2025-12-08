@@ -62,7 +62,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +71,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,17 +84,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en')
+    Locale('en'),
   ];
 
   /// No description provided for @appTitle.
@@ -308,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @activityUpdatedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Activity updated successfully'**
+  /// **'Service updated successfully'**
   String get activityUpdatedSuccess;
 
   /// No description provided for @cardDetailsAddedSuccessfully.
@@ -410,7 +413,7 @@ abstract class AppLocalizations {
   /// No description provided for @activityDeletedSuccessfully.
   ///
   /// In en, this message translates to:
-  /// **'Activity Deleted Successfully'**
+  /// **'Service Deleted Successfully'**
   String get activityDeletedSuccessfully;
 
   /// No description provided for @deletePropertyTitle.
@@ -452,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @yourActivities.
   ///
   /// In en, this message translates to:
-  /// **'Your activities'**
+  /// **'Your Services'**
   String get yourActivities;
 
   /// No description provided for @beVendorNow.
@@ -656,7 +659,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutLoby.
   ///
   /// In en, this message translates to:
-  /// **'About Loby'**
+  /// **'About Luby'**
   String get aboutLoby;
 
   /// No description provided for @termsAndConditions.
@@ -686,19 +689,19 @@ abstract class AppLocalizations {
   /// No description provided for @enterActivityInfo.
   ///
   /// In en, this message translates to:
-  /// **'Please enter your activity information'**
+  /// **'Please enter your Service information'**
   String get enterActivityInfo;
 
   /// No description provided for @nameOfActivity.
   ///
   /// In en, this message translates to:
-  /// **'Name of activity'**
+  /// **'Name of Service'**
   String get nameOfActivity;
 
   /// No description provided for @enterActivityName.
   ///
   /// In en, this message translates to:
-  /// **'Enter your activity name'**
+  /// **'Enter your Service name'**
   String get enterActivityName;
 
   /// No description provided for @uploadStudioPhotosOrVideo.
@@ -710,19 +713,19 @@ abstract class AppLocalizations {
   /// No description provided for @activityTimeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Activity time'**
+  /// **'Service time'**
   String get activityTimeLabel;
 
   /// No description provided for @enterActivityTime.
   ///
   /// In en, this message translates to:
-  /// **'Enter Activity time'**
+  /// **'Enter Service time'**
   String get enterActivityTime;
 
   /// No description provided for @pleaseEnterActivityTime.
   ///
   /// In en, this message translates to:
-  /// **'Please enter the Activity time'**
+  /// **'Please enter the Service time'**
   String get pleaseEnterActivityTime;
 
   /// No description provided for @hoursHint.
@@ -908,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @lobyPlatformUsageAgreement.
   ///
   /// In en, this message translates to:
-  /// **'Loby Platform Usage Agreement'**
+  /// **'Luby Platform Usage Agreement'**
   String get lobyPlatformUsageAgreement;
 
   /// No description provided for @address.
@@ -1070,7 +1073,7 @@ abstract class AppLocalizations {
   /// No description provided for @vendorTouristActivity.
   ///
   /// In en, this message translates to:
-  /// **'Tourist activity'**
+  /// **'Tourist Service'**
   String get vendorTouristActivity;
 
   /// No description provided for @navHome.
@@ -1100,7 +1103,7 @@ abstract class AppLocalizations {
   /// No description provided for @vendorIntroText.
   ///
   /// In en, this message translates to:
-  /// **'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Hendrerit tristique lorem ipsum dolor sit amet.\nDiam habitant.'**
+  /// **'Join Luby as a vendor and start listing your properties or services to reach a wider audience and grow your business.'**
   String get vendorIntroText;
 
   /// No description provided for @availabilityQuestion.
@@ -1442,13 +1445,13 @@ abstract class AppLocalizations {
   /// No description provided for @welcomeToLoby.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to LOBY'**
+  /// **'Welcome to LUBY'**
   String get welcomeToLoby;
 
   /// No description provided for @onboardingWelcomeDescription.
   ///
   /// In en, this message translates to:
-  /// **'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit tristique gravida felis, sociis in felis.'**
+  /// **'Discover and book the best studios and tourist services with ease. Experience unforgettable moments with LUBY. Let\'s get started!'**
   String get onboardingWelcomeDescription;
 
   /// No description provided for @letsStart.
@@ -1528,9 +1531,268 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your studio reservation has been successfully completed!'**
   String get reservationCompletedMessage;
+
+  /// No description provided for @pleaseSelectAllRequiredDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select all required documents.'**
+  String get pleaseSelectAllRequiredDocuments;
+
+  /// No description provided for @accountUnderReviewCannotEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is under review and cannot be edited at this time.'**
+  String get accountUnderReviewCannotEdit;
+
+  /// No description provided for @accountRejectedContactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been rejected. Please contact support for more information.'**
+  String get accountRejectedContactSupport;
+
+  /// No description provided for @uploadingDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading documents...'**
+  String get uploadingDocuments;
+
+  /// No description provided for @documentsUploadedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents uploaded successfully'**
+  String get documentsUploadedSuccessfully;
+
+  /// No description provided for @uploadDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Documents'**
+  String get uploadDocuments;
+
+  /// No description provided for @roomTypeSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get roomTypeSingle;
+
+  /// No description provided for @roomTypeDouble.
+  ///
+  /// In en, this message translates to:
+  /// **'Double'**
+  String get roomTypeDouble;
+
+  /// No description provided for @roomTypeSuite.
+  ///
+  /// In en, this message translates to:
+  /// **'Suite'**
+  String get roomTypeSuite;
+
+  /// No description provided for @roomTypeFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get roomTypeFamily;
+
+  /// No description provided for @includeBreakfast.
+  ///
+  /// In en, this message translates to:
+  /// **'Include breakfast'**
+  String get includeBreakfast;
+
+  /// No description provided for @petFriendly.
+  ///
+  /// In en, this message translates to:
+  /// **'Pet friendly'**
+  String get petFriendly;
+
+  /// No description provided for @searchForAccommodations.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for Accommodations'**
+  String get searchForAccommodations;
+
+  /// No description provided for @searchLocationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Location (city, area, or property name)'**
+  String get searchLocationHint;
+
+  /// No description provided for @checkInInline.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get checkInInline;
+
+  /// No description provided for @guests.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests'**
+  String get guests;
+
+  /// No description provided for @roomTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Room type'**
+  String get roomTypeLabel;
+
+  /// No description provided for @yourSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Search'**
+  String get yourSearch;
+
+  /// No description provided for @locationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationLabel;
+
+  /// No description provided for @totalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get totalLabel;
+
+  /// No description provided for @searchProperties.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Properties'**
+  String get searchProperties;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Search'**
+  String get clearSearch;
+
+  /// No description provided for @nationalIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID'**
+  String get nationalIdLabel;
+
+  /// No description provided for @ibanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN'**
+  String get ibanLabel;
+
+  /// No description provided for @certificateNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate number'**
+  String get certificateNumberLabel;
+
+  /// No description provided for @nationalIdDocumentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'National ID document'**
+  String get nationalIdDocumentLabel;
+
+  /// No description provided for @ibanDocumentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN document'**
+  String get ibanDocumentLabel;
+
+  /// No description provided for @certificateDocumentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate document'**
+  String get certificateDocumentLabel;
+
+  /// No description provided for @firstNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'First Name'**
+  String get firstNameHint;
+
+  /// No description provided for @lastNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Name'**
+  String get lastNameHint;
+
+  /// No description provided for @phoneNumberHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberHint;
+
+  /// No description provided for @alreadyHaveAccountQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get alreadyHaveAccountQuestion;
+
+  /// No description provided for @agreeToTermsAndConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the Terms and Conditions'**
+  String get agreeToTermsAndConditions;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get login;
+
+  /// No description provided for @bankCardsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Cards'**
+  String get bankCardsTitle;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logout;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @confirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPasswordLabel;
+
+  /// No description provided for @profileUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update profile'**
+  String get profileUpdateFailed;
+
+  /// No description provided for @contactUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUsTitle;
+
+  /// No description provided for @howCanWeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How can we help you?'**
+  String get howCanWeHelp;
+
+  /// No description provided for @messageInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add your message here'**
+  String get messageInputHint;
+
+  /// No description provided for @commonSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get commonSend;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1539,25 +1801,26 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['ar', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar': return AppLocalizationsAr();
-    case 'en': return AppLocalizationsEn();
+    case 'ar':
+      return AppLocalizationsAr();
+    case 'en':
+      return AppLocalizationsEn();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }
