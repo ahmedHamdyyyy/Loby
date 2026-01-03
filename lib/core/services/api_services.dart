@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../../config/constants/api_constance.dart';
 import '../../config/constants/constance.dart';
+import '../../main.dart';
+import '../../project/auth/view/Screen/sign_in.dart';
+import '../error/dio_error.dart';
 import 'cach_services.dart';
 
 class ApiService {
@@ -92,6 +95,7 @@ class _ApiInterceptor extends InterceptorsWrapper {
           final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
           if (refreshToken == null || refreshToken.isEmpty) {
             _isRefreshing = false;
+            await _handleAuthFailure();
             return handler.next(response);
           }
           final accessToken = await getAccessToken(refreshToken);
@@ -102,8 +106,7 @@ class _ApiInterceptor extends InterceptorsWrapper {
           return handler.resolve(cloneReq);
         } catch (e) {
           _isRefreshing = false;
-          await _cacheService.storage.remove(AppConst.accessToken);
-          await _cacheService.storage.remove(AppConst.refreshToken);
+          await _handleAuthFailure();
           return handler.next(response);
         }
       }
@@ -128,6 +131,7 @@ class _ApiInterceptor extends InterceptorsWrapper {
           final refreshToken = _cacheService.storage.getString(AppConst.refreshToken);
           if (refreshToken == null || refreshToken.isEmpty) {
             _isRefreshing = false;
+            await _handleAuthFailure();
             return handler.next(err);
           }
           final accessToken = await getAccessToken(refreshToken);
@@ -138,13 +142,35 @@ class _ApiInterceptor extends InterceptorsWrapper {
           return handler.resolve(cloneReq);
         } catch (e) {
           _isRefreshing = false;
-          await _cacheService.storage.remove(AppConst.accessToken);
-          await _cacheService.storage.remove(AppConst.refreshToken);
+          await _handleAuthFailure();
           return handler.next(err);
         }
       }
     }
-    super.onError(err, handler);
+    // Use centralized error handler to provide a friendly message
+    final friendlyMessage = ApiExceptionHandler.handle(err);
+    final transformed = DioException(
+      requestOptions: err.requestOptions,
+      response: err.response,
+      type: err.type,
+      error: err.error,
+      stackTrace: err.stackTrace,
+      message: friendlyMessage,
+    );
+    return handler.reject(transformed);
+  }
+
+  Future<void> _handleAuthFailure() async {
+    // Remove cached tokens
+    await _cacheService.storage.remove(AppConst.accessToken);
+    await _cacheService.storage.remove(AppConst.refreshToken);
+
+    // Navigate to signin screen
+    final context = rootNavigatorKey.currentContext;
+    if (context != null) {
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const SignInScreen()), (route) => false);
+    }
   }
 
   Future<String> getAccessToken(String refreshToken) async {

@@ -17,7 +17,6 @@ class ProfileState extends Equatable {
   ProfileState copyWith({
     String? callback,
     UserModel? user,
-    VendorRole? vendorRole,
     Status? fetchUserStatus,
     Status? chooseVendorRole,
     Status? updateUserStatus,

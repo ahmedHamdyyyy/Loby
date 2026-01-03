@@ -6,6 +6,7 @@ class ApiConstance {
   static const signup = "auth/vendor/signup";
   // Vendor specific signup route
   static const vendorSignup = "auth/vendor/signup";
+  static const verifyUserData = "auth/vendor/signup/validate";
   static const logout = "auth/logout";
   static const refreshToken = "auth/refresh-token";
   static const resetpassword = "auth/reset-password";
@@ -16,7 +17,7 @@ class ApiConstance {
   static const userProfile = "users/me";
   static const setVendorRole = "users/choose-vendor-role";
   static const updateFcmToken = "auth/vendor/update-fcm-token";
-  static const updateVendorDocuments = "auth/vendor/vendor/update-documents";
+  static const updateVendorDocuments = "auth/vendor/update-documents";
 
   static const createActivity = "activities";
   static const getActivities = 'activities/me';

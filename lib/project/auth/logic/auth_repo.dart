@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/error/dio_error.dart';
 import '../../../models/user.dart';
 import 'auth_data.dart';
 
@@ -35,7 +36,7 @@ class AuthRepo {
       return await _authData.signout();
     } on DioException catch (e) {
       debugPrint(e.response?.data.toString());
-      throw Exception(e.response?.data['error']);
+      throw ApiExceptionHandler.handle(e);
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');
@@ -49,7 +50,7 @@ class AuthRepo {
       debugPrintStack(label: e.message, stackTrace: s);
       debugPrint(e.response?.data.toString());
       debugPrint(e.response?.statusMessage.toString());
-      throw Exception(e.response?.data?['message'] ?? 'An unexpected error occurred');
+      rethrow;
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');
@@ -61,7 +62,19 @@ class AuthRepo {
       await _authData.confirmOtpSignUp(email, otp, willSignup);
     } on DioException catch (e) {
       debugPrint(e.response?.data.toString());
-      throw Exception(e.response?.data['error']);
+      throw ApiExceptionHandler.handle(e);
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('An unexpected error occurred');
+    }
+  }
+
+  Future<void> verifyUserData(UserModel user) async {
+    try {
+      await _authData.verifyUserData(user);
+    } on DioException catch (e) {
+      debugPrint(e.response?.data.toString());
+      throw ApiExceptionHandler.handle(e);
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');
@@ -73,7 +86,7 @@ class AuthRepo {
       return await _authData.resetPassword(email, newPassword);
     } on DioException catch (e) {
       debugPrint(e.response?.data.toString());
-      throw Exception(e.response?.data['error']);
+      throw ApiExceptionHandler.handle(e);
     } catch (e) {
       debugPrint(e.toString());
       throw Exception('An unexpected error occurred');

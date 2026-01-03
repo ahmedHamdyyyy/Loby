@@ -43,7 +43,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => getIt<PropertiesCubit>().getProperties(),
+      onRefresh: () async {
+        final profileState = getIt<ProfileCubit>().state;
+        final role = VendorRole.values.firstWhere((e) => e.name == profileState.user.role, orElse: () => VendorRole.non);
+        switch (role) {
+          case VendorRole.property:
+            getIt<PropertiesCubit>().getProperties();
+            break;
+          case VendorRole.activity:
+            getIt<ActivitiesCubit>().getActivities();
+            break;
+          case VendorRole.non:
+            await getIt<ProfileCubit>().fetchUser();
+            break;
+        }
+      },
       child: BlocConsumer<ProfileCubit, ProfileState>(
         listener: (context, state) {
           final vendorRole = VendorRole.values.firstWhere((e) => e.name == state.user.role, orElse: () => VendorRole.non);
@@ -69,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           final vendorRole = VendorRole.values.firstWhere((e) => e.name == state.user.role, orElse: () => VendorRole.non);
           final isVerified = state.user.status == UserStatus.approved;
+          final isBusy = state.chooseVendorRole == Status.loading || state.fetchUserStatus == Status.loading;
           return Scaffold(
             body: SingleChildScrollView(
               child: Column(
@@ -210,46 +225,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                       padding: const EdgeInsets.symmetric(vertical: 14),
                                       minimumSize: const Size(double.infinity, 48),
                                     ),
-                                    onPressed: () async {
-                                      if (state.fetchUserStatus == Status.loading) return;
-                                      if (state.user.status == UserStatus.pending) {
-                                        Utils.errorDialog(context, context.l10n.emailNotVerifiedMsg);
-                                        return;
-                                      } else if (state.user.status == UserStatus.rejected) {
-                                        // redirect to support or show message.
-                                        Utils.errorDialog(
-                                          context,
-                                          'Rejected Account: Please contact support for more information.',
-                                        );
-                                        return;
-                                      }
-                                      switch (vendorRole) {
-                                        case VendorRole.non:
-                                          final vendorRole = await showDialog<VendorRole?>(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (context) => const VendorTypeDialog(),
-                                          );
-                                          if (vendorRole == null) break;
-                                          getIt<ProfileCubit>().chooseVendorRole(vendorRole);
-                                          break;
-                                        case VendorRole.property:
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => const PropertyTypesScreen()),
-                                          );
-                                          break;
-                                        case VendorRole.activity:
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => const ActivityScreen(activityId: '')),
-                                          );
-                                          break;
-                                      }
-                                    },
+                                    onPressed:
+                                        isBusy
+                                            ? null
+                                            : () async {
+                                              if (state.user.status == UserStatus.pending) {
+                                                Utils.errorDialog(context, context.l10n.emailNotVerifiedMsg);
+                                                return;
+                                              } else if (state.user.status == UserStatus.rejected) {
+                                                // redirect to support or show message.
+                                                Utils.errorDialog(
+                                                  context,
+                                                  'Rejected Account: Please contact support for more information.',
+                                                );
+                                                return;
+                                              }
+                                              switch (vendorRole) {
+                                                case VendorRole.non:
+                                                  final vendorRole = await showDialog<VendorRole?>(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    builder: (context) => const VendorTypeDialog(),
+                                                  );
+                                                  if (vendorRole == null) break;
+                                                  getIt<ProfileCubit>().chooseVendorRole(vendorRole);
+                                                  break;
+                                                case VendorRole.property:
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => const PropertyTypesScreen()),
+                                                  );
+                                                  break;
+                                                case VendorRole.activity:
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(builder: (context) => const ActivityScreen()),
+                                                  );
+                                                  break;
+                                              }
+                                            },
                                     child:
-                                        state.fetchUserStatus == Status.loading
-                                            ? const CircularProgressIndicator()
+                                        isBusy
+                                            ? const SizedBox(
+                                              height: 24,
+                                              width: 24,
+                                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                            )
                                             : Text(
                                               context.l10n.start,
                                               style: GoogleFonts.poppins(

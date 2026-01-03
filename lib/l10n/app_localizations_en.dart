@@ -83,8 +83,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get imagePickFailed => 'Failed to pick image';
 
   @override
-  String get mustPickImageBeforeVideo =>
-      'You must pick an image first before adding a video';
+  String get mustPickImageBeforeVideo => 'You must pick an image first before adding a video';
 
   @override
   String get onlyMp4Allowed => 'Only MP4 video is allowed';
@@ -96,8 +95,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get atLeastOneImageMustRemain => 'At least one image must remain';
 
   @override
-  String get cannotRemoveFirstImage =>
-      'Cannot remove the first image as it is the only one';
+  String get cannotRemoveFirstImage => 'Cannot remove the first image as it is the only one';
 
   @override
   String get filePickFailed => 'Failed to pick file';
@@ -182,12 +180,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get conversationDeletedSuccessfully =>
-      'Conversation deleted successfully';
+  String get conversationDeletedSuccessfully => 'Conversation deleted successfully';
 
   @override
-  String get conversationDeleteError =>
-      'An error occurred while deleting the conversation';
+  String get conversationDeleteError => 'An error occurred while deleting the conversation';
 
   @override
   String get commonDelete => 'Delete';
@@ -199,8 +195,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deletePropertyTitle => 'Delete Property';
 
   @override
-  String get deletePropertyContent =>
-      'Are you sure you want to delete this property?';
+  String get deletePropertyContent => 'Are you sure you want to delete this property?';
 
   @override
   String get guestUser => 'Guest User';
@@ -224,12 +219,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appCommission => 'App Commission';
 
   @override
-  String get commissionDetails =>
-      'The first party\'s commission for every reservation made by the second party is 15% of the rent (not including value added tax).';
+  String get commissionDetails => 'The first party\'s commission for every reservation made by the second party is 15% of the rent (not including value added tax).';
 
   @override
-  String get emailNotVerifiedMsg =>
-      'Your email is not verified please wait until it is verified then try again.';
+  String get emailNotVerifiedMsg => 'Your email is not verified please wait until it is verified then try again.';
 
   @override
   String get account => 'Account';
@@ -244,8 +237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete Account';
 
   @override
-  String get areYouSureDeleteAccount =>
-      'Are you sure about deleting your account?';
+  String get areYouSureDeleteAccount => 'Are you sure about deleting your account?';
 
   @override
   String get yes => 'Yes';
@@ -254,8 +246,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signUp => 'Sign Up';
 
   @override
-  String get createYourAccount =>
-      'Create your account to continue using the app ';
+  String get createYourAccount => 'Create your account to continue using the app ';
 
   @override
   String get agreeToTerms => 'Agree to the terms and conditions';
@@ -282,8 +273,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeBack => 'Welcome Back!';
 
   @override
-  String get loginIntro =>
-      'Please enter your email and password to sign in to your account.';
+  String get loginIntro => 'Please enter your email and password to sign in to your account.';
 
   @override
   String get emailHint => 'Enter your email';
@@ -334,8 +324,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactUs => 'Contact Us';
 
   @override
-  String get pleaseSelectValidAddress =>
-      'Please select a valid address from the Map';
+  String get pleaseSelectValidAddress => 'Please select a valid address from the Map';
 
   @override
   String get enterActivityInfo => 'Please enter your Service information';
@@ -394,8 +383,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get email => 'Email';
 
   @override
-  String get pleaseCompleteInformation =>
-      'Please complete the following\ninformation';
+  String get pleaseCompleteInformation => 'Please complete the following\ninformation';
 
   @override
   String get enterPropertyInfo => 'Please enter your property information';
@@ -419,22 +407,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterYourDetails => 'Please enter your Details';
 
   @override
-  String get tellGuestsWhatPlaceOffers =>
-      'Tell guests what your place has to offer';
+  String get tellGuestsWhatPlaceOffers => 'Tell guests what your place has to offer';
 
   @override
   String get uploadStudioPhotosOrVideoAlt => 'studio photos or video';
 
   @override
-  String get uploadLeaseOrOwnershipContract =>
-      'Upload Lease or ownership contract';
+  String get uploadLeaseOrOwnershipContract => 'Upload Lease or ownership contract';
 
   @override
   String get leaseOrOwnershipContract => 'Lease or ownership contract';
 
   @override
-  String get uploadTouristFacilityLicense =>
-      'Upload Tourist hospitality facility license';
+  String get uploadTouristFacilityLicense => 'Upload Tourist hospitality facility license';
 
   @override
   String get touristFacilityLicense => 'Tourist hospitality facility license';
@@ -465,8 +450,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get address => 'Address';
 
   @override
-  String get enterYourAddressOrTapMap =>
-      'Enter your address or tap map icon to select';
+  String get enterYourAddressOrTapMap => 'Enter your address or tap map icon to select';
 
   @override
   String get pleaseEnterYourAddress => 'Please enter your address';
@@ -560,8 +544,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navProfile => 'Profile';
 
   @override
-  String get vendorIntroText =>
-      'Join Luby as a vendor and start listing your properties or services to reach a wider audience and grow your business.';
+  String get vendorIntroText => 'Join Luby as a vendor and start listing your properties or services to reach a wider audience and grow your business.';
 
   @override
   String availabilityQuestion(String type) {
@@ -587,8 +570,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lobbyOffersTitle => 'Lobby Offers';
 
   @override
-  String get lobbyOffersDescription =>
-      'If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%';
+  String get lobbyOffersDescription => 'If you add from one apartment to 10, the percentage is 10% - from 0 to 20, the percentage is 15% - more than 25, the percentage is 20%';
 
   @override
   String get imageLabel => 'Image';
@@ -618,6 +600,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmLocation => 'Confirm Location';
+
+  @override
+  String get locationPermissionDenied => 'Location permission denied. Please enable location access.';
+
+  @override
+  String get loadingMap => 'Loading map...';
 
   @override
   String get shareSomeBasics => 'Share some basics about your place';
@@ -754,8 +742,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeToLoby => 'Welcome to LUBY';
 
   @override
-  String get onboardingWelcomeDescription =>
-      'Discover and book the best studios and tourist services with ease. Experience unforgettable moments with LUBY. Let\'s get started!';
+  String get onboardingWelcomeDescription => 'Discover and book the best studios and tourist services with ease. Experience unforgettable moments with LUBY. Let\'s get started!';
 
   @override
   String get letsStart => 'Let\'s Start';
@@ -782,8 +769,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourNotifications => 'Your Notifications';
 
   @override
-  String get noNotificationsYet =>
-      'You don\'t have any notifications right now';
+  String get noNotificationsYet => 'You don\'t have any notifications right now';
 
   @override
   String get notificationTitle => 'Notification';
@@ -795,20 +781,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hello => 'Hello';
 
   @override
-  String get reservationCompletedMessage =>
-      'Your studio reservation has been successfully completed!';
+  String get reservationCompletedMessage => 'Your studio reservation has been successfully completed!';
 
   @override
-  String get pleaseSelectAllRequiredDocuments =>
-      'Please select all required documents.';
+  String get pleaseSelectAllRequiredDocuments => 'Please select all required documents.';
 
   @override
-  String get accountUnderReviewCannotEdit =>
-      'Your account is under review and cannot be edited at this time.';
+  String get accountUnderReviewCannotEdit => 'Your account is under review and cannot be edited at this time.';
 
   @override
-  String get accountRejectedContactSupport =>
-      'Your account has been rejected. Please contact support for more information.';
+  String get accountRejectedContactSupport => 'Your account has been rejected. Please contact support for more information.';
 
   @override
   String get uploadingDocuments => 'Uploading documents...';
@@ -926,6 +908,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messageInputHint => 'You can add your message here';
+
+  @override
+  String get messageContainsTooManyConsecutiveNumbers => 'The message contains too many consecutive numbers';
 
   @override
   String get commonSend => 'Send';

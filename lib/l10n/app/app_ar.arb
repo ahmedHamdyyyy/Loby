@@ -299,7 +299,5 @@
     "howCanWeHelp": "كيف يمكننا مساعدتك؟",
     "messageInputHint": "يمكنك إضافة رسالتك هنا",
     "messageContainsTooManyConsecutiveNumbers": "تحتوي الرسالة على العديد من الأرقام المتتالية",
-    "commonSend": "إرسال",
-    "locationPermissionDenied": "تم رفض إذن الموقع. يرجى تفعيل الوصول إلى الموقع.",
-    "loadingMap": "جارٍ تحميل الخريطة..."
+    "commonSend": "إرسال"
 }

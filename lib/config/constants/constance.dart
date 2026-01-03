@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 enum Status { initial, loading, success, error }
 
 enum VendorRole { non, property, activity }
@@ -55,4 +57,61 @@ class AppConst {
   static const String isLoggedInKey = 'is_logged_in';
 
   static const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  static String normalizeError(Object e) {
+    String? message;
+
+    // 1️⃣ Handle DioException explicitly
+    if (e is DioException) {
+      // a) Direct Dio message (e.g. DioException(Error: ...))
+      if (e.message != null && e.message!.isNotEmpty) {
+        message = e.message;
+      }
+
+      // b) Response data
+      final data = e.response?.data;
+      if (data != null) {
+        if (data is String && data.isNotEmpty) {
+          message = data;
+        } else if (data is Map<String, dynamic>) {
+          // Common backend keys
+          for (final key in ['message', 'error', 'detail', 'details', 'msg']) {
+            if (data[key] != null && data[key].toString().isNotEmpty) {
+              message = data[key].toString();
+              break;
+            }
+
+            // Nested data { data: { message: ... } }
+            if (data['data'] is Map && data['data'][key] != null && data['data'][key].toString().isNotEmpty) {
+              message = data['data'][key].toString();
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    // 2️⃣ Handle normal Exception
+    if (message == null && e is Exception) {
+      message = e.toString();
+    }
+
+    // 3️⃣ Final fallback
+    message ??= e.toString();
+
+    // 🔥 Clean technical prefixes
+    message =
+        message
+            .replaceFirst(RegExp(r'^DioException[:\(]*', caseSensitive: false), '')
+            .replaceFirst(RegExp(r'^Exception[:\(]*', caseSensitive: false), '')
+            .replaceFirst(RegExp(r'^Error[: ]*', caseSensitive: false), '')
+            .replaceAll(')', '')
+            .trim();
+
+    // 🧠 Friendly defaults
+    if (message.isEmpty || message.toLowerCase() == 'null') {
+      return 'Something went wrong. Please try again.';
+    }
+
+    return message;
+  }
 }

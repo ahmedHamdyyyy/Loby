@@ -17,7 +17,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       final allProperties = await _propertiesRespository.getProperties();
       emit(state.copyWith(getStatus: Status.success, properties: allProperties));
     } catch (e) {
-      emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(getStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(getStatus: Status.initial));
     }
@@ -35,7 +35,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(createStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(createStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(createStatus: Status.initial));
     }
@@ -57,7 +57,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(updateStatus: Status.error, msg: AppConst.normalizeError(e)));
     } /* finally {
       emit(state.copyWith(updateStatus: Status.initial));
     } */
@@ -75,7 +75,7 @@ class PropertiesCubit extends Cubit<PropertiesState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(deleteStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(deleteStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(deleteStatus: Status.initial));
     }
@@ -87,7 +87,9 @@ class PropertiesCubit extends Cubit<PropertiesState> {
       final property = await _propertiesRespository.getProperty(id);
       emit(state.copyWith(getPropertyStatus: Status.success, property: property));
     } catch (e) {
-      emit(state.copyWith(getPropertyStatus: Status.error, msg: e.toString(), property: PropertyModel.initial));
+      emit(
+        state.copyWith(getPropertyStatus: Status.error, msg: AppConst.normalizeError(e), property: PropertyModel.initial),
+      );
     } finally {
       emit(state.copyWith(getPropertyStatus: Status.initial));
     }

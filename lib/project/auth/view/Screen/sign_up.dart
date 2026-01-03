@@ -82,7 +82,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
-    context.read<AuthCubit>().verifyEmail(emailController.text.trim());
+    context.read<AuthCubit>().verifyEmail(
+      UserModel.non.copyWith(
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        email: emailController.text.trim(),
+        phone: phoneController.text.trim(),
+        password: passwordController.text.trim(),
+        role: AppConst.vendor,
+        profilePicture: profileImage == null ? '' : profileImage!.path,
+        nationalId: nationalIdController.text.trim(),
+        iban: ibanController.text.trim(),
+        certificateNumber: certificateNumberController.text.trim(),
+        nationalIdDocument: nationalIdDocument?.path ?? '',
+        ibanDocument: ibanDocument?.path ?? '',
+        certificateNumberDocument: certificateNumberDocument?.path ?? '',
+      ),
+    );
   }
 
   void _handleImageSelected(File image) => setState(() => profileImage = image);

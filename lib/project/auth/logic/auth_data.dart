@@ -95,6 +95,12 @@ class AuthData {
     return response.data['data']['message'];
   }
 
+  Future<void> verifyUserData(UserModel user) async {
+    final mapData = await user.signUp();
+    final response = await _apiServices.dio.post(ApiConstance.verifyUserData, data: mapData);
+    if (response.statusCode != 200) throw _responseException(response);
+  }
+
   /*   Future<UserModel> signup({required UserModel user}) async {
     final response = await _apiServices.dio.post(ApiConstance.signup, data: await user.signUp());
     if (_hasException(response)) throw _responseException(response);

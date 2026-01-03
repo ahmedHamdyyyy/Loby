@@ -65,7 +65,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
           Utils.errorDialog(context, state.msg);
         } else if (state.getReservationStatus == Status.success) {
           Navigator.pop(context);
-          showToast(text: context.l10n.updatedSuccessfully, stute: ToustStute.success);
+          // showToast(text: context.l10n.updatedSuccessfully, stute: ToustStute.success);
         }
       },
       builder: (context, state) {

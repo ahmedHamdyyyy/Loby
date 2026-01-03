@@ -164,6 +164,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
           break;
         case Status.success:
           Navigator.pop(context);
+          Navigator.pop(context);
           showToast(text: context.l10n.propertyCreatedSuccessfully, stute: ToustStute.success);
           break;
         case Status.error:
@@ -178,6 +179,7 @@ class _PropertyScreenState extends State<PropertyScreen> {
           Utils.loadingDialog(context);
           break;
         case Status.success:
+          Navigator.pop(context);
           Navigator.pop(context);
           showToast(text: context.l10n.propertyUpdatedSuccessfully, stute: ToustStute.success);
           break;

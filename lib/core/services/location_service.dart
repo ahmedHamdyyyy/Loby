@@ -1,10 +1,11 @@
 import 'dart:math';
+
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as location_package;
-import 'package:geocoding/geocoding.dart';
 
 class LocationService {
-  static final LocationService _instance = LocationService._internal();
+  static final _instance = LocationService._internal();
   factory LocationService() => _instance;
   LocationService._internal();
 
@@ -43,16 +44,15 @@ class LocationService {
   /// Calculate distance between two points in kilometers
   double calculateDistance(LatLng point1, LatLng point2) {
     const double earthRadius = 6371; // Earth's radius in kilometers
-    
+
     double lat1 = point1.latitude * (pi / 180);
     double lat2 = point2.latitude * (pi / 180);
     double deltaLat = (point2.latitude - point1.latitude) * (pi / 180);
     double deltaLng = (point2.longitude - point1.longitude) * (pi / 180);
-    
-    double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
-        cos(lat1) * cos(lat2) * sin(deltaLng / 2) * sin(deltaLng / 2);
+
+    double a = sin(deltaLat / 2) * sin(deltaLat / 2) + cos(lat1) * cos(lat2) * sin(deltaLng / 2) * sin(deltaLng / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    
+
     return earthRadius * c;
   }
 
@@ -60,9 +60,9 @@ class LocationService {
   String formatCoordinates(LatLng position) {
     String lat = position.latitude >= 0 ? 'N' : 'S';
     String lng = position.longitude >= 0 ? 'E' : 'W';
-    
+
     return '${position.latitude.abs().toStringAsFixed(6)}° $lat, '
-           '${position.longitude.abs().toStringAsFixed(6)}° $lng';
+        '${position.longitude.abs().toStringAsFixed(6)}° $lng';
   }
 
   /// Get address from coordinates (Reverse Geocoding)
@@ -71,39 +71,40 @@ class LocationService {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
+        localeIdentifier: 'en',
       );
-      
+
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
-        
+
         // Build a comprehensive address string
         List<String> addressParts = [];
-        
+
         if (place.street != null && place.street!.isNotEmpty) {
           addressParts.add(place.street!);
         }
-        
+
         if (place.subLocality != null && place.subLocality!.isNotEmpty) {
           addressParts.add(place.subLocality!);
         }
-        
+
         if (place.locality != null && place.locality!.isNotEmpty) {
           addressParts.add(place.locality!);
         }
-        
+
         if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
           addressParts.add(place.administrativeArea!);
         }
-        
+
         if (place.country != null && place.country!.isNotEmpty) {
           addressParts.add(place.country!);
         }
-        
+
         if (addressParts.isNotEmpty) {
           return addressParts.join(', ');
         }
       }
-      
+
       // Fallback to coordinates if no address found
       return formatCoordinates(position);
     } catch (e) {
@@ -119,11 +120,12 @@ class LocationService {
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
+        localeIdentifier: 'en',
       );
-      
+
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks.first;
-        
+
         return {
           'street': place.street ?? '',
           'subLocality': place.subLocality ?? '',
@@ -134,11 +136,37 @@ class LocationService {
           'coordinates': formatCoordinates(position),
         };
       }
-      
+
       return {'coordinates': formatCoordinates(position)};
     } catch (e) {
       print('Error getting place details: $e');
       return {'coordinates': formatCoordinates(position)};
+    }
+  }
+
+  /// Search for locations by query string
+  Future<List<Location>> searchLocation(String query) async {
+    try {
+      if (query.isEmpty) return [];
+      List<Location> locations = await locationFromAddress(query);
+      return locations;
+    } catch (e) {
+      print('Error searching location: $e');
+      return [];
+    }
+  }
+
+  /// Get coordinates from address
+  Future<LatLng?> getCoordinatesFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return LatLng(locations.first.latitude, locations.first.longitude);
+      }
+      return null;
+    } catch (e) {
+      print('Error getting coordinates from address: $e');
+      return null;
     }
   }
 
@@ -157,11 +185,6 @@ class LocationService {
     bool draggable = false,
     Function(LatLng)? onDragEnd,
   }) {
-    return Marker(
-      markerId: MarkerId(markerId),
-      position: position,
-      draggable: draggable,
-      onDragEnd: onDragEnd,
-    );
+    return Marker(markerId: MarkerId(markerId), position: position, draggable: draggable, onDragEnd: onDragEnd);
   }
-} 
+}

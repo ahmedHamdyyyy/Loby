@@ -474,7 +474,5 @@
     "howCanWeHelp": "How can we help you?",
     "messageInputHint": "You can add your message here",
     "messageContainsTooManyConsecutiveNumbers": "The message contains too many consecutive numbers",
-    "commonSend": "Send",
-    "locationPermissionDenied": "Location permission denied. Please enable location access.",
-    "loadingMap": "Loading map..."
+    "commonSend": "Send"
 }

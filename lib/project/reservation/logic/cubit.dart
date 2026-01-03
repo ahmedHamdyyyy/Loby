@@ -17,7 +17,7 @@ class ReservationsCubit extends Cubit<ReservationsState> {
       final reservations = await _repo.getReservations(isCurrentReservations);
       emit(state.copyWith(getStatus: Status.success, reservations: reservations));
     } catch (e) {
-      emit(state.copyWith(getStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(getStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(getStatus: Status.initial));
     }
@@ -34,7 +34,7 @@ class ReservationsCubit extends Cubit<ReservationsState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(updateStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(updateStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(updateStatus: Status.initial));
     }
@@ -92,7 +92,13 @@ class ReservationsCubit extends Cubit<ReservationsState> {
       final reservation = await _repo.getReservationById(id);
       emit(state.copyWith(getReservationStatus: Status.success, reservation: reservation));
     } catch (e) {
-      emit(state.copyWith(getReservationStatus: Status.error, msg: e.toString(), reservation: ReservationModel.initial));
+      emit(
+        state.copyWith(
+          getReservationStatus: Status.error,
+          msg: AppConst.normalizeError(e),
+          reservation: ReservationModel.initial,
+        ),
+      );
     } finally {
       emit(state.copyWith(getReservationStatus: Status.initial));
     }

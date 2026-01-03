@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -19,16 +20,24 @@ class LocationConfirmationScreen extends StatefulWidget {
 class _LocationConfirmationScreenState extends State<LocationConfirmationScreen> {
   GoogleMapController? _mapController;
   LatLng _selectedLocation = const LatLng(24.7136, 46.6753);
-  String _selectedAddress = '';
-  String _selectedCity = '';
-  String _selectedState = '';
-  String _selectedCountry = '';
-  bool _isLoadingAddress = false;
+  String _selectedAddress = '', _selectedCity = '', _selectedState = '', _selectedCountry = '';
+  bool _isLoadingAddress = false, _isMapReady = false, _isDraggingMarker = false;
+  final TextEditingController _searchController = TextEditingController();
+  List<Location> _searchResults = [];
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _initializeMap();
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
   }
 
   void _initializeMap() async {
@@ -45,23 +54,84 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
   Future<void> _updateLocationDetails(LatLng location) async {
     try {
       final placeDetails = await LocationService().getPlaceDetails(location);
-      setState(() {
-        _selectedLocation = location;
-        _selectedCity = placeDetails['locality'] ?? placeDetails['subLocality'] ?? '';
-        _selectedState = placeDetails['administrativeArea'] ?? '';
-        _selectedCountry = placeDetails['country'] ?? '';
-        _selectedAddress = _buildFormattedAddress();
-        _isLoadingAddress = false;
-      });
+      if (mounted) {
+        setState(() {
+          _selectedLocation = location;
+          _selectedCity = placeDetails['locality'] ?? placeDetails['subLocality'] ?? '';
+          _selectedState = placeDetails['administrativeArea'] ?? '';
+          _selectedCountry = placeDetails['country'] ?? '';
+          _selectedAddress = _buildFormattedAddress();
+          _isLoadingAddress = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _selectedLocation = location;
-        _selectedAddress = '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
-        _selectedCity = '';
-        _selectedState = '';
-        _selectedCountry = '';
-        _isLoadingAddress = false;
-      });
+      if (mounted) {
+        setState(() {
+          _selectedLocation = location;
+          _selectedAddress = '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
+          _selectedCity = '';
+          _selectedState = '';
+          _selectedCountry = '';
+          _isLoadingAddress = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _searchLocation(String query) async {
+    if (query.isEmpty) {
+      setState(() => _searchResults = []);
+      return;
+    }
+
+    try {
+      final results = await LocationService().searchLocation(query);
+      if (mounted) setState(() => _searchResults = results);
+    } catch (e) {
+      if (mounted) setState(() => _searchResults = []);
+    }
+  }
+
+  Future<void> _selectSearchResult(Location location) async {
+    final latLng = LatLng(location.latitude, location.longitude);
+    setState(() {
+      _selectedLocation = latLng;
+      _searchResults = [];
+      _searchController.clear();
+      _searchFocusNode.unfocus();
+      _isLoadingAddress = true;
+    });
+
+    await _updateLocationDetails(latLng);
+    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15.0));
+  }
+
+  Future<String> _getPlaceNameFromLocation(Location location) async {
+    try {
+      final placeDetails = await LocationService().getPlaceDetails(LatLng(location.latitude, location.longitude));
+
+      List<String> nameParts = [];
+      if (placeDetails['locality']?.isNotEmpty ?? false) {
+        nameParts.add(placeDetails['locality']!);
+      } else if (placeDetails['subLocality']?.isNotEmpty ?? false) {
+        nameParts.add(placeDetails['subLocality']!);
+      }
+
+      if (placeDetails['administrativeArea']?.isNotEmpty ?? false) {
+        nameParts.add(placeDetails['administrativeArea']!);
+      }
+
+      if (placeDetails['country']?.isNotEmpty ?? false) {
+        nameParts.add(placeDetails['country']!);
+      }
+
+      if (nameParts.isNotEmpty) {
+        return nameParts.join(', ');
+      }
+
+      return '${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}';
+    } catch (e) {
+      return '${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}';
     }
   }
 
@@ -70,8 +140,12 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
     if (_selectedCity.isNotEmpty) addressParts.add(_selectedCity);
     if (_selectedState.isNotEmpty) addressParts.add(_selectedState);
     if (_selectedCountry.isNotEmpty) addressParts.add(_selectedCountry);
-    if (addressParts.isNotEmpty) return addressParts.join(', ');
-    return '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
+
+    if (addressParts.isEmpty) {
+      return '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
+    }
+
+    return addressParts.join(', ');
   }
 
   String _buildLocationSummary() {
@@ -79,43 +153,24 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
     if (_selectedCity.isNotEmpty) locationParts.add(_selectedCity);
     if (_selectedState.isNotEmpty) locationParts.add(_selectedState);
     if (_selectedCountry.isNotEmpty) locationParts.add(_selectedCountry);
-    return locationParts.join(', ');
+    return locationParts.isNotEmpty ? locationParts.join(', ') : '';
   }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-    _updateAddressForCurrentLocation();
+    setState(() => _isMapReady = true);
   }
 
-  void _updateAddressForCurrentLocation() async {
-    setState(() => _isLoadingAddress = true);
-    await _updateLocationDetails(_selectedLocation);
+  void _onCameraMove(CameraPosition position) {
+    if (!_isDraggingMarker) {
+      setState(() => _selectedLocation = position.target);
+    }
   }
-
-  void _onCameraMove(CameraPosition position) => setState(() => _selectedLocation = position.target);
 
   void _onCameraIdle() async {
-    if (_mapController != null) {
-      _mapController!
-          .getVisibleRegion()
-          .then((bounds) async {
-            final center = LatLng(
-              (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
-              (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
-            );
-            setState(() => _isLoadingAddress = true);
-            await _updateLocationDetails(center);
-          })
-          .catchError((error) {
-            setState(() {
-              _selectedAddress =
-                  '${_selectedLocation.latitude.toStringAsFixed(6)}, ${_selectedLocation.longitude.toStringAsFixed(6)}';
-              _selectedCity = '';
-              _selectedState = '';
-              _selectedCountry = '';
-              _isLoadingAddress = false;
-            });
-          });
+    if (_mapController != null && !_isDraggingMarker) {
+      setState(() => _isLoadingAddress = true);
+      await _updateLocationDetails(_selectedLocation);
     }
   }
 
@@ -141,43 +196,86 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Google Maps
-          GoogleMap(
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: CameraPosition(target: _selectedLocation, zoom: 15.0),
-            onCameraMove: _onCameraMove,
-            onCameraIdle: _onCameraIdle,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            markers: {
-              Marker(
-                markerId: const MarkerId('selected_location'),
-                position: _selectedLocation,
-                draggable: true,
-                onDragEnd: (newPosition) async {
-                  setState(() {
-                    _isLoadingAddress = true;
-                  });
+      body: GestureDetector(
+        onTap: () {
+          // Dismiss keyboard and search results when tapping on map
+          _searchFocusNode.unfocus();
+          if (_searchResults.isNotEmpty) {
+            setState(() {
+              _searchResults = [];
+            });
+          }
+        },
+        child: Stack(
+          children: [
+            // Google Maps
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(target: _selectedLocation, zoom: 15.0),
+              onCameraMove: _onCameraMove,
+              onCameraIdle: _onCameraIdle,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              markers: {
+                Marker(
+                  markerId: const MarkerId('selected_location'),
+                  position: _selectedLocation,
+                  draggable: true,
+                  onDragStart: (position) {
+                    setState(() => _isDraggingMarker = true);
+                  },
+                  onDrag: (position) {
+                    setState(() {
+                      _selectedLocation = position;
+                      _isLoadingAddress = true;
+                    });
+                  },
+                  onDragEnd: (newPosition) async {
+                    setState(() {
+                      _selectedLocation = newPosition;
+                      _isDraggingMarker = false;
+                    });
+                    await _updateLocationDetails(newPosition);
+                  },
+                ),
+              },
+            ),
 
-                  await _updateLocationDetails(newPosition);
-                },
+            // Loading overlay
+            if (!_isMapReady)
+              Container(
+                color: Colors.white,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor)),
+                      const SizedBox(height: 16),
+                      Text(
+                        context.l10n.loadingMap,
+                        style: GoogleFonts.poppins(
+                          color: AppColors.grayTextColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            },
-          ),
 
-          // Top search bar
-          _buildSearchBar(),
+            // Top search bar (placeholder for future search functionality)
+            _buildSearchBar(),
 
-          // Center marker indicator
-          _buildCenterMarker(),
+            // My Location button
+            _buildMyLocationButton(),
 
-          // Bottom confirmation panel
-          _buildConfirmationPanel(),
-        ],
+            // Bottom confirmation panel
+            _buildConfirmationPanel(),
+          ],
+        ),
       ),
     );
   }
@@ -187,56 +285,179 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
       top: 60,
       left: 20,
       right: 20,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, offset: const Offset(0, 2))],
-        ),
-        child: Row(
-          children: [
-            // ignore: deprecated_member_use
-            SvgPicture.asset(ImageAssets.searchIcon, width: 24, height: 24, color: AppColors.grayColorIcon),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                context.l10n.searchLocation,
-                style: GoogleFonts.poppins(color: AppColors.grayTextColor, fontSize: 16, fontWeight: FontWeight.w400),
-              ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, offset: const Offset(0, 2))],
             ),
-          ],
-        ),
+            child: Row(
+              children: [
+                SvgPicture.asset(ImageAssets.searchIcon, width: 24, height: 24, color: AppColors.grayColorIcon),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    focusNode: _searchFocusNode,
+                    onChanged: (value) {
+                      _searchLocation(value);
+                    },
+                    decoration: InputDecoration(
+                      hintText: context.l10n.searchLocation,
+                      hintStyle: GoogleFonts.poppins(
+                        color: AppColors.grayTextColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: GoogleFonts.poppins(color: AppColors.primaryTextColor, fontSize: 16, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                if (_searchController.text.isNotEmpty)
+                  IconButton(
+                    icon: Icon(Icons.clear, color: AppColors.grayColorIcon, size: 20),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {
+                        _searchResults = [];
+                      });
+                    },
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+              ],
+            ),
+          ),
+          if (_searchResults.isNotEmpty) _buildSearchResults(),
+        ],
       ),
     );
   }
 
-  Widget _buildCenterMarker() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            ImageAssets.locationIcon,
+  Widget _buildSearchResults() {
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 10, offset: const Offset(0, 2))],
+      ),
+      constraints: const BoxConstraints(maxHeight: 250),
+      child: ListView.separated(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        itemCount: _searchResults.length,
+        separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey.shade300),
+        itemBuilder: (context, index) {
+          final location = _searchResults[index];
+          return FutureBuilder<String>(
+            future: _getPlaceNameFromLocation(location),
+            builder: (context, snapshot) {
+              final placeName =
+                  snapshot.data ?? '${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}';
+              return ListTile(
+                leading: Icon(Icons.location_on, color: AppColors.primaryColor),
+                title: Text(
+                  placeName,
+                  style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.primaryTextColor),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                subtitle:
+                    snapshot.hasData
+                        ? Text(
+                          '${location.latitude.toStringAsFixed(4)}, ${location.longitude.toStringAsFixed(4)}',
+                          style: GoogleFonts.poppins(fontSize: 12, color: AppColors.grayTextColor),
+                        )
+                        : null,
+                trailing:
+                    snapshot.connectionState == ConnectionState.waiting
+                        ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
+                          ),
+                        )
+                        : null,
+                onTap: () => _selectSearchResult(location),
+                dense: true,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget _buildCenterMarker() {
+  //   return Center(
+  //     child: Column(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         SvgPicture.asset(
+  //           ImageAssets.locationIcon,
+  //           width: 48,
+  //           height: 48,
+  //           colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Container(
+  //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(12),
+  //             boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 8, offset: const Offset(0, 2))],
+  //           ),
+  //           child: Text(
+  //             context.l10n.dragToSelectLocation,
+  //             style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.grayTextColor),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildMyLocationButton() {
+    return Positioned(
+      right: 20,
+      top: 130,
+      child: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: () async {
+            setState(() => _isLoadingAddress = true);
+            final currentLocation = await LocationService().getCurrentLocation();
+            if (currentLocation != null) {
+              setState(() => _selectedLocation = currentLocation);
+              await _updateLocationDetails(currentLocation);
+              _mapController?.animateCamera(CameraUpdate.newLatLngZoom(currentLocation, 15.0));
+            } else {
+              setState(() => _isLoadingAddress = false);
+              if (mounted) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(context.l10n.locationPermissionDenied), backgroundColor: Colors.red));
+              }
+            }
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
             width: 48,
             height: 48,
-            colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+            child: Icon(Icons.my_location, color: AppColors.primaryColor, size: 24),
           ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [BoxShadow(color: Colors.black.withAlpha(25), blurRadius: 8, offset: const Offset(0, 2))],
-            ),
-            child: Text(
-              context.l10n.dragToSelectLocation,
-              style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.grayTextColor),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -335,50 +556,42 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
             SizedBox(
               width: double.infinity,
               height: 48,
-              child: OutlinedButton(
-                onPressed: () async {
-                  setState(() {
-                    _isLoadingAddress = true;
-                  });
-
-                  final currentLocation = await LocationService().getCurrentLocation();
-                  if (currentLocation != null) {
-                    await _updateLocationDetails(currentLocation);
-                    // Animate to current location
-                    _mapController?.animateCamera(CameraUpdate.newLatLng(currentLocation));
-                  } else {
-                    setState(() {
-                      _isLoadingAddress = false;
-                    });
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: AppColors.primaryColor),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                child: Text(
+              child: OutlinedButton.icon(
+                onPressed:
+                    _isLoadingAddress
+                        ? null
+                        : () async {
+                          setState(() => _isLoadingAddress = true);
+                          final currentLocation = await LocationService().getCurrentLocation();
+                          if (currentLocation != null) {
+                            setState(() => _selectedLocation = currentLocation);
+                            await _updateLocationDetails(currentLocation);
+                            _mapController?.animateCamera(CameraUpdate.newLatLngZoom(currentLocation, 15.0));
+                          } else {
+                            setState(() => _isLoadingAddress = false);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Location Permission Denied'),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                icon: Icon(Icons.my_location, color: _isLoadingAddress ? Colors.grey : AppColors.primaryColor),
+                label: Text(
                   context.l10n.useCurrentLocation,
-                  style: GoogleFonts.poppins(color: AppColors.primaryColor, fontSize: 16, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.poppins(
+                    color: _isLoadingAddress ? Colors.grey : AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Update Address button (for testing)
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton(
-                onPressed: () {
-                  _updateAddressForCurrentLocation();
-                },
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.orange),
+                  side: BorderSide(color: _isLoadingAddress ? Colors.grey : AppColors.primaryColor),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                child: Text(
-                  context.l10n.updateAddress,
-                  style: GoogleFonts.poppins(color: Colors.orange, fontSize: 16, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -389,9 +602,9 @@ class _LocationConfirmationScreenState extends State<LocationConfirmationScreen>
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: _confirmLocation,
+                onPressed: _isLoadingAddress ? null : _confirmLocation,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
+                  backgroundColor: _isLoadingAddress ? Colors.grey : AppColors.primaryColor,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   elevation: 0,
                 ),

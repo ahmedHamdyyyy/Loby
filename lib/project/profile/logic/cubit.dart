@@ -17,7 +17,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       final userData = await _userRepository.fetchUserData();
       emit(state.copyWith(fetchUserStatus: Status.success, user: userData));
     } catch (e) {
-      emit(state.copyWith(fetchUserStatus: Status.error, callback: e.toString()));
+      emit(state.copyWith(fetchUserStatus: Status.error, callback: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(fetchUserStatus: Status.initial));
     }
@@ -27,9 +27,9 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(chooseVendorRole: Status.loading));
     try {
       await _userRepository.setVendorRole(role);
-      emit(state.copyWith(chooseVendorRole: Status.success, vendorRole: role));
+      emit(state.copyWith(chooseVendorRole: Status.success, user: state.user.copyWith(role: role.name)));
     } catch (e) {
-      emit(state.copyWith(chooseVendorRole: Status.error, callback: e.toString()));
+      emit(state.copyWith(chooseVendorRole: Status.error, callback: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(chooseVendorRole: Status.initial));
     }
@@ -51,7 +51,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
       emit(state.copyWith(updateUserStatus: Status.success, user: user));
     } catch (e) {
-      emit(state.copyWith(updateUserStatus: Status.error, callback: e.toString()));
+      emit(state.copyWith(updateUserStatus: Status.error, callback: AppConst.normalizeError(e)));
     }
   }
 
@@ -75,7 +75,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
       emit(state.copyWith(uploadDocumentsStatus: Status.success, user: user));
     } catch (e) {
-      emit(state.copyWith(uploadDocumentsStatus: Status.error, callback: e.toString()));
+      emit(state.copyWith(uploadDocumentsStatus: Status.error, callback: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(uploadDocumentsStatus: Status.initial));
     }

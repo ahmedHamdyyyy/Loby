@@ -83,8 +83,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get imagePickFailed => 'فشل في اختيار الصورة';
 
   @override
-  String get mustPickImageBeforeVideo =>
-      'يجب اختيار صورة أولاً قبل إضافة فيديو';
+  String get mustPickImageBeforeVideo => 'يجب اختيار صورة أولاً قبل إضافة فيديو';
 
   @override
   String get onlyMp4Allowed => 'يُسمح فقط برفع فيديو MP4';
@@ -96,8 +95,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get atLeastOneImageMustRemain => 'يجب أن تبقى صورة واحدة على الأقل';
 
   @override
-  String get cannotRemoveFirstImage =>
-      'لا يمكن إزالة الصورة الأولى لأنها الوحيدة';
+  String get cannotRemoveFirstImage => 'لا يمكن إزالة الصورة الأولى لأنها الوحيدة';
 
   @override
   String get filePickFailed => 'فشل في اختيار الملف';
@@ -221,12 +219,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appCommission => 'عمولة التطبيق';
 
   @override
-  String get commissionDetails =>
-      'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
+  String get commissionDetails => 'عمولة الطرف الأول لكل حجز يتم بواسطة الطرف الثاني هي 15% من الإيجار (لا تشمل ضريبة القيمة المضافة).';
 
   @override
-  String get emailNotVerifiedMsg =>
-      'لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.';
+  String get emailNotVerifiedMsg => 'لم يتم التحقق من بريدك الإلكتروني. يرجى الانتظار حتى يتم التحقق ثم حاول مرة أخرى.';
 
   @override
   String get account => 'الحساب';
@@ -277,8 +273,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeBack => 'مرحبًا بعودتك!';
 
   @override
-  String get loginIntro =>
-      'يرجى إدخال البريد الإلكتروني وكلمة المرور لتسجيل الدخول إلى حسابك.';
+  String get loginIntro => 'يرجى إدخال البريد الإلكتروني وكلمة المرور لتسجيل الدخول إلى حسابك.';
 
   @override
   String get emailHint => 'أدخل بريدك الإلكتروني';
@@ -455,8 +450,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get address => 'العنوان';
 
   @override
-  String get enterYourAddressOrTapMap =>
-      'أدخل عنوانك أو اضغط على أيقونة الخريطة للاختيار';
+  String get enterYourAddressOrTapMap => 'أدخل عنوانك أو اضغط على أيقونة الخريطة للاختيار';
 
   @override
   String get pleaseEnterYourAddress => 'يرجى إدخال عنوانك';
@@ -550,8 +544,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navProfile => 'الملف الشخصي';
 
   @override
-  String get vendorIntroText =>
-      'انضم إلى لوبي كبائع وابدأ في إدراج عقاراتك أو أنشطتك للوصول إلى جمهور أوسع وتنمية عملك.';
+  String get vendorIntroText => 'انضم إلى لوبي كبائع وابدأ في إدراج عقاراتك أو أنشطتك للوصول إلى جمهور أوسع وتنمية عملك.';
 
   @override
   String availabilityQuestion(String type) {
@@ -577,8 +570,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lobbyOffersTitle => 'عروض لوبي';
 
   @override
-  String get lobbyOffersDescription =>
-      'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
+  String get lobbyOffersDescription => 'إذا أضفت من شقة واحدة إلى 10 تكون النسبة 10% - من 0 إلى 20 تكون النسبة 15% - أكثر من 25 تكون النسبة 20%';
 
   @override
   String get imageLabel => 'صورة';
@@ -608,6 +600,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmLocation => 'تأكيد الموقع';
+
+  @override
+  String get locationPermissionDenied => 'تم رفض إذن الموقع. يرجى تفعيل الوصول إلى الموقع.';
+
+  @override
+  String get loadingMap => 'جارٍ تحميل الخريطة...';
 
   @override
   String get shareSomeBasics => 'شارك بعض الأساسيات عن مكانك';
@@ -744,8 +742,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeToLoby => 'مرحبًا بك في لوبي';
 
   @override
-  String get onboardingWelcomeDescription =>
-      'اكتشف واحجز أفضل الاستوديوهات والأنشطة السياحية بسهولة. عش لحظات لا تُنسى مع لوبي. لنبدأ!';
+  String get onboardingWelcomeDescription => 'اكتشف واحجز أفضل الاستوديوهات والأنشطة السياحية بسهولة. عش لحظات لا تُنسى مع لوبي. لنبدأ!';
 
   @override
   String get letsStart => 'لنبدأ';
@@ -784,20 +781,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get hello => 'مرحبًا';
 
   @override
-  String get reservationCompletedMessage =>
-      'تم إكمال حجز الاستوديو الخاص بك بنجاح!';
+  String get reservationCompletedMessage => 'تم إكمال حجز الاستوديو الخاص بك بنجاح!';
 
   @override
-  String get pleaseSelectAllRequiredDocuments =>
-      'يرجى اختيار جميع المستندات المطلوبة.';
+  String get pleaseSelectAllRequiredDocuments => 'يرجى اختيار جميع المستندات المطلوبة.';
 
   @override
-  String get accountUnderReviewCannotEdit =>
-      'حسابك قيد المراجعة ولا يمكن تعديله في هذا الوقت.';
+  String get accountUnderReviewCannotEdit => 'حسابك قيد المراجعة ولا يمكن تعديله في هذا الوقت.';
 
   @override
-  String get accountRejectedContactSupport =>
-      'تم رفض حسابك. يرجى التواصل مع الدعم لمزيد من المعلومات.';
+  String get accountRejectedContactSupport => 'تم رفض حسابك. يرجى التواصل مع الدعم لمزيد من المعلومات.';
 
   @override
   String get uploadingDocuments => 'جارٍ رفع المستندات...';
@@ -915,6 +908,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get messageInputHint => 'يمكنك إضافة رسالتك هنا';
+
+  @override
+  String get messageContainsTooManyConsecutiveNumbers => 'تحتوي الرسالة على العديد من الأرقام المتتالية';
 
   @override
   String get commonSend => 'إرسال';

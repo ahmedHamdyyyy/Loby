@@ -110,16 +110,14 @@ class _ConfirmOtpScreenState extends State<ConfirmOtpScreen> with TickerProvider
       return;
     }
 
-    if (!_checkHourlyLimit()) {
-      return;
-    }
+    if (!_checkHourlyLimit()) return;
 
     // Track the attempt
     _firstResendAttemptTime ??= DateTime.now();
     _resendAttemptsThisHour++;
 
     // Resend the verification email
-    context.read<AuthCubit>().verifyEmail(widget.email);
+    context.read<AuthCubit>().verifyEmail(widget.user!);
 
     // Restart the timer
     _startResendTimer();

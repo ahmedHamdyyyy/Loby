@@ -18,7 +18,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       final notifications = await _repo.fetchNotifications();
       emit(state.copyWith(loadStatus: Status.success, notifications: notifications));
     } catch (e) {
-      emit(state.copyWith(loadStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(loadStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(loadStatus: Status.initial));
     }
@@ -32,7 +32,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
       final updated = state.notifications.map((n) => n.id == id ? n.copyWith(isRead: true) : n).toList();
       emit(state.copyWith(readStatus: Status.success, notifications: updated));
     } catch (e) {
-      emit(state.copyWith(readStatus: Status.error, msg: e.toString()));
+      emit(state.copyWith(readStatus: Status.error, msg: AppConst.normalizeError(e)));
     } finally {
       emit(state.copyWith(readStatus: Status.initial));
     }

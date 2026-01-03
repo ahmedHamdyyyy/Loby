@@ -115,7 +115,7 @@ void notificationTapBackground(NotificationResponse response) {
   }
 }
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 AppLinksService? _appLinksService;
 
 DateTime? _lastNavAt;
@@ -143,7 +143,7 @@ void _handleNotificationNavigation(Map<String, dynamic> data) {
     return;
   }
 
-  final nav = _rootNavigatorKey.currentState;
+  final nav = rootNavigatorKey.currentState;
   if (nav == null) return;
 
   // Normalize type variations to lower_snake
@@ -257,7 +257,7 @@ void main() async {
   // Initialize deep links after first frame so Navigator is available
   WidgetsBinding.instance.addPostFrameCallback((_) {
     _appLinksService = AppLinksService(
-      navigatorKey: _rootNavigatorKey,
+      navigatorKey: rootNavigatorKey,
       onRouteData: _handleNotificationNavigation,
       acceptedSchemes: const ['loby'],
     );
@@ -320,7 +320,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), useMaterial3: true),
-              navigatorKey: _rootNavigatorKey,
+              navigatorKey: rootNavigatorKey,
               home: const LubyScreenSplash(),
               onGenerateTitle: (context) => AppLocalizations.of(context)?.appTitle ?? 'Luby',
               locale: locale,
