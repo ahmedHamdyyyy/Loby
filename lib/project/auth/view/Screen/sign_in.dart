@@ -7,6 +7,7 @@ import '../../../../core/utils/utile.dart';
 import '../../../home/view/main_vandor_home.dart';
 import '../../logic/auth_cubit.dart';
 import '../Widget/all_widget_auth.dart';
+import 'forgot_password_screen.dart';
 import 'sign_up.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -41,6 +42,10 @@ class _SignInScreenState extends State<SignInScreen> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpScreen()));
   }
 
+  void _handleForgotPassword() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()));
+  }
+
   @override
   Widget build(BuildContext context) => BlocListener<AuthCubit, AuthState>(
     listener: (context, state) {
@@ -67,6 +72,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 onTogglePassword: () => setState(() => obscurePassword = !obscurePassword),
                 onContinue: _handleLogin,
                 onCreateAccount: _handleCreateAccount,
+                onForgotPassword: _handleForgotPassword,
                 onGoogleContinue: () {},
                 onFacebookContinue: () {},
                 onGuestLogin: () {},

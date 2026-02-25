@@ -725,6 +725,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fees => 'الرسوم';
 
   @override
+  String get serviceFees => 'رسوم الخدمة';
+
+  @override
   String get totalPrice => 'إجمالي السعر';
 
   @override

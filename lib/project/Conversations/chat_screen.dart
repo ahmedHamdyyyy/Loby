@@ -36,7 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  bool hasSequenceNumbers(String input, {int minLength = 8}) {
+  bool hasSequenceNumbers(String input, {int minLength = 7}) {
     // Convert Arabic digits to English
     final normalized = input.replaceAllMapped(RegExp(r'[٠-٩]'), (m) => (m.group(0)!.codeUnitAt(0) - 0x0660).toString());
 
@@ -60,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
     final messageText = _messageController.text.trim();
     if (hasSequenceNumbers(messageText)) {
-      showToast(text: 'Message Contains Too Many Consecutive Numbers', stute: ToustStute.worning);
+      showToast(text: context.l10n.messageContainsTooManyConsecutiveNumbers, stute: ToustStute.worning);
       return;
     }
     setState(() => _isSending = true);

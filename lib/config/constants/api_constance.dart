@@ -11,7 +11,8 @@ class ApiConstance {
   static const refreshToken = "auth/refresh-token";
   static const resetpassword = "auth/reset-password";
   static const confirmOtpSignUp = "auth/vendor/signup/verify";
-  static const confirmOtpResetPassword = "auth/vendor/confirm-otp-reset-password";
+  static const confirmOtpResetPassword = "auth/vendor/forget-password/verify";
+  static const initiateForgetPassword = "auth/vendor/forget-password/initiate";
   static const forgetPasswordReset = "auth/vendor/forget-password/reset";
   static const verifyEmail = "auth/vendor/signup/initiate";
   static const userProfile = "users/me";

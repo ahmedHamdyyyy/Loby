@@ -137,8 +137,15 @@ class LoginScreenContent extends StatelessWidget {
     required this.obscurePassword,
     required this.onTogglePassword,
     required this.onCreateAccount,
+    required this.onForgotPassword,
   });
-  final VoidCallback onContinue, onGoogleContinue, onFacebookContinue, onGuestLogin, onTogglePassword, onCreateAccount;
+  final VoidCallback onContinue,
+      onGoogleContinue,
+      onFacebookContinue,
+      onGuestLogin,
+      onTogglePassword,
+      onCreateAccount,
+      onForgotPassword;
   final TextEditingController emailController, passwordController;
   final bool obscurePassword;
 
@@ -235,7 +242,23 @@ class LoginScreenContent extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: onForgotPassword,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Forgot Password?',
+                    style: GoogleFonts.poppins(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 height: 48,

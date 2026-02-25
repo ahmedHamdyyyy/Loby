@@ -95,6 +95,15 @@ class AuthData {
     return response.data['data']['message'];
   }
 
+  Future<void> initiateForgetPassword({required String email}) async {
+    final response = await _apiServices.dio.post(
+      ApiConstance.initiateForgetPassword,
+      data: {AppConst.email: email},
+      options: Options(headers: {'X-Device-ID': await getDeviceId()}),
+    );
+    if (response.statusCode != 200) throw _responseException(response);
+  }
+
   Future<void> verifyUserData(UserModel user) async {
     final mapData = await user.signUp();
     final response = await _apiServices.dio.post(ApiConstance.verifyUserData, data: mapData);

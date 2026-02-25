@@ -81,4 +81,16 @@ class AuthCubit extends Cubit<AuthState> {
       emit(state.copyWith(resetPasswordStatus: Status.initial));
     }
   }
+
+  void initiateForgetPassword(String email) async {
+    emit(state.copyWith(initiateForgetPasswordStatus: Status.loading));
+    try {
+      await _repo.initiateForgetPassword(email: email);
+      emit(state.copyWith(initiateForgetPasswordStatus: Status.success, msg: 'Verification email sent'));
+    } catch (e) {
+      emit(state.copyWith(initiateForgetPasswordStatus: Status.error, msg: AppConst.normalizeError(e)));
+    } finally {
+      emit(state.copyWith(initiateForgetPasswordStatus: Status.initial));
+    }
+  }
 }

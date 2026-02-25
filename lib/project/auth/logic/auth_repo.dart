@@ -92,4 +92,17 @@ class AuthRepo {
       throw Exception('An unexpected error occurred');
     }
   }
+
+  Future<void> initiateForgetPassword({required String email}) async {
+    try {
+      await _authData.initiateForgetPassword(email: email);
+    } on DioException catch (e, s) {
+      debugPrintStack(label: e.message, stackTrace: s);
+      debugPrint(e.response?.data.toString());
+      rethrow;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception('An unexpected error occurred');
+    }
+  }
 }

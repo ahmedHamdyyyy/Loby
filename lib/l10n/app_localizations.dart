@@ -1427,6 +1427,12 @@ abstract class AppLocalizations {
   /// **'Fees'**
   String get fees;
 
+  /// No description provided for @serviceFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Service Fees'**
+  String get serviceFees;
+
   /// No description provided for @totalPrice.
   ///
   /// In en, this message translates to:

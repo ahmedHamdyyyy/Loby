@@ -1,10 +1,15 @@
-// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:Luby/config/widget/widget.dart';
+import 'package:barcode/barcode.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../../../../../config/colors/colors.dart';
 import '../../../../../config/images/image_assets.dart';
@@ -38,6 +43,240 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
   }
 
   final vendor = getIt<ProfileCubit>().state.user;
+
+  Future<void> _generateAndShareReservationPdf(ReservationModel reservation) async {
+    final isProperty = reservation.type == ReservationType.property;
+    final price = isProperty ? (reservation.item as PropertyModel).pricePerNight : (reservation.item as ActivityModel).price;
+    final nightsNumber = isProperty ? nights(reservation.checkInDate, reservation.checkOutDate) : 1;
+    final title = isProperty ? (reservation.item as PropertyModel).type.name : (reservation.item as ActivityModel).name;
+    final address =
+        isProperty
+            ? (reservation.item as PropertyModel).address.formattedAddress
+            : (reservation.item as ActivityModel).address.formattedAddress;
+    final checkIn = reservation.checkInDate.length > 10 ? reservation.checkInDate.substring(0, 10) : reservation.checkInDate;
+    final checkOut =
+        reservation.checkOutDate.length > 10 ? reservation.checkOutDate.substring(0, 10) : reservation.checkOutDate;
+
+    // Load logo
+    final logoData = await rootBundle.load(ImageAssets.logo);
+    final logoImage = pw.MemoryImage(logoData.buffer.asUint8List());
+
+    final basePrice = reservation.totalPrice;
+    final feesAmount = (reservation.totalPriceAfterFees - reservation.totalPrice).abs();
+    final totalAmount = reservation.totalPriceAfterFees;
+
+    final doc = pw.Document();
+
+    doc.addPage(
+      pw.MultiPage(
+        pageTheme: pw.PageTheme(
+          margin: const pw.EdgeInsets.all(24),
+          theme: pw.ThemeData(defaultTextStyle: const pw.TextStyle(fontSize: 12)),
+        ),
+        build:
+            (context) => [
+              // Header with logo
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Image(logoImage, width: 60, height: 60),
+                  pw.SizedBox(width: 16),
+                  pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text('Reservation Summary', style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold)),
+                      pw.SizedBox(height: 4),
+                      pw.Text(
+                        'Reservation #: ${reservation.registrationNumber}',
+                        style: const pw.TextStyle(color: PdfColors.grey700),
+                      ),
+                      pw.Text(
+                        'Generated: ${DateTime.now().toIso8601String().substring(0, 19)}',
+                        style: const pw.TextStyle(color: PdfColors.grey700),
+                      ),
+                    ],
+                  ),
+                  pw.Spacer(),
+                  pw.Container(
+                    padding: const pw.EdgeInsets.all(4),
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(color: PdfColors.grey400),
+                      borderRadius: pw.BorderRadius.circular(6),
+                    ),
+                    child: pw.BarcodeWidget(
+                      data: reservation.registrationNumber.toString(),
+                      barcode: Barcode.qrCode(),
+                      width: 64,
+                      height: 64,
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 16),
+              // Guest & Host
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                columnWidths: {0: const pw.FlexColumnWidth(2), 1: const pw.FlexColumnWidth(3)},
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Guest', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(reservation.userName)),
+                    ],
+                  ),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Host', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('${vendor.firstName} ${vendor.lastName}'),
+                      ),
+                    ],
+                  ),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Contact', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(vendor.email)),
+                    ],
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 16),
+              // Property/Activity details
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                columnWidths: {0: const pw.FlexColumnWidth(2), 1: const pw.FlexColumnWidth(3)},
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(
+                          isProperty ? 'Property' : 'Activity',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                      ),
+                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(title)),
+                    ],
+                  ),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text('Address', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      ),
+                      pw.Padding(padding: const pw.EdgeInsets.all(8), child: pw.Text(address)),
+                    ],
+                  ),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(
+                          isProperty ? 'Check-in / Check-out' : 'Date',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(isProperty ? '$checkIn → $checkOut' : checkIn),
+                      ),
+                    ],
+                  ),
+                  pw.TableRow(
+                    children: [
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(
+                          isProperty ? 'Nights' : 'Guests',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                        ),
+                      ),
+                      pw.Padding(
+                        padding: const pw.EdgeInsets.all(8),
+                        child: pw.Text(isProperty ? '$nightsNumber' : '${reservation.guestNumber}'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 16),
+              // Pricing summary
+              pw.Container(
+                decoration: pw.BoxDecoration(
+                  border: pw.Border.all(color: PdfColors.grey300),
+                  borderRadius: pw.BorderRadius.circular(6),
+                ),
+                child: pw.Padding(
+                  padding: const pw.EdgeInsets.all(12),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Row(
+                        children: [
+                          pw.Text(
+                            isProperty
+                                ? '$nightsNumber night(s) × ${reservation.guestNumber} guest(s) × SAR ${price.toStringAsFixed(2)}'
+                                : '${reservation.guestNumber} guest(s) × SAR ${price.toStringAsFixed(2)}',
+                          ),
+                          pw.Spacer(),
+                          pw.Text('SAR ${basePrice.toStringAsFixed(2)}'),
+                        ],
+                      ),
+                      pw.SizedBox(height: 6),
+                      pw.Row(
+                        children: [pw.Text('Service Fees'), pw.Spacer(), pw.Text('SAR ${feesAmount.toStringAsFixed(2)}')],
+                      ),
+                      pw.Divider(),
+                      pw.Row(
+                        children: [
+                          pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.Spacer(),
+                          pw.Text(
+                            'SAR ${totalAmount.toStringAsFixed(2)}',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              pw.SizedBox(height: 16),
+              // Terms & notes
+              pw.Text('Terms and Notes', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 6),
+              pw.Bullet(text: 'Free cancellation before $checkIn.'),
+              pw.Bullet(text: 'Please bring a valid ID at check-in.'),
+              pw.Bullet(text: 'Contact your host for special requests or arrival times.'),
+              pw.SizedBox(height: 12),
+              pw.Divider(),
+              pw.SizedBox(height: 8),
+              pw.Row(
+                children: [
+                  pw.Text('Luby — Reservations', style: const pw.TextStyle(color: PdfColors.grey700)),
+                  pw.Spacer(),
+                  pw.Text('support@lubyksa.com', style: const pw.TextStyle(color: PdfColors.grey700)),
+                ],
+              ),
+            ],
+      ),
+    );
+
+    final fileName = 'Reservation_${reservation.registrationNumber}.pdf';
+    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+  }
 
   @override
   void initState() {
@@ -265,7 +504,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                   price: '${reservation.totalPrice.toStringAsFixed(2)} ${context.l10n.currencySar}',
                 ),
                 SummaryRow(
-                  title: context.l10n.fees,
+                  title: context.l10n.serviceFees,
                   price:
                       '${(reservation.totalPriceAfterFees - reservation.totalPrice).toStringAsFixed(2)} ${context.l10n.currencySar}',
                 ),
@@ -286,7 +525,7 @@ class _ReservationDetailsScreenState extends State<ReservationDetailsScreen> {
                 ),
                 // ],
                 const Divider(height: 32, thickness: 1, color: AppColors.editIconColor),
-                const ViewReservationSummary(),
+                ViewReservationSummary(reservation: reservation, onTap: () => _generateAndShareReservationPdf(reservation)),
                 const SizedBox(height: 24),
               ],
             ),
@@ -377,27 +616,28 @@ String _localizedStatus(BuildContext context, ReservationStatus status) {
 }
 
 class ViewReservationSummary extends StatelessWidget {
-  const ViewReservationSummary({super.key});
+  final ReservationModel reservation;
+  final VoidCallback onTap;
+
+  const ViewReservationSummary({super.key, required this.reservation, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(ImageAssets.pdfIcon, width: 30, height: 30),
-        const SizedBox(width: 14),
-        Expanded(
-          child: Text(
-            context.l10n.viewReservationSummary,
-            style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Image.asset(ImageAssets.pdfIcon, width: 30, height: 30),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(
+              context.l10n.viewReservationSummary,
+              style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondTextColor),
+            ),
           ),
-        ),
-        InkWell(
-          onTap: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) => const LastReservationDetailsScreenvendor()));
-          },
-          child: const Icon(Icons.arrow_forward_ios, color: AppColors.grayColorIcon),
-        ),
-      ],
+          const Icon(Icons.arrow_forward_ios, color: AppColors.grayColorIcon),
+        ],
+      ),
     );
   }
 }

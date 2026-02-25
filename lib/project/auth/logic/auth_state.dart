@@ -1,9 +1,14 @@
 part of 'auth_cubit.dart';
 
-
 class AuthState extends Equatable {
   final String msg;
-  final Status signupStatus, signinStatus, signoutStatus, verifyEmailStatus, resetPasswordStatus, confirmOtpStatus;
+  final Status signupStatus,
+      signinStatus,
+      signoutStatus,
+      verifyEmailStatus,
+      resetPasswordStatus,
+      confirmOtpStatus,
+      initiateForgetPasswordStatus;
   final UserModel user;
 
   const AuthState({
@@ -14,6 +19,7 @@ class AuthState extends Equatable {
     this.verifyEmailStatus = Status.initial,
     this.resetPasswordStatus = Status.initial,
     this.confirmOtpStatus = Status.initial,
+    this.initiateForgetPasswordStatus = Status.initial,
     this.user = UserModel.non,
   });
   AuthState copyWith({
@@ -25,6 +31,7 @@ class AuthState extends Equatable {
     UserModel? user,
     Status? resetPasswordStatus,
     Status? confirmOtpStatus,
+    Status? initiateForgetPasswordStatus,
   }) => AuthState(
     msg: msg ?? this.msg,
     signupStatus: signupStatus ?? this.signupStatus,
@@ -33,6 +40,7 @@ class AuthState extends Equatable {
     verifyEmailStatus: verifyEmailStatus ?? this.verifyEmailStatus,
     resetPasswordStatus: resetPasswordStatus ?? this.resetPasswordStatus,
     confirmOtpStatus: confirmOtpStatus ?? this.confirmOtpStatus,
+    initiateForgetPasswordStatus: initiateForgetPasswordStatus ?? this.initiateForgetPasswordStatus,
     user: user ?? this.user,
   );
 
@@ -46,10 +54,6 @@ class AuthState extends Equatable {
     user,
     confirmOtpStatus,
     resetPasswordStatus,
+    initiateForgetPasswordStatus,
   ];
-
-
-
-
-   }
-
+}
